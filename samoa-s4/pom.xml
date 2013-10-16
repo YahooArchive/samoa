@@ -1,0 +1,160 @@
+<!--
+  #%L
+  SAMOA
+  %%
+  Copyright (C) 2013 Yahoo! Inc.
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <artifactId>samoa-s4</artifactId>
+    <version>0.0.1</version>
+
+    <name>samoa-s4</name>
+    <description>S4 bindings for SAMOA</description>
+    <parent>
+      <groupId>com.yahoo.labs.samoa</groupId>
+      <artifactId>samoa</artifactId>
+      <version>0.0.1</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.yahoo.labs.samoa</groupId>
+            <artifactId>samoa-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.javacliparser</groupId>
+            <artifactId>javacliparser</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
+        <!-- S4 dependencies need to be installed separately as they are 
+            not available via Maven yet -->
+        <dependency>
+            <groupId>org.apache.s4</groupId>
+            <artifactId>s4-base</artifactId>
+            <version>0.6.0-incubating</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.s4</groupId>
+            <artifactId>s4-comm</artifactId>
+            <version>0.6.0-incubating</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.s4</groupId>
+            <artifactId>s4-core</artifactId>
+            <version>0.6.0-incubating</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.7</version>
+
+                <configuration>
+                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+
+                    <excludeGroupIds>org.apache.s4</excludeGroupIds>
+                    <excludeTransitive>true</excludeTransitive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- SAMOA S4 assembly -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/samoa-s4.xml</descriptor>
+                    </descriptors>
+                    <finalName>SAMOA-S4-${project.version}</finalName>
+                    <attach>false</attach>
+                    <outputDirectory>../target</outputDirectory>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifestEntries>
+                            <Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
+                            <Bundle-Description>${project.description}</Bundle-Description>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor>Yahoo!</Implementation-Vendor>
+                            <Implementation-Vendor-Id>SAMOA</Implementation-Vendor-Id>
+                            <S4-App-Class>com.yahoo.labs.samoa.topology.impl.DoTaskApp</S4-App-Class>
+                            <S4-Version>0.6.0-incubating</S4-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

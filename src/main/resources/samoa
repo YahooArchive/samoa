@@ -1,0 +1,195 @@
+#!/bin/bash
+
+###
+# #%L
+# SAMOA
+# %%
+# Copyright (C) 2013 Yahoo! Inc.
+# %%
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# #L%
+###
+
+# =====================================================================================================	#
+# 			Scalable Advanced Massive Online Analysis a.k.a SAMOA				#
+# =====================================================================================================	#
+# -----------------------------------------------------------------------------------------------------	#
+# SAMOA is a scalabe data stream machine learning processing framework that 				#
+# can be used to implement machine learning algorithms on top of distributed				#
+# stream processing engines.										#
+# 													#
+# Usage:												#
+# ./samoa <platform> <jar-location> <task & options>							#
+# Example:												#
+# ./samoa S4 /foo/bar/SAMOA-S4-0.0.1.jar "ClusteringTask -s (RandomRBFGeneratorEvents -K 5 -a 2)" 	#
+#													#
+# -----------------------------------------------------------------------------------------------------	#
+
+PLATFORM=`echo $1 | tr '[:lower:]' '[:upper:]'`
+JAR_PATH=$2
+JAR_FILE=`echo ${JAR_PATH##*/}`
+JAR_DIR=`echo ${JAR_PATH%/*?}`
+OPTIONS=$3
+
+
+if [ $PLATFORM = 'S4' ]; then
+
+	# Local functions
+	deployLocal() 
+	{
+		# Make sure to kill S4 processes before re-deploying
+
+		echo "Starting Zookeeper..."
+		(cd $S4_HOME ; . s4 zkServer -clean -port=${ZK_SERVER_PORT} &)
+		sleep 10
+
+		echo "Defining cluster..."
+		(cd $S4_HOME ; . s4 newCluster -c=${CLUSTER_NAME} -nbTasks=1 -flp=${CLUSTER_PORT}  -zk=${ZK_SERVER}:${ZK_SERVER_PORT} & )
+		sleep 5
+
+		echo "Starting node on cluster "$CLUSTER_NAME"..."
+		(cd $S4_HOME ; . s4 node -c=${CLUSTER_NAME} -zk=${ZK_SERVER}:${ZK_SERVER_PORT} & )
+		sleep 5
+	}
+
+	PROPERTY_VALUE=
+	readProperty() {
+	    property=$1
+	    PROPERTY_VALUE=`sed '/^\#/d' samoa-s4.properties | grep $property  | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+	}
+	# END Local functions
+
+	echo "Deploying to "$PLATFORM
+	curr_dir=`pwd`
+	if [ -f /tmp/httpPID ]; then
+		pid=`more /tmp/httpPID`
+		kill -9 $pid
+		rm /tmp/httpPID
+	fi
+
+	cd $JAR_DIR
+	# Starting HTTP Server
+	python -m SimpleHTTPServer 8000 &
+	echo $! > /tmp/httpPID
+	sleep 2
+	cd $curr_dir
+	
+	# Reading properties file
+	readProperty 'http.server.ip'
+	APP_SERVER_IP=$PROPERTY_VALUE
+	if [ $APP_SERVER_IP = '' ]; then
+		APP_SERVER_IP=`hostname`
+	fi
+	
+	readProperty 'http.server.port'
+	APP_SERVER_PORT=$PROPERTY_VALUE
+	if [ $APP_SERVER_PORT = '' ]; then
+		APP_SERVER_PORT=8000
+	fi
+	
+	readProperty 'zookeeper.server'
+	ZK_SERVER=$PROPERTY_VALUE
+	if [ $ZK_SERVER = '' ]; then
+		ZK_SERVER=`hostname`
+	fi
+	
+	readProperty 'zookeeper.port'
+	ZK_SERVER_PORT=$PROPERTY_VALUE
+	if [ $ZK_SERVER_PORT = '' ]; then
+		ZK_SERVER_PORT=2181
+	fi
+	
+	readProperty 'cluster.name'
+	CLUSTER_NAME=$PROPERTY_VALUE
+	if [ $CLUSTER_NAME = '' ]; then
+		CLUSTER_NAME="cluster"
+	fi
+	
+	readProperty 'cluster.port'
+	CLUSTER_PORT=$PROPERTY_VALUE
+	if [ $CLUSTER_NAME = '' ]; then
+		CLUSTER_PORT=12000
+	fi
+
+	readProperty 'samoa.deploy.mode'
+	DEPLOY_MODE=$PROPERTY_VALUE
+	if [ $DEPLOY_MODE = '' ]; then
+	  DEPLOY_MODE=local
+	elif [ $DEPLOY_MODE = 'local' ]; then
+	  deployLocal
+	fi
+	# END Reading properties file
+
+	APP_NAME="SamoaS4App"
+	APP_CLASS="com.yahoo.labs.samoa.topology.impl.DoTaskApp"
+	NAMED_PARAMETERS=`echo $OPTIONS | sed 's/ /:/g'`
+	
+	echo "Deploying SAMOA Application..."
+	(cd $S4_HOME ; . s4 deploy -s4r=http://${APP_SERVER_IP}:${APP_SERVER_PORT}/${JAR_FILE} -c=${CLUSTER_NAME} -p=evalTask=${NAMED_PARAMETERS}  -appClass=${APP_CLASS} -appName=${APP_NAME} -zk=${ZK_SERVER}:${ZK_SERVER_PORT})
+
+    # should wait for app to be deployed
+    sleep 5
+
+	# END Apache S4 deployment
+	
+elif [ $PLATFORM = 'STORM' ]; then
+
+	echo "Deploying to platform "$PLATFORM
+	if [ -z $STORM_HOME ];then
+	    echo "STORM_HOME is not set!"
+	    echo "Please set STORM_HOME into your Storm installation"
+	    exit -1
+	fi
+
+	if [ ! -f $2 ];then
+	    echo "$2 does not exist!"
+	    echo "Please use a valid jar file for Storm execution"
+	    exit -1
+	fi
+
+	STORM_EXEC="$STORM_HOME/bin/storm"
+
+	SAMOA_STORM_PROPERTIES=samoa-storm.properties
+	MODE_OPTION='samoa.storm.mode'
+	NUM_WORKER_OPTION='samoa.storm.numworker'
+
+	VALUE=""
+	getvalue()
+        {
+	    VALUE=`sed '/^\#/d' $SAMOA_STORM_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+        }
+
+	getvalue "$NUM_WORKER_OPTION"
+	NUM_WORKER="$VALUE"
+	
+	getvalue "$MODE_OPTION"
+	MODE_ARG="$VALUE"
+
+	COMPLETE_ARG=""
+	COUNTER=0
+	for var in "$@"
+	do
+	    COUNTER=`expr $COUNTER + 1`
+	    if [ $COUNTER -gt 2 ];then
+	        COMPLETE_ARG="$COMPLETE_ARG $var"
+	    fi
+	done
+	
+	DEPLOYABLE=$2
+
+	$STORM_EXEC jar $DEPLOYABLE com.yahoo.labs.samoa.topology.impl.StormDoTask$COMPLETE_ARG $NUM_WORKER $MODE_ARG
+else
+	echo "Specify a valid platform."
+	echo "usage: samoa <platform>"
+fi
+

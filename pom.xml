@@ -1,0 +1,148 @@
+<!--
+  #%L
+  SAMOA
+  %%
+  Copyright (C) 2013 Yahoo! Inc.
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <groupId>com.yahoo.labs.samoa</groupId>
+    <artifactId>samoa</artifactId>
+    <version>0.0.1</version>
+
+    <name>SAMOA</name>
+    <description>Scalable Advanced Massive Online Analysis</description>
+    <packaging>pom</packaging>
+
+    <organization>
+        <name>Yahoo! Labs</name>
+        <url>http://labs.yahoo.com</url>
+    </organization>
+
+    <profiles>
+        <profile>
+            <id>storm</id>
+            <modules>
+                <module>samoa-instances</module>
+                <module>samoa-api</module>
+                <module>samoa-storm</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>s4</id>
+            <modules>
+                <module>samoa-instances</module>
+                <module>samoa-api</module>
+                <module>samoa-s4</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>2.3.2</version>
+    <configuration>
+        <source>1.6</source>
+        <target>1.6</target>
+    </configuration>
+</plugin>
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>license-maven-plugin</artifactId>
+    <version>1.5</version>
+    <configuration>
+        <licenseName>apache_v2</licenseName>
+        <inceptionYear>2013</inceptionYear>
+        <organizationName>Yahoo! Inc.</organizationName>
+        <projectName>SAMOA</projectName>
+        <roots>
+		<root>samoa-api</root>
+                <root>samoa-instances</root>
+		<root>samoa-storm</root>
+		<root>samoa-s4</root>
+		<root>src/main/resources</root>
+	</roots>
+    </configuration>
+    <executions>
+        <execution>
+            <id>first</id>
+            <goals>
+                <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+        </execution>
+    </executions>
+</plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            license-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.5,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                update-file-header
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.10</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>.git/**/*</exclude>
+                            <exclude>**/*.iml</exclude>
+                            <exclude>**/README.md</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

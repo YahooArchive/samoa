@@ -1,0 +1,10 @@
+#maven
+target/
+
+#eclipse
+.classpath
+.project
+.settings/
+
+#DS_Store
+.DS_Store
