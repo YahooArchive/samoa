@@ -64,7 +64,7 @@ As a user you can use it to develop new algorithms and test different Stream Pro
 
 * [1 Scalable Advanced Massive Online Analysis](../../wiki/Scalable Advanced Massive Online Analysis)
     * [1.0 Building SAMOA](../../wiki/Building SAMOA)
-    * [1.1 Executing SAMOA with Twitter Storm](../../wiki/Executing SAMOA with Twitter Storm)
+    * [1.1 Executing SAMOA with Apache Storm](../../wiki/Executing SAMOA with Apache Storm)
     * [1.2 Executing SAMOA with Apache S4](../../wiki/Executing-SAMOA-with-Apache-S4)
 * [2 SAMOA and Machine Learning](../../wiki/SAMOA and Machine Learning)
     * [2.1 Prequential Evaluation Task](../../wiki/Prequential Evaluation Task)
