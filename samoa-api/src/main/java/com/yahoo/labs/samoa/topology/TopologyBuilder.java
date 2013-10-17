@@ -209,7 +209,7 @@ public class TopologyBuilder {
         return ret;
     }
 
-    public EntranceProcessingItem addEntranceProcessor(PrequentialSourceProcessor processor, PrequentialSourceTopologyStarter starter) {
+    public EntranceProcessingItem addEntranceProcessor(Processor processor, TopologyStarter starter) {
         if (this.mapProcessorToProcessingItem == null) {
             this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         }

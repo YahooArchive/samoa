@@ -19,35 +19,30 @@ package com.yahoo.labs.samoa.tasks;
  * limitations under the License.
  * #L%
  */
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.yahoo.labs.samoa.moa.streams.InstanceStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.yahoo.labs.samoa.core.TopologyStarter;
-import com.yahoo.labs.samoa.evaluation.ClassificationPerformanceEvaluator;
-import com.yahoo.labs.samoa.evaluation.EvaluatorProcessor;
-import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.streams.PrequentialSourceProcessor;
-import com.yahoo.labs.samoa.streams.PrequentialSourceTopologyStarter;
-import com.yahoo.labs.samoa.topology.ComponentFactory;
-import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
-import com.yahoo.labs.samoa.topology.Topology;
-import com.yahoo.labs.samoa.topology.TopologyBuilder;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.FileOption;
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.StringOption;
+
+import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.evaluation.BasicClassificationPerformanceEvaluator;
+import com.yahoo.labs.samoa.evaluation.ClassificationPerformanceEvaluator;
+import com.yahoo.labs.samoa.evaluation.EvaluatorProcessor;
+import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.learners.classifiers.trees.VerticalHoeffdingTree;
+import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.moa.streams.generators.RandomTreeGenerator;
+import com.yahoo.labs.samoa.streams.PrequentialSourceProcessor;
+import com.yahoo.labs.samoa.streams.PrequentialSourceTopologyStarter;
+import com.yahoo.labs.samoa.topology.ComponentFactory;
+import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.Topology;
+import com.yahoo.labs.samoa.topology.TopologyBuilder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Prequential Evaluation task is a scheme in evaluating performance of online
@@ -90,7 +85,7 @@ public class PrequentialEvaluation implements Task, Configurable {
             100000, 0, Integer.MAX_VALUE);
 
     public StringOption evaluationNameOption = new StringOption("evalutionName",
-            'n', "Identifier of the valuation",
+            'n', "Identifier of the evaluation",
             "Prequential_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 
     public FileOption dumpFileOption = new FileOption("dumpFile", 'd',

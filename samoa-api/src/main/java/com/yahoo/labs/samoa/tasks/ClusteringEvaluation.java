@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Clustering Evaluation task is a scheme in evaluating performance of
  * clusterers
  *
- * @author Arinto Murdopo
+ * @author Arinto Murdopo, Antonio Severien
  *
  */
 public class ClusteringEvaluation implements Task, Configurable {
@@ -67,11 +67,6 @@ public class ClusteringEvaluation implements Task, Configurable {
     public ClassOption streamTrainOption = new ClassOption("streamTrain", 's',
             "Stream to learn from.", InstanceStream.class,
             RandomRBFGeneratorEvents.class.getName());
-    
-    /*public ClassOption evaluatorOption = new ClassOption("evaluator", 'e',
-            "Classification performance evaluation method.",
-            ClassificationPerformanceEvaluator.class,
-            BasicClassificationPerformanceEvaluator.class.getName());*/
     
     public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i',
             "Maximum number of instances to test/train on  (-1 = no limit).",
@@ -91,7 +86,7 @@ public class ClusteringEvaluation implements Task, Configurable {
             1000, 0, Integer.MAX_VALUE);
     
     public StringOption evaluationNameOption = new StringOption("evalutionName",
-            'n', "Identifier of the valuation",
+            'n', "Identifier of the evaluation",
             "Clustering__" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
     
     public FileOption dumpFileOption = new FileOption("dumpFile", 'd',
@@ -106,7 +101,7 @@ public class ClusteringEvaluation implements Task, Configurable {
     
     private ClusteringSourceTopologyStarter starter;
     
-    private EntranceProcessingItem sourcePi;
+    //private EntranceProcessingItem sourcePi;
     
     private Stream sourcePiOutputStream;
     
@@ -116,7 +111,7 @@ public class ClusteringEvaluation implements Task, Configurable {
     
     private ClusteringEvaluatorProcessor evaluator;
     
-    private ProcessingItem evaluatorPi;
+    //private ProcessingItem evaluatorPi;
     
     private Stream evaluatorPiInputStream;
     
@@ -154,12 +149,14 @@ public class ClusteringEvaluation implements Task, Configurable {
         //TODO: integrate time limit into TopologyStarter and PrequentialSourceProcessor
 
         starter = new ClusteringSourceTopologyStarter(source, instanceLimitOption.getValue(), this.samplingThresholdOption.getValue());
-        sourcePi = builder.createEntrancePi(source, starter);
-        sourcePiOutputStream = builder.createStream(sourcePi);
+        //sourcePi = builder.createEntrancePi(source, starter);
+        //sourcePiOutputStream = builder.createStream(sourcePi);
+        builder.addEntranceProcessor(source, starter);
+        sourcePiOutputStream = builder.createStream(source);
         starter.setInputStream(sourcePiOutputStream);
         logger.debug("Sucessfully instantiating ClusteringSourceProcessor");
 
-        sourcePiEvalStream = builder.createStream(sourcePi);
+        sourcePiEvalStream = builder.createStream(source);
         starter.setEvalStream(sourcePiEvalStream);
         
         //instantiate learner and connect it to sourcePiOutputStream
@@ -177,9 +174,12 @@ public class ClusteringEvaluation implements Task, Configurable {
                 .decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon())
                 .build();
 
-        evaluatorPi = builder.createPi(evaluator);
-        evaluatorPi.connectInputShuffleStream(evaluatorPiInputStream);
-        evaluatorPi.connectInputAllStream(sourcePiEvalStream);
+        //evaluatorPi = builder.createPi(evaluator);
+        //evaluatorPi.connectInputShuffleStream(evaluatorPiInputStream);
+        //evaluatorPi.connectInputAllStream(sourcePiEvalStream);
+        builder.addProcessor(evaluator);
+        builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
+        builder.connectInputAllStream(sourcePiEvalStream, evaluator);       
         logger.debug("Sucessfully instantiating EvaluatorProcessor");
         
         topology = builder.build();
