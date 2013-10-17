@@ -28,8 +28,22 @@ in multiple SPEs, i.e., code the algorithms once and execute them in multiple SP
 
 ## Build
 
+###Storm
+
+Simply clone the repository and install SAMOA:
+```bash
+git clone git@github.com:yahoo/samoa.git
+cd samoa
+
+mvn -Pstorm package # e.g., to get the Storm version
+```
+
+The deployable jar for SAMOA will be in `target/SAMOA-Storm-0.0.1.jar`.
+
+###S4
+
 If you want to compile SAMOA for S4, you will need to install the S4 dependencies
-manually as explained in [Executing SAMOA with Apache S4](../../wiki/1.2-Executing-SAMOA-with-Apache-S4).
+manually as explained in [Executing SAMOA with Apache S4](../../wiki/Executing-SAMOA-with-Apache-S4).
 
 Once the dependencies if needed are installed, you can simply clone the repository and install SAMOA.
 
@@ -38,11 +52,11 @@ git clone git@github.com:yahoo/samoa.git
 cd samoa
 mvn -P<variant> package # where variant is "storm" or "s4"
 
-mvn -Pstorm package # e.g., to get the Storm version
+mvn -Ps4 package # e.g., to get the s4 version
 ```
 
 The deployable jars for SAMOA will be in `target/SAMOA-<variant>-<version>.jar`.
-For example, for Storm `target/SAMOA-Storm-0.0.1.jar`.
+For example, for S4 `target/SAMOA-S4-0.0.1.jar`.
 
 ## Documentation
 
