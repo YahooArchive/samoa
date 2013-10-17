@@ -21,6 +21,8 @@ package com.yahoo.labs.samoa.topology;
  */
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.TopologyStarter;
+import com.yahoo.labs.samoa.streams.PrequentialSourceProcessor;
+import com.yahoo.labs.samoa.streams.PrequentialSourceTopologyStarter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -205,5 +207,14 @@ public class TopologyBuilder {
             ret = this.createStream(pi);
         }
         return ret;
+    }
+
+    public EntranceProcessingItem addEntranceProcessor(PrequentialSourceProcessor processor, PrequentialSourceTopologyStarter starter) {
+        if (this.mapProcessorToProcessingItem == null) {
+            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
+        }
+        EntranceProcessingItem pi = createEntrancePi(processor, starter);
+        this.mapProcessorToProcessingItem.put(processor, pi);
+        return pi;
     }
 }
