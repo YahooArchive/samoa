@@ -30,12 +30,11 @@ in multiple SPEs, i.e., code the algorithms once and execute them in multiple SP
 
 ###Storm
 
-Simply clone the repository and install SAMOA:
+Simply clone the repository and install SAMOA.
 ```bash
 git clone git@github.com:yahoo/samoa.git
 cd samoa
-
-mvn -Pstorm package # e.g., to get the Storm version
+mvn -Pstorm package
 ```
 
 The deployable jar for SAMOA will be in `target/SAMOA-Storm-0.0.1.jar`.
