@@ -77,7 +77,7 @@ As a user you can use it to develop new algorithms and test different Stream Pro
     * [3.4 Task](../../wiki/Task)
     * [3.5 Topology Builder](../../wiki/Topology Builder)
     * [3.6 Topology Starter](../../wiki/Topology Starter)
-    * [3.7 Learner](../../..wiki/Learner)
+    * [3.7 Learner](../../wiki/Learner)
     * [3.8 Processing Item](../../wiki/Processing Item)
 * [4 Developing New Tasks in SAMOA](../../wiki/Developing New Tasks in SAMOA)
 
