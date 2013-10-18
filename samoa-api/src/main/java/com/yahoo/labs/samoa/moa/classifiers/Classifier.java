@@ -20,9 +20,9 @@ package com.yahoo.labs.samoa.moa.classifiers;
  * #L%
  */
 
+import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.Example;
 import com.yahoo.labs.samoa.moa.learners.Learner;
-import com.yahoo.labs.samoa.instances.Instance;
 
 /**
  * Classifier interface for incremental classification models.

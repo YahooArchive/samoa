@@ -151,7 +151,7 @@ public class PrequentialEvaluation implements Task, Configurable {
         //instantiate classifier and connect it to sourcePiOutputStream
         classifier = (Learner) this.learnerOption.getValue();
         classifier.init(builder, preqSource.getDataset());
-        classifier.getInputProcessingItem().connectInputShuffleStream(sourcePiOutputStream);
+        this.builder.connectInputShuffleStream(sourcePiOutputStream, classifier.getInputProcessor());
         logger.debug("Sucessfully instantiating Classifier");
 
         evaluatorPiInputStream = classifier.getResultStream();

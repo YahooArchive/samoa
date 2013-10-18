@@ -43,7 +43,7 @@ public class MOAClustererAdapter implements LocalClustererAdapter, Configurable 
     private static final long serialVersionUID = 4372366401338704353L;
     
     public ClassOption learnerOption = new ClassOption("learner", 'l',
-            "Classifier to train.", com.yahoo.labs.samoa.moa.clusterers.Clusterer.class, Clustream.class.getName());
+            "Clusterer to train.", com.yahoo.labs.samoa.moa.clusterers.Clusterer.class, Clustream.class.getName());
     /**
      * The learner.
      */

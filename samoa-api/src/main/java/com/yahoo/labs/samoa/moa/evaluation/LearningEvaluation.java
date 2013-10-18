@@ -20,15 +20,12 @@ package com.yahoo.labs.samoa.moa.evaluation;
  * #L%
  */
 
+import com.yahoo.labs.samoa.moa.AbstractMOAObject;
+import com.yahoo.labs.samoa.moa.core.Measurement;
+import com.yahoo.labs.samoa.moa.learners.Learner;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.yahoo.labs.samoa.moa.AbstractMOAObject;
-import com.yahoo.labs.samoa.moa.classifiers.Classifier;
-import com.yahoo.labs.samoa.moa.clusterers.Clusterer;
-import com.yahoo.labs.samoa.moa.learners.Learner;
-import com.yahoo.labs.samoa.moa.core.Measurement;
 
 /**
  * Class that stores an array of evaluation measurements.

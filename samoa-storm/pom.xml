@@ -77,9 +77,9 @@
 							<Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
 							<Bundle-Description>${project.description}</Bundle-Description>
 							<Implementation-Version>${project.version}</Implementation-Version>
-							<Implementation-Vendor>Yahoo!</Implementation-Vendor>
+							<Implementation-Vendor>Yahoo Labs</Implementation-Vendor>
 							<Implementation-Vendor-Id>SAMOA</Implementation-Vendor-Id>
-							<Main-Class>samoa.topology.impl.DoTask</Main-Class>
+							<Main-Class>com.yahoo.labs.samoa.DoTask</Main-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>

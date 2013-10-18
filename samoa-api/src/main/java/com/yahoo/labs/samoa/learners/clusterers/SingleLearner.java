@@ -27,9 +27,9 @@ package com.yahoo.labs.samoa.learners.clusterers;
 
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
+import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 /**
@@ -41,7 +41,7 @@ public final class SingleLearner implements Learner, Configurable {
 
 	private static final long serialVersionUID = 684111382631697031L;
 	
-	private ProcessingItem learnerPI;
+	private LocalClustererProcessor  learnerP;
 		
 	private Stream resultStream;
 	
@@ -62,13 +62,13 @@ public final class SingleLearner implements Learner, Configurable {
 
 
 	protected void setLayout() {		
-		LocalClustererProcessor learnerP = new LocalClustererProcessor();
+		learnerP = new LocalClustererProcessor();
                 LocalClustererAdapter learner = (LocalClustererAdapter) this.learnerOption.getValue();
                 learner.setDataset(this.dataset);
 		learnerP.setLearner(learner);
                 
-		learnerPI = this.builder.createPi(learnerP, 1);
-		resultStream = this.builder.createStream(learnerPI);
+		this.builder.addProcessor(learnerP, 1);
+		resultStream = this.builder.createStream(learnerP);
 		
 		learnerP.setOutputStream(resultStream);
 	}
@@ -76,9 +76,9 @@ public final class SingleLearner implements Learner, Configurable {
 	/* (non-Javadoc)
 	 * @see samoa.classifiers.Classifier#getInputProcessingItem()
 	 */
-	@Override
-	public ProcessingItem getInputProcessingItem() {
-		return learnerPI;
+       @Override
+	public Processor getInputProcessor() {
+		return learnerP;
 	}
 		
 	/* (non-Javadoc)

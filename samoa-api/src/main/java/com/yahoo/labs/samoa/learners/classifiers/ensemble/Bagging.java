@@ -35,6 +35,7 @@ import com.yahoo.labs.samoa.topology.TopologyBuilder;
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
+import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.learners.classifiers.MOAClassifierAdapter;
 
 /**
@@ -54,13 +55,14 @@ public class Bagging implements Learner , Configurable {
 			"The number of models in the bag.", 10, 1, Integer.MAX_VALUE);
 
 	/** The distributor pi. */
-	private ProcessingItem distributorPI;
-	
+	//private ProcessingItem distributorPI;
+	private BaggingDistributorProcessor distributorP;
+                
 	/** The learner pi. */
-	private ProcessingItem learnerPI;
+	//private ProcessingItem learnerPI;
 	
 	/** The prediction combiner pi. */
-	private ProcessingItem predictionCombinerPI;
+	//private ProcessingItem predictionCombinerPI;
 	
 	/** The training stream. */
 	private Stream trainingStream;
@@ -81,32 +83,38 @@ public class Bagging implements Learner , Configurable {
 
 		int sizeEnsemble = this.ensembleSizeOption.getValue();
 
-		BaggingDistributorProcessor distributorP = new BaggingDistributorProcessor();
+		distributorP = new BaggingDistributorProcessor();
 		distributorP.setSizeEnsemble(sizeEnsemble);
-		distributorPI = this.builder.createPi(distributorP, 1);
+		//distributorPI = this.builder.createPi(distributorP, 1);
+                this.builder.addProcessor(distributorP, 1);
 	
 		LocalClassifierProcessor learnerP = new LocalClassifierProcessor();
                 LocalClassifierAdapter learner = (LocalClassifierAdapter) this.baseLearnerOption.getValue();
                 learner.setDataset(this.dataset);
 		learnerP.setClassifier(learner);
-		learnerPI = this.builder.createPi(learnerP, sizeEnsemble);
+		//learnerPI = this.builder.createPi(learnerP, sizeEnsemble);
+                this.builder.addProcessor(learnerP, sizeEnsemble);
 		
 		PredictionCombinerProcessor predictionCombinerP= new PredictionCombinerProcessor();
 		predictionCombinerP.setSizeEnsemble(sizeEnsemble);
-		predictionCombinerPI = this.builder.createPi(predictionCombinerP, 1);
+                //predictionCombinerPI = this.builder.createPi(predictionCombinerP, 1);
+		this.builder.addProcessor(predictionCombinerP, 1);
 		
 		//Streams
-		resultStream = this.builder.createStream(predictionCombinerPI);
+		resultStream = this.builder.createStream(predictionCombinerP);
 		predictionCombinerP.setOutputStream(resultStream);
 
-		Stream toPredictionCombinerStream = this.builder.createStream(learnerPI);
-		predictionCombinerPI.connectInputKeyStream(toPredictionCombinerStream);
+		Stream toPredictionCombinerStream = this.builder.createStream(learnerP);
+                //predictionCombinerPI.connectInputKeyStream(toPredictionCombinerStream);
+		this.builder.connectInputKeyStream(toPredictionCombinerStream, predictionCombinerP);
 		
-		trainingStream = this.builder.createStream(distributorPI);
-		learnerPI.connectInputKeyStream(trainingStream);
+		trainingStream = this.builder.createStream(distributorP);
+		//learnerPI.connectInputKeyStream(trainingStream);
+                this.builder.connectInputKeyStream(trainingStream, learnerP);
 	
-		predictionStream = this.builder.createStream(distributorPI);		
-		learnerPI.connectInputKeyStream(predictionStream);
+		predictionStream = this.builder.createStream(distributorP);		
+		//learnerPI.connectInputKeyStream(predictionStream);
+                this.builder.connectInputKeyStream(predictionStream, learnerP);
 		
 		distributorP.setTrainingStream(trainingStream);
 		distributorP.setPredictionStream(predictionStream);
@@ -146,14 +154,12 @@ public class Bagging implements Learner , Configurable {
 //
 //	}
 
-	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getInputProcessingItem()
-	 */
-	@Override
-	public ProcessingItem getInputProcessingItem() {
-		return distributorPI;
-	}
 
+        @Override
+	public Processor getInputProcessor() {
+		return distributorP;
+	}
+        
 	/* (non-Javadoc)
 	 * @see samoa.classifiers.Classifier#getResultStream()
 	 */

@@ -162,7 +162,7 @@ public class ClusteringEvaluation implements Task, Configurable {
         //instantiate learner and connect it to sourcePiOutputStream
         learner = (Learner) this.learnerOption.getValue();
         learner.init(builder, source.getDataset());
-        learner.getInputProcessingItem().connectInputShuffleStream(sourcePiOutputStream);
+        this.builder.connectInputShuffleStream(sourcePiOutputStream, learner.getInputProcessor());
         logger.debug("Sucessfully instantiating Learner");
 
         evaluatorPiInputStream = learner.getResultStream();

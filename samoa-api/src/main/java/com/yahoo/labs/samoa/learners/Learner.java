@@ -25,13 +25,11 @@ package com.yahoo.labs.samoa.learners;
  */
 
 
-import java.io.Serializable;
-
+import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
-//import weka.core.Instances;
+import java.io.Serializable;
 
 /**
  * The Interface Classifier.
@@ -42,19 +40,19 @@ import com.yahoo.labs.samoa.topology.TopologyBuilder;
 public interface Learner extends Serializable{
 
 	/**
-	 * Inits the Classifier object.
+	 * Inits the Learner object.
 	 *
 	 * @param topologyBuilder the topology builder
 	 * @param dataset the dataset
 	 */	
 	public void init(TopologyBuilder topologyBuilder, Instances dataset);
 	
-	/**
+        /**
 	 * Gets the input processing item.
 	 *
 	 * @return the input processing item
 	 */
-	public ProcessingItem getInputProcessingItem();
+	public Processor getInputProcessor();
 
 	
 	/**

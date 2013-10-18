@@ -25,16 +25,16 @@ package com.yahoo.labs.samoa.learners.clusterers.simple;
  */
 
 
-import com.yahoo.labs.samoa.learners.clusterers.*;
-import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
-import com.yahoo.labs.samoa.topology.TopologyBuilder;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
+import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.instances.Instances;
+import com.yahoo.labs.samoa.learners.Learner;
+import com.yahoo.labs.samoa.learners.clusterers.*;
+import com.yahoo.labs.samoa.topology.ProcessingItem;
+import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.TopologyBuilder;
 /**
  * 
  * Learner that contain a single learner.
@@ -59,9 +59,7 @@ public final class DistributedClusterer implements Learner, Configurable {
         
 	private TopologyBuilder builder;
         
-	private ProcessingItem distributorPI;
-        
-        private ProcessingItem globalClusteringCombinerPI;
+	private ClusteringDistributorProcessor distributorP;
         
         private Stream distributorToLocalStream;
         
@@ -78,9 +76,9 @@ public final class DistributedClusterer implements Learner, Configurable {
 
 	protected void setLayout() {
                 //Distributor
-            	ClusteringDistributorProcessor distributorP = new ClusteringDistributorProcessor();
-		distributorPI = this.builder.createPi(distributorP, 1);
-                distributorToLocalStream = this.builder.createStream(distributorPI);
+            	distributorP = new ClusteringDistributorProcessor();
+		this.builder.addProcessor(distributorP, 1);
+                distributorToLocalStream = this.builder.createStream(distributorP);
                 distributorP.setOutputStream(distributorToLocalStream );
                 
                 //Local Clustering
@@ -98,17 +96,17 @@ public final class DistributedClusterer implements Learner, Configurable {
                 LocalClustererAdapter globalLearner = (LocalClustererAdapter) this.learnerOption.getValue();
                 globalLearner.setDataset(this.dataset);
 		globalClusteringCombinerP.setLearner(learner);
-		globalClusteringCombinerPI = this.builder.createPi(globalClusteringCombinerP, 1);
-                globalClusteringCombinerPI.connectInputAllStream(localToGlobalStream);
+		this.builder.addProcessor(globalClusteringCombinerP, 1);
+                this.builder.connectInputAllStream(localToGlobalStream, globalClusteringCombinerP);
                 
                 //Output Stream
-		resultStream = this.builder.createStream(globalClusteringCombinerPI);	
+		resultStream = this.builder.createStream(globalClusteringCombinerP);	
 		globalClusteringCombinerP.setOutputStream(resultStream);
 	}
 
-	@Override
-	public ProcessingItem getInputProcessingItem() {
-		return distributorPI;
+       @Override
+	public Processor getInputProcessor() {
+		return distributorP;
 	}
 		
 	@Override

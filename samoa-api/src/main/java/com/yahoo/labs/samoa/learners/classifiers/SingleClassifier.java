@@ -24,14 +24,13 @@ package com.yahoo.labs.samoa.learners.classifiers;
  * License
  */
 
-import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
-import com.yahoo.labs.samoa.topology.TopologyBuilder;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
+import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.instances.Instances;
+import com.yahoo.labs.samoa.learners.Learner;
+import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.TopologyBuilder;
 /**
  * 
  * Classifier that contain a single classifier.
@@ -41,7 +40,7 @@ public final class SingleClassifier implements Learner, Configurable {
 
 	private static final long serialVersionUID = 684111382631697031L;
 	
-	private ProcessingItem learnerPI;
+	private LocalClassifierProcessor learnerP;
 		
 	private Stream resultStream;
 	
@@ -62,23 +61,21 @@ public final class SingleClassifier implements Learner, Configurable {
 
 
 	protected void setLayout() {		
-		LocalClassifierProcessor learnerP = new LocalClassifierProcessor();
+		learnerP = new LocalClassifierProcessor();
                 LocalClassifierAdapter learner = (LocalClassifierAdapter) this.learnerOption.getValue();
                 learner.setDataset(this.dataset);
 		learnerP.setClassifier(learner);
                 
-		learnerPI = this.builder.createPi(learnerP, 1);
-		resultStream = this.builder.createStream(learnerPI);
+		//learnerPI = this.builder.createPi(learnerP, 1);
+                this.builder.addProcessor(learnerP,1);
+		resultStream = this.builder.createStream(learnerP);
 		
 		learnerP.setOutputStream(resultStream);
 	}
 
-	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getInputProcessingItem()
-	 */
-	@Override
-	public ProcessingItem getInputProcessingItem() {
-		return learnerPI;
+        @Override
+	public Processor getInputProcessor() {
+		return learnerP;
 	}
 		
 	/* (non-Javadoc)
