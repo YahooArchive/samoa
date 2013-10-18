@@ -24,15 +24,13 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
-import java.util.Random;
-
-import com.yahoo.labs.samoa.moa.core.MiscUtils;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.InstanceContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.moa.core.MiscUtils;
 import com.yahoo.labs.samoa.topology.Stream;
-//import weka.core.Instance;
+import java.util.Random;
 
 /**
  * The Class BaggingDistributorPE.
@@ -99,7 +97,7 @@ public class BaggingDistributorProcessor implements Processor{
 	 *
 	 * @param inEvent the in event
 	 */
-	private void train(InstanceContentEvent inEvent) {
+	protected void train(InstanceContentEvent inEvent) {
 		Instance trainInst = inEvent.getInstance();
 		for (int i = 0; i < sizeEnsemble; i++) {
 			int k = MiscUtils.poisson(1.0, this.random);
@@ -143,7 +141,7 @@ public class BaggingDistributorProcessor implements Processor{
 	 *
 	 * @param trainingStream the new training stream
 	 */
-	public void setTrainingStream(Stream trainingStream) {
+	public void setOutputStream(Stream trainingStream) {
 		this.trainingStream = trainingStream;
 	}
 
@@ -195,7 +193,7 @@ public class BaggingDistributorProcessor implements Processor{
 			newProcessor.setPredictionStream(originProcessor.getPredictionStream());
 		}
 		if (originProcessor.getTrainingStream() != null){
-			newProcessor.setTrainingStream(originProcessor.getTrainingStream());
+			newProcessor.setOutputStream(originProcessor.getTrainingStream());
 		}
 		newProcessor.setSizeEnsemble(originProcessor.getSizeEnsemble());
 		/*if (originProcessor.getLearningCurve() != null){

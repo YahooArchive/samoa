@@ -23,144 +23,162 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 /**
  * License
  */
-
-import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.ResultContentEvent;
+import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.topology.Stream;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Class PredictionCombinerProcessor.
  */
-final public class PredictionCombinerProcessor implements Processor {
+public class PredictionCombinerProcessor implements Processor {
 
-	/** The Constant logger. */
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(PredictionCombinerProcessor.class);
+    private static final long serialVersionUID = -1606045723451191132L;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1606045723451191132L;
+    /**
+     * The size ensemble.
+     */
+    protected int ensembleSize;
 
-	/** The size ensemble. */
-	private int sizeEnsemble;
-	
-	/** The output stream. */
-	private Stream outputStream;
-	
-	/** The number of events received. */
-	private int numEventsReceived = 0;
-	
-	/**
-	 * Sets the output stream.
-	 *
-	 * @param stream the new output stream
-	 */
-	public void setOutputStream(Stream stream) {
-		outputStream = stream;
-	}
-	
-	/**
-	 * Gets the output stream.
-	 *
-	 * @return the output stream
-	 */
-	public Stream getOutputStream() {
-		return outputStream;
-	}
+    /**
+     * The output stream.
+     */
+    protected Stream outputStream;
 
-	/**
-	 * Gets the size ensemble.
-	 *
-	 * @return the sizeEnsemble
-	 */
-	public int getSizeEnsemble() {
-		return sizeEnsemble;
-	}
+    /**
+     * Sets the output stream.
+     *
+     * @param stream the new output stream
+     */
+    public void setOutputStream(Stream stream) {
+        outputStream = stream;
+    }
 
-	/**
-	 * Sets the size ensemble.
-	 *
-	 * @param sizeEnsemble the new size ensemble
-	 */
-	public void setSizeEnsemble(int sizeEnsemble) {
-		this.sizeEnsemble = sizeEnsemble;
-	}
+    /**
+     * Gets the output stream.
+     *
+     * @return the output stream
+     */
+    public Stream getOutputStream() {
+        return outputStream;
+    }
 
-	/** The combined vote. */
-	private DoubleVector combinedVote;
-	
+    /**
+     * Gets the size ensemble.
+     *
+     * @return the ensembleSize
+     */
+    public int getSizeEnsemble() {
+        return ensembleSize;
+    }
 
-	/**
-	 * On event.
-	 *
-	 * @param event the event
-	 * @return true, if successful
-	 */
-	public boolean process(ContentEvent event) {
+    /**
+     * Sets the size ensemble.
+     *
+     * @param ensembleSize the new size ensemble
+     */
+    public void setSizeEnsemble(int ensembleSize) {
+        this.ensembleSize = ensembleSize;
+    }
 
-		
-		ResultContentEvent inEvent = (ResultContentEvent) event; //((s4Event) event).getContentEvent();
-		double[] prediction = inEvent.getClassVotes();
+    protected Map<Integer, Integer> mapCountsforInstanceReceived;
 
-		DoubleVector vote = new DoubleVector(prediction);
-		if (vote.sumOfValues() > 0.0) {
-			vote.normalize();
-			combinedVote.addValues(vote);
-		}
+    protected Map<Integer, DoubleVector> mapVotesforInstanceReceived;
+    
+    /**
+     * On event.
+     *
+     * @param event the event
+     * @return true, if successful
+     */
+    public boolean process(ContentEvent event) {
 
-		//System.out.println("BaggingPredictor"+inEvent.getInstanceIndex()+" "+numEventsReceived+" "+inEvent.getEvaluationIndex() );
-		if (inEvent.isLastEvent() || ++numEventsReceived == sizeEnsemble) {
-			ResultContentEvent outContentEvent = new ResultContentEvent(inEvent.getInstanceIndex(),
-					inEvent.getInstance(), inEvent.getClassId(),
-					combinedVote.getArrayCopy(), inEvent.isLastEvent());
-			outContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());
-			outputStream.put(outContentEvent);
-			//System.out.println("BaggingPredictor close"+inEvent.getInstanceIndex());
-			/* This PE instance is no longer needed. */
-			//close();
-                        //this.reset();
-                        numEventsReceived = 0;
-                        combinedVote = new DoubleVector();
-			return true;
-		}
-		return false;
-
-	}
-
-
-	/* (non-Javadoc)
-	 * @see samoa.core.Processor#onCreate(int)
-	 */
-	@Override
-	public void onCreate(int id) {
-            this.reset();
-        }
+        ResultContentEvent inEvent = (ResultContentEvent) event;
+        double[] prediction = inEvent.getClassVotes();
+        int instanceIndex = (int) inEvent.getInstanceIndex();
         
-        public void reset(){
-		combinedVote = new DoubleVector();
-		numEventsReceived = 0;
-		//System.out.println("BaggingPredictor create"+id);
-	}
+        addStatisticsforInstanceReceived(instanceIndex, inEvent.getClassifierIndex(), prediction, 1);
+
+        if (inEvent.isLastEvent() || hasAllVotesArrivedInstance(instanceIndex)) {
+            DoubleVector combinedVote = this.mapVotesforInstanceReceived.get(instanceIndex);
+            if (combinedVote == null){
+                combinedVote = new DoubleVector();
+            }
+            ResultContentEvent outContentEvent = new ResultContentEvent(inEvent.getInstanceIndex(),
+                    inEvent.getInstance(), inEvent.getClassId(),
+                    combinedVote.getArrayCopy(), inEvent.isLastEvent());
+            outContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());
+            outputStream.put(outContentEvent);
+            clearStatisticsInstance(instanceIndex);
+            return true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public void onCreate(int id) {
+        this.reset();
+    }
+
+    public void reset() {
+    }
 
 
-	/* (non-Javadoc)
-	 * @see samoa.core.Processor#newProcessor(samoa.core.Processor)
-	 */
-	@Override
-	public Processor newProcessor(Processor sourceProcessor) {
-		PredictionCombinerProcessor newProcessor = new PredictionCombinerProcessor();
-		PredictionCombinerProcessor originProcessor = (PredictionCombinerProcessor) sourceProcessor;
-		if (originProcessor.getOutputStream() != null){
-			newProcessor.setOutputStream(originProcessor.getOutputStream());
-		}
-		newProcessor.setSizeEnsemble(originProcessor.getSizeEnsemble());
-		return newProcessor;
-	}
-	
+    /* (non-Javadoc)
+     * @see samoa.core.Processor#newProcessor(samoa.core.Processor)
+     */
+    @Override
+    public Processor newProcessor(Processor sourceProcessor) {
+        PredictionCombinerProcessor newProcessor = new PredictionCombinerProcessor();
+        PredictionCombinerProcessor originProcessor = (PredictionCombinerProcessor) sourceProcessor;
+        if (originProcessor.getOutputStream() != null) {
+            newProcessor.setOutputStream(originProcessor.getOutputStream());
+        }
+        newProcessor.setSizeEnsemble(originProcessor.getSizeEnsemble());
+        return newProcessor;
+    }
+
+    protected void addStatisticsforInstanceReceived(int instanceIndex, int classifierIndex, double[] prediction, int add) {
+        if (this.mapCountsforInstanceReceived == null) {
+            this.mapCountsforInstanceReceived = new HashMap<Integer, Integer>();
+            this.mapVotesforInstanceReceived = new HashMap<Integer, DoubleVector>();
+        }
+        DoubleVector vote = new DoubleVector(prediction);
+        if (vote.sumOfValues() > 0.0) {
+            vote.normalize();
+            DoubleVector combinedVote = this.mapVotesforInstanceReceived.get(instanceIndex);
+            if (combinedVote == null){
+                combinedVote = new DoubleVector();
+            }
+            vote.scaleValues(getEnsembleMemberWeight(classifierIndex));
+            combinedVote.addValues(vote);
+                    
+            this.mapVotesforInstanceReceived.put(instanceIndex, combinedVote);
+        }
+        Integer count = this.mapCountsforInstanceReceived.get(instanceIndex);
+        if (count == null) {
+            count = 0;
+        }
+        this.mapCountsforInstanceReceived.put(instanceIndex, count + add);
+    }
+
+    protected boolean hasAllVotesArrivedInstance(int instanceIndex) {
+        return (this.mapCountsforInstanceReceived.get(instanceIndex) == this.ensembleSize);
+    }
+
+    protected void clearStatisticsInstance(int instanceIndex) {
+        this.mapCountsforInstanceReceived.remove(instanceIndex);
+        this.mapVotesforInstanceReceived.remove(instanceIndex);
+    }
+    
+     protected double getEnsembleMemberWeight(int i) {
+        return 1.0;
+    }
+
+    
 }

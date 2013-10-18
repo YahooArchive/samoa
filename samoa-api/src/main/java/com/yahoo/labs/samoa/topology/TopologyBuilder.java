@@ -217,4 +217,9 @@ public class TopologyBuilder {
         this.mapProcessorToProcessingItem.put(processor, pi);
         return pi;
     }
+    
+    public ProcessingItem getProcessingItem(Processor processor){
+        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
+        return pi;
+    }
 }
