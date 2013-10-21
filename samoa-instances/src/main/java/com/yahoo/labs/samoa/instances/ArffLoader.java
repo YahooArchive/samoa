@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.yahoo.labs.samoa.instances;
 
 /*
@@ -79,7 +75,7 @@ public class ArffLoader {
         this.instanceInformation = this.getHeader();
         if (classAttribute < 0) {
             this.instanceInformation.setClassIndex(this.instanceInformation.numAttributes() - 1);
-            System.out.print(this.instanceInformation.classIndex());
+            //System.out.print(this.instanceInformation.classIndex());
         } else if (classAttribute > 0) {
             this.instanceInformation.setClassIndex(classAttribute - 1);
         }
@@ -317,7 +313,7 @@ public class ArffLoader {
                     if (token.startsWith("@RELATION")) {
                         streamTokenizer.nextToken();
                         relation = streamTokenizer.sval;
-                        System.out.println("RELATION " + relation);
+                        //System.out.println("RELATION " + relation);
                     } else if (token.startsWith("@ATTRIBUTE")) {
                         streamTokenizer.nextToken();
                         String name = streamTokenizer.sval;
@@ -327,7 +323,7 @@ public class ArffLoader {
                         }
                         streamTokenizer.nextToken();
                         String type = streamTokenizer.sval;
-                        System.out.println("* " + name + ":" + type + " ");
+                        //System.out.println("* " + name + ":" + type + " ");
                         if (streamTokenizer.ttype == '{') {
                             streamTokenizer.nextToken();
                             List<String> attributeLabels = new ArrayList<String>();
@@ -335,15 +331,15 @@ public class ArffLoader {
 
                                 if (streamTokenizer.sval != null) {
                                     attributeLabels.add(streamTokenizer.sval);
-                                    System.out.print(streamTokenizer.sval + ",");
+                                    //System.out.print(streamTokenizer.sval + ",");
                                 } else {
                                     attributeLabels.add(Double.toString(streamTokenizer.nval));
-                                    System.out.print(streamTokenizer.nval + ",");
+                                    //System.out.print(streamTokenizer.nval + ",");
                                 }
 
                                 streamTokenizer.nextToken();
                             }
-                            System.out.println();
+                            //System.out.println();
                             attributes.add(new Attribute(name, attributeLabels));
                         } else {
                             // Add attribute
@@ -351,7 +347,7 @@ public class ArffLoader {
                         }
 
                     } else if (token.startsWith("@DATA")) {
-                        System.out.print("END");
+                        //System.out.print("END");
                         streamTokenizer.nextToken();
                         break;
                     }
