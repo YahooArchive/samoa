@@ -26,9 +26,6 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierProcessor;
-import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierAdapter;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 
@@ -36,7 +33,6 @@ import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.learners.classifiers.MOAClassifierAdapter;
 import com.yahoo.labs.samoa.learners.classifiers.SingleClassifier;
 
 /**
@@ -48,8 +44,6 @@ public class Bagging implements Learner , Configurable {
 	private static final long serialVersionUID = -2971850264864952099L;
 	
 	/** The base learner option. */
-	//public ClassOption baseLearnerOption = new ClassOption("baseLearner", 'l',
-	//		"Classifier to train.", LocalClassifierAdapter.class, MOAClassifierAdapter.class.getName());
 	public ClassOption baseLearnerOption = new ClassOption("baseLearner", 'l',
 			"Classifier to train.", Learner.class, SingleClassifier.class.getName());
 
@@ -58,18 +52,11 @@ public class Bagging implements Learner , Configurable {
 	public IntOption ensembleSizeOption = new IntOption("ensembleSize", 's',
 			"The number of models in the bag.", 10, 1, Integer.MAX_VALUE);
 
-	/** The distributor pi. */
-	//private ProcessingItem distributorPI;
+	/** The distributor processor. */
 	private BaggingDistributorProcessor distributorP;
-                
-	/** The learner pi. */
-	//private ProcessingItem learnerPI;
-	
-	/** The prediction combiner pi. */
-	//private ProcessingItem predictionCombinerPI;
 	
 	/** The training stream. */
-	private Stream trainingStream;
+	private Stream testingStream;
 	
 	/** The prediction stream. */
 	private Stream predictionStream;
@@ -94,17 +81,10 @@ public class Bagging implements Learner , Configurable {
 		distributorP = new BaggingDistributorProcessor();
 		distributorP.setSizeEnsemble(sizeEnsemble);
                 this.builder.addProcessor(distributorP, 1);
-	
-		//LocalClassifierProcessor learnerP = new LocalClassifierProcessor();
-                //LocalClassifierAdapter learner = (LocalClassifierAdapter) this.baseLearnerOption.getValue();
-                //learner.setDataset(this.dataset);
-		//learnerP.setClassifier(learner);
-                //this.builder.addProcessor(learnerP, sizeEnsemble);
 		        
                 //instantiate classifier 
                 classifier = (Learner) this.baseLearnerOption.getValue();
                 classifier.init(builder, this.dataset, sizeEnsemble);
-                //this.builder.connectInputShuffleStream(sourcePiOutputStream, classifier.getInputProcessor());
         
 		PredictionCombinerProcessor predictionCombinerP= new PredictionCombinerProcessor();
 		predictionCombinerP.setSizeEnsemble(sizeEnsemble);
@@ -114,30 +94,21 @@ public class Bagging implements Learner , Configurable {
 		resultStream = this.builder.createStream(predictionCombinerP);
 		predictionCombinerP.setOutputStream(resultStream);
 
-		//Stream toPredictionCombinerStream = this.builder.createStream(learnerP);
-                //this.builder.connectInputKeyStream(toPredictionCombinerStream, predictionCombinerP);
  		this.builder.connectInputKeyStream(classifier.getResultStream(), predictionCombinerP);
 		
-		trainingStream = this.builder.createStream(distributorP);
-                //this.builder.connectInputKeyStream(trainingStream, learnerP);
-                this.builder.connectInputKeyStream(trainingStream, classifier.getInputProcessor());
+		testingStream = this.builder.createStream(distributorP);
+                this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
 	
 		predictionStream = this.builder.createStream(distributorP);		
-                //this.builder.connectInputKeyStream(predictionStream, learnerP);
                 this.builder.connectInputKeyStream(predictionStream, classifier.getInputProcessor());
 		
-		distributorP.setOutputStream(trainingStream);
+		distributorP.setOutputStream(testingStream);
 		distributorP.setPredictionStream(predictionStream);
-
-		//learnerP.setOutputStream(toPredictionCombinerStream);
 	}
 
 	/** The builder. */
 	private TopologyBuilder builder;
-
-	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#init(samoa.engines.Engine, samoa.core.Stream, weka.core.Instances)
-	 */			
+		
 	
 	@Override
 	public void init(TopologyBuilder builder, Instances dataset, int parallelism) {
@@ -146,25 +117,6 @@ public class Bagging implements Learner , Configurable {
                 this.parallelism = parallelism;
 		this.setLayout();
 	}
-
-	/* (non-Javadoc)
-	 * @see moa.MOAObject#getDescription(java.lang.StringBuilder, int)
-	 */
-//	@Override
-//	public void getDescription(StringBuilder arg0, int arg1) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see moa.options.AbstractOptionHandler#prepareForUseImpl(moa.tasks.TaskMonitor, moa.core.ObjectRepository)
-//	 */
-//	@Override
-//	protected void prepareForUseImpl(TaskMonitor arg0, ObjectRepository arg1) {
-//		// TODO Auto-generated method stub
-//
-//	}
-
 
         @Override
 	public Processor getInputProcessor() {

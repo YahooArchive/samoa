@@ -32,7 +32,7 @@ import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierAdapter;
 import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierProcessor;
-import com.yahoo.labs.samoa.learners.classifiers.MOAClassifierAdapter;
+import com.yahoo.labs.samoa.learners.classifiers.SingleClassifier;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 
@@ -46,7 +46,7 @@ public class Boosting implements Learner , Configurable {
 	
 	/** The base learner option. */
 	public ClassOption baseLearnerOption = new ClassOption("baseLearner", 'l',
-			"Classifier to train.", LocalClassifierAdapter.class, MOAClassifierAdapter.class.getName());
+			"Classifier to train.", Learner.class, SingleClassifier.class.getName());
 
 	/** The ensemble size option. */
 	public IntOption ensembleSizeOption = new IntOption("ensembleSize", 's',
@@ -70,6 +70,8 @@ public class Boosting implements Learner , Configurable {
 	/** The dataset. */
 	private Instances dataset;
         
+        protected Learner classifier;
+        
         protected int parallelism;
 
 	/**
@@ -83,11 +85,9 @@ public class Boosting implements Learner , Configurable {
 		distributorP.setSizeEnsemble(sizeEnsemble);
                 this.builder.addProcessor(distributorP, 1);
 	
-		LocalClassifierProcessor learnerP = new LocalClassifierProcessor();
-                LocalClassifierAdapter learner = (LocalClassifierAdapter) this.baseLearnerOption.getValue();
-                learner.setDataset(this.dataset);
-		learnerP.setClassifier(learner);
-                this.builder.addProcessor(learnerP, sizeEnsemble);
+                //instantiate classifier 
+                classifier = (Learner) this.baseLearnerOption.getValue();
+                classifier.init(builder, this.dataset, sizeEnsemble);
 		
 		BoostingPredictionCombinerProcessor predictionCombinerP= new BoostingPredictionCombinerProcessor();
 		predictionCombinerP.setSizeEnsemble(sizeEnsemble);
@@ -97,24 +97,21 @@ public class Boosting implements Learner , Configurable {
 		resultStream = this.builder.createStream(predictionCombinerP);
 		predictionCombinerP.setOutputStream(resultStream);
 
-		Stream toPredictionCombinerStream = this.builder.createStream(learnerP);
-		this.builder.connectInputKeyStream(toPredictionCombinerStream, predictionCombinerP);
+ 		this.builder.connectInputKeyStream(classifier.getResultStream(), predictionCombinerP);
 		
 		testingStream = this.builder.createStream(distributorP);
-                this.builder.connectInputKeyStream(testingStream, learnerP);
+                this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
 	
 		predictionStream = this.builder.createStream(distributorP);		
-                this.builder.connectInputKeyStream(predictionStream, learnerP);
+                this.builder.connectInputKeyStream(predictionStream, classifier.getInputProcessor());
 		
 		distributorP.setOutputStream(testingStream);
 		distributorP.setPredictionStream(predictionStream);
-
-		learnerP.setOutputStream(toPredictionCombinerStream);
                 
                 // Addition to Bagging: stream to train
                 trainingStream = this.builder.createStream(predictionCombinerP);
                 predictionCombinerP.setTrainingStream(trainingStream);
-                this.builder.connectInputKeyStream(trainingStream, learnerP);
+                this.builder.connectInputKeyStream(trainingStream, classifier.getInputProcessor());
                 
 	}
 
