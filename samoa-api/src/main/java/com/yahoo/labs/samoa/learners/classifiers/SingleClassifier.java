@@ -47,15 +47,18 @@ public final class SingleClassifier implements Learner, Configurable {
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
-			"Classifier to train.", LocalClassifierAdapter.class, "MOALearner");
+			"Classifier to train.", LocalClassifierAdapter.class, MOAClassifierAdapter.class.getName());
 	
 	private TopologyBuilder builder;
+        
+        private int parallelism;
 
 
 	@Override
-	public void init(TopologyBuilder builder, Instances dataset){
+	public void init(TopologyBuilder builder, Instances dataset, int parallelism){
 		this.builder = builder;
 		this.dataset = dataset;
+                this.parallelism = parallelism;
 		this.setLayout();
 	}
 
@@ -67,7 +70,7 @@ public final class SingleClassifier implements Learner, Configurable {
 		learnerP.setClassifier(learner);
                 
 		//learnerPI = this.builder.createPi(learnerP, 1);
-                this.builder.addProcessor(learnerP,1);
+                this.builder.addProcessor(learnerP, parallelism);
 		resultStream = this.builder.createStream(learnerP);
 		
 		learnerP.setOutputStream(resultStream);

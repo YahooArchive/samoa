@@ -52,11 +52,13 @@ public final class SingleLearner implements Learner, Configurable {
 	
 	private TopologyBuilder builder;
 
+        private int parallelism;
 
 	@Override
-	public void init(TopologyBuilder builder, Instances dataset){
+	public void init(TopologyBuilder builder, Instances dataset, int parallelism){
 		this.builder = builder;
 		this.dataset = dataset;
+                this.parallelism = parallelism;
 		this.setLayout();
 	}
 
@@ -67,7 +69,7 @@ public final class SingleLearner implements Learner, Configurable {
                 learner.setDataset(this.dataset);
 		learnerP.setLearner(learner);
                 
-		this.builder.addProcessor(learnerP, 1);
+		this.builder.addProcessor(learnerP, this.parallelism);
 		resultStream = this.builder.createStream(learnerP);
 		
 		learnerP.setOutputStream(resultStream);

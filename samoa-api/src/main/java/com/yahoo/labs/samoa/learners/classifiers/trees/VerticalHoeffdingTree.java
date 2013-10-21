@@ -109,9 +109,12 @@ public final class VerticalHoeffdingTree implements Learner, Configurable {
     private LocalStatisticsProcessor locStatProc;
 
     private Stream computeStream;
+    
+    private int parallelism;
 
     @Override
-    public void init(TopologyBuilder topologyBuilder, Instances dataset) {
+    public void init(TopologyBuilder topologyBuilder, Instances dataset, int parallelism) {
+        this.parallelism = parallelism;
         this.modelAggrProc = new ModelAggregatorProcessor.Builder(dataset)
                 .splitCriterion((SplitCriterion) this.splitCriterionOption.getValue())
                 .splitConfidence(splitConfidenceOption.getValue())
@@ -121,7 +124,7 @@ public final class VerticalHoeffdingTree implements Learner, Configurable {
                 .timeOut(timeOutOption.getValue())
                 .build();
 
-        topologyBuilder.addProcessor(modelAggrProc);
+        topologyBuilder.addProcessor(modelAggrProc, parallelism);
 
         this.resultStream = topologyBuilder.createStream(modelAggrProc);
         this.modelAggrProc.setResultStream(resultStream);

@@ -64,12 +64,15 @@ public final class DistributedClusterer implements Learner, Configurable {
         private Stream distributorToLocalStream;
         
         private Stream localToGlobalStream;
+        
+        private int parallelism;
 
 
 	@Override
-	public void init(TopologyBuilder builder, Instances dataset){
+	public void init(TopologyBuilder builder, Instances dataset, int parallelism){
 		this.builder = builder;
 		this.dataset = dataset;
+                this.parallelism = this.parallelism;
 		this.setLayout();
 	}
 
@@ -77,7 +80,7 @@ public final class DistributedClusterer implements Learner, Configurable {
 	protected void setLayout() {
                 //Distributor
             	distributorP = new ClusteringDistributorProcessor();
-		this.builder.addProcessor(distributorP, 1);
+		this.builder.addProcessor(distributorP, parallelism);
                 distributorToLocalStream = this.builder.createStream(distributorP);
                 distributorP.setOutputStream(distributorToLocalStream );
                 

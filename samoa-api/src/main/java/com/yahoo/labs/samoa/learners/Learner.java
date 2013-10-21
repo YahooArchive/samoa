@@ -44,8 +44,9 @@ public interface Learner extends Serializable{
 	 *
 	 * @param topologyBuilder the topology builder
 	 * @param dataset the dataset
+         * @param parallelism the parallelism
 	 */	
-	public void init(TopologyBuilder topologyBuilder, Instances dataset);
+	public void init(TopologyBuilder topologyBuilder, Instances dataset, int parallelism);
 	
         /**
 	 * Gets the input processing item.

@@ -155,7 +155,7 @@ public class PredictionCombinerProcessor implements Processor {
             if (combinedVote == null){
                 combinedVote = new DoubleVector();
             }
-            vote.scaleValues(getEnsembleMemberWeight(classifierIndex));
+            //vote.scaleValues(getEnsembleMemberWeight(classifierIndex));
             combinedVote.addValues(vote);
                     
             this.mapVotesforInstanceReceived.put(instanceIndex, combinedVote);

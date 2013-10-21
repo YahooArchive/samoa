@@ -69,6 +69,8 @@ public class Boosting implements Learner , Configurable {
 	
 	/** The dataset. */
 	private Instances dataset;
+        
+        protected int parallelism;
 
 	/**
 	 * Sets the layout.
@@ -124,12 +126,12 @@ public class Boosting implements Learner , Configurable {
 	 */			
 	
 	@Override
-	public void init(TopologyBuilder builder, Instances dataset) {
+	public void init(TopologyBuilder builder, Instances dataset, int parallelism) {
 		this.builder = builder;
 		this.dataset = dataset;
+                this.parallelism = parallelism;
 		this.setLayout();
 	}
-
 
         @Override
 	public Processor getInputProcessor() {
