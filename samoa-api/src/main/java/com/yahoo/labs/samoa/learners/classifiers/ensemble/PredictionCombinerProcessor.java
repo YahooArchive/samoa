@@ -106,7 +106,7 @@ public class PredictionCombinerProcessor implements Processor {
         if (inEvent.isLastEvent() || hasAllVotesArrivedInstance(instanceIndex)) {
             DoubleVector combinedVote = this.mapVotesforInstanceReceived.get(instanceIndex);
             if (combinedVote == null){
-                combinedVote = new DoubleVector();
+                combinedVote = new DoubleVector(new double[inEvent.getInstance().numClasses()]);
             }
             ResultContentEvent outContentEvent = new ResultContentEvent(inEvent.getInstanceIndex(),
                     inEvent.getInstance(), inEvent.getClassId(),
@@ -155,7 +155,7 @@ public class PredictionCombinerProcessor implements Processor {
             if (combinedVote == null){
                 combinedVote = new DoubleVector();
             }
-            //vote.scaleValues(getEnsembleMemberWeight(classifierIndex));
+            vote.scaleValues(getEnsembleMemberWeight(classifierIndex));
             combinedVote.addValues(vote);
                     
             this.mapVotesforInstanceReceived.put(instanceIndex, combinedVote);
