@@ -21,8 +21,9 @@ package com.yahoo.labs.samoa.moa.core;
  */
 
 import com.yahoo.labs.samoa.instances.Instance;
+import java.io.Serializable;
 
-public class InstanceExample implements Example<Instance> {
+public class InstanceExample implements Example<Instance>, Serializable {
 
 	public Instance instance;
 

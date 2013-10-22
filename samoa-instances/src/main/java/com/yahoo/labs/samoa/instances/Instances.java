@@ -47,7 +47,9 @@ public class Instances implements Serializable {
 	 */
 	protected List<Instance> instances;
 
-	protected ArffLoader arff;
+	transient protected ArffLoader arff;
+        
+        protected int classAttribute;
 
 	public Instances(InstancesHeader modelContext) {
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -68,6 +70,7 @@ public class Instances implements Serializable {
 	}
 
 	public Instances(Reader reader, int size, int classAttribute) {
+                this.classAttribute = classAttribute;
 		arff = new ArffLoader(reader, 0, classAttribute);
 		this.instanceInformation = arff.getStructure();
 		this.instances = new ArrayList<Instance>();
@@ -174,7 +177,10 @@ public class Instances implements Serializable {
 	public boolean readInstance(Reader fileReader) {
 
 		// ArffReader arff = new ArffReader(reader, this, m_Lines, 1);
-		Instance inst = arff.readInstance();
+            if (arff == null) {
+               arff = new ArffLoader(fileReader,0,this.classAttribute); 
+            }
+		Instance inst = arff.readInstance(fileReader);
 		if (inst != null) {
 			inst.setDataset(this);
 			add(inst);

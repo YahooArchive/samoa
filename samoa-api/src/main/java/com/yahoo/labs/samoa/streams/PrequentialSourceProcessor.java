@@ -81,7 +81,8 @@ public final class PrequentialSourceProcessor implements Processor {
 	 */
 	public void sendInstances(Stream inputStream, int numberInstances){
 		int numInstanceSent = 0;
-		
+		initStreamSource(sourceStream);
+                
 		while(streamSource.hasMoreInstances() && numInstanceSent < numberInstances){
 			numInstanceSent++;
 			InstanceContentEvent contentEvent = 
@@ -96,16 +97,16 @@ public final class PrequentialSourceProcessor implements Processor {
 		return streamSource;
 	}
 	
+        protected InstanceStream sourceStream;
+        
 	public void setStreamSource(InstanceStream stream){
-		if(stream instanceof AbstractOptionHandler){
-			((AbstractOptionHandler)(stream)).prepareForUse();
-		}
-		
-		this.streamSource = new StreamSource(stream);
-		firstInstance = streamSource.nextInstance().getData();
+		this.sourceStream = stream;
 	}
 	
 	public Instances getDataset(){
+            if (firstInstance == null){
+                initStreamSource(sourceStream);
+            }
 		return firstInstance.dataset();
 	}
 	
@@ -124,4 +125,13 @@ public final class PrequentialSourceProcessor implements Processor {
 		contentEvent.setLast(true);
 		inputStream.put(contentEvent);
 	}
+
+    private void initStreamSource(InstanceStream stream) {
+        if(stream instanceof AbstractOptionHandler){
+                ((AbstractOptionHandler)(stream)).prepareForUse();
+        }
+        
+        this.streamSource = new StreamSource(stream);
+        firstInstance = streamSource.nextInstance().getData();
+    }
 }
