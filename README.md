@@ -49,13 +49,10 @@ Once the dependencies if needed are installed, you can simply clone the reposito
 ```bash
 git clone git@github.com:yahoo/samoa.git
 cd samoa
-mvn -P<variant> package # where variant is "storm" or "s4"
-
-mvn -Ps4 package # e.g., to get the s4 version
+mvn -Ps4 package
 ```
 
-The deployable jars for SAMOA will be in `target/SAMOA-<variant>-<version>.jar`.
-For example, for S4 `target/SAMOA-S4-0.0.1.jar`.
+The deployable jars for SAMOA will be in `target/SAMOA-S4-0.0.1.jar`.
 
 ## Documentation
 
