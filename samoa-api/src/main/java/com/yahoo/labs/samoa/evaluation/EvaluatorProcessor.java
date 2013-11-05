@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.ResultContentEvent;
+import com.yahoo.labs.samoa.learners.ResultContentEvent;
 
 public class EvaluatorProcessor implements Processor {
 

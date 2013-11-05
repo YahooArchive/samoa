@@ -22,6 +22,7 @@ package com.yahoo.labs.samoa.learners.clusterers;
 /**
  * License
  */
+import com.yahoo.labs.samoa.evaluation.ClusteringResultContentEvent;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.DenseInstance;

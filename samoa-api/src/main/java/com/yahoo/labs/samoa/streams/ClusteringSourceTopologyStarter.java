@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.learners.clusterers;
+package com.yahoo.labs.samoa.streams;
 
 /*
  * #%L

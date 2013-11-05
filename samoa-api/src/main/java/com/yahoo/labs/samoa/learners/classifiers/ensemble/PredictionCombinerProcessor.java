@@ -25,7 +25,7 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  */
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.ResultContentEvent;
+import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.topology.Stream;
