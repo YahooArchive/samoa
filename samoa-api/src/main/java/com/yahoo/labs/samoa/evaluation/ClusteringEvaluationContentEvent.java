@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.learners.clusterers;
+package com.yahoo.labs.samoa.evaluation;
 
 /*
  * #%L
@@ -19,9 +19,10 @@ package com.yahoo.labs.samoa.learners.clusterers;
  * limitations under the License.
  * #L%
  */
-
-import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.*;
+import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
+import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
 
 /**
  * License
@@ -29,30 +30,32 @@ import com.yahoo.labs.samoa.moa.cluster.Clustering;
 /**
  * The Class Clustering ResultEvent.
  */
-final public class ClusteringResultContentEvent implements ContentEvent {
+final public class ClusteringEvaluationContentEvent implements ContentEvent {
 
     private static final long serialVersionUID = -7746983521296618922L;
-    private Clustering clustering;
+    private Clustering gtClustering;
+    private DataPoint dataPoint;
     private final boolean isLast;
     private String key = "0";
 
-    public ClusteringResultContentEvent() {
+    public ClusteringEvaluationContentEvent() {
         this.isLast = false;
     }
 
-    public ClusteringResultContentEvent(boolean isLast) {
+    public ClusteringEvaluationContentEvent(boolean isLast) {
         this.isLast = isLast;
     }
 
     /**
-     * Instantiates a new clustering result event.
+     * Instantiates a new gtClustering result event.
      *
-     * @param clustering the clustering result
+     * @param gtClustering the gtClustering result
      * @param isLast is the last result
      */
-    public ClusteringResultContentEvent(Clustering clustering, boolean isLast) {
-        this.clustering = clustering;
+    public ClusteringEvaluationContentEvent(Clustering clustering, DataPoint instance, boolean isLast) {
+        this.gtClustering = clustering;
         this.isLast = isLast;
+        this.dataPoint = instance;
     }
 
     public String getKey() {
@@ -67,7 +70,12 @@ final public class ClusteringResultContentEvent implements ContentEvent {
         return this.isLast;
     }
 
-    Clustering getClustering() {
-        return this.clustering;
+    Clustering getGTClustering() {
+        return this.gtClustering;
     }
+    
+    DataPoint getDataPoint() {
+        return this.dataPoint;
+    }
+    
 }

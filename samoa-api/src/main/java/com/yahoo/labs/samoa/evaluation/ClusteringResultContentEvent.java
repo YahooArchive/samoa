@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.learners.clusterers;
+package com.yahoo.labs.samoa.evaluation;
 
 /*
  * #%L
@@ -19,10 +19,9 @@ package com.yahoo.labs.samoa.learners.clusterers;
  * limitations under the License.
  * #L%
  */
-import com.yahoo.labs.samoa.core.*;
-import com.yahoo.labs.samoa.instances.Instance;
+
+import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
 
 /**
  * License
@@ -30,32 +29,30 @@ import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
 /**
  * The Class Clustering ResultEvent.
  */
-final public class ClusteringEvaluationContentEvent implements ContentEvent {
+final public class ClusteringResultContentEvent implements ContentEvent {
 
     private static final long serialVersionUID = -7746983521296618922L;
-    private Clustering gtClustering;
-    private DataPoint dataPoint;
+    private Clustering clustering;
     private final boolean isLast;
     private String key = "0";
 
-    public ClusteringEvaluationContentEvent() {
+    public ClusteringResultContentEvent() {
         this.isLast = false;
     }
 
-    public ClusteringEvaluationContentEvent(boolean isLast) {
+    public ClusteringResultContentEvent(boolean isLast) {
         this.isLast = isLast;
     }
 
     /**
-     * Instantiates a new gtClustering result event.
+     * Instantiates a new clustering result event.
      *
-     * @param gtClustering the gtClustering result
+     * @param clustering the clustering result
      * @param isLast is the last result
      */
-    public ClusteringEvaluationContentEvent(Clustering clustering, DataPoint instance, boolean isLast) {
-        this.gtClustering = clustering;
+    public ClusteringResultContentEvent(Clustering clustering, boolean isLast) {
+        this.clustering = clustering;
         this.isLast = isLast;
-        this.dataPoint = instance;
     }
 
     public String getKey() {
@@ -70,12 +67,7 @@ final public class ClusteringEvaluationContentEvent implements ContentEvent {
         return this.isLast;
     }
 
-    Clustering getGTClustering() {
-        return this.gtClustering;
+    public Clustering getClustering() {
+        return this.clustering;
     }
-    
-    DataPoint getDataPoint() {
-        return this.dataPoint;
-    }
-    
 }

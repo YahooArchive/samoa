@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.learners.clusterers;
+package com.yahoo.labs.samoa.streams;
 
 /*
  * #%L
@@ -20,10 +20,12 @@ package com.yahoo.labs.samoa.learners.clusterers;
  * #L%
  */
 
+import com.yahoo.labs.samoa.evaluation.ClusteringEvaluationContentEvent;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
+import com.yahoo.labs.samoa.learners.clusterers.ClusteringContentEvent;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
 import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;

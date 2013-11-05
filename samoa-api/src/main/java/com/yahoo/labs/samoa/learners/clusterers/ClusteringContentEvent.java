@@ -43,7 +43,6 @@ final public class ClusteringContentEvent implements ContentEvent {
      *
      * @param index the index
      * @param instance the instance
-     * @param isTraining the is training
      */
     public ClusteringContentEvent(long index, Instance instance) {
         /*if (instance != null) {
@@ -53,19 +52,22 @@ final public class ClusteringContentEvent implements ContentEvent {
         this.setKey(Long.toString(index));
     }
 
+    @Override
     public String getKey() {
         return this.key;
     }
 
+    @Override
     public void setKey(String str) {
         this.key = str;
     }
 
+    @Override
     public boolean isLastEvent() {
         return this.isLast;
     }
 
-    void setLast(boolean isLast) {
+    public void setLast(boolean isLast) {
         this.isLast = isLast;
     }
 

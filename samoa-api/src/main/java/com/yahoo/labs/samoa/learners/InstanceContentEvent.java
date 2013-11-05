@@ -1,5 +1,5 @@
 
-package com.yahoo.labs.samoa.core;
+package com.yahoo.labs.samoa.learners;
 
 /*
  * #%L
@@ -25,6 +25,8 @@ package com.yahoo.labs.samoa.core;
  * License
  */
 
+import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.SerializableInstance;
 import net.jcip.annotations.Immutable;
 import com.yahoo.labs.samoa.instances.Instance;
 //import weka.core.Instance;

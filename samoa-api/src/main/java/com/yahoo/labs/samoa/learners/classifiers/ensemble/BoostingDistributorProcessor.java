@@ -1,6 +1,6 @@
 package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 
-import com.yahoo.labs.samoa.core.InstanceContentEvent;
+import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 
 /*
  * #%L

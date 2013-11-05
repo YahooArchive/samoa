@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.core;
+package com.yahoo.labs.samoa.learners;
 
 /*
  * #%L
@@ -20,6 +20,8 @@ package com.yahoo.labs.samoa.core;
  * #L%
  */
 
+import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.SerializableInstance;
 import com.yahoo.labs.samoa.instances.Instance;
 
 /**
