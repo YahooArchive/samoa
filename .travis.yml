@@ -9,7 +9,7 @@ install:
   - gradle s4-tools::installApp
   - cd ..
 
-script: "mvn -Pstorm,s4 test"
+script: "mvn -B -Pstorm,s4 test"
 
 # disable email notifications
 email: false
