@@ -2,6 +2,7 @@ language: java
 
 # install S4 dependencies
 install:
+  - mvn install -DskipTests=true -B
   - git clone https://github.com/apache/incubator-s4.git
   - cd incubator-s4
   - gradle wrapper
