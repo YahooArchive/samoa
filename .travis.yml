@@ -1,1 +1,12 @@
 language: java
+# Specific for S4, ignoring it for the moment
+#install:
+#  - git clone https://github.com/apache/incubator-s4.git
+#  - cd incubator-s4
+#  - wget http://services.gradle.org/distributions/gradle-1.6-bin.zip
+#  - unzip gradle-1.6-bin.zip
+#  - ./gradle-1.6/bin/gradle wrapper
+#  - ./gradle-1.6/bin/gradle install
+#  - ./gradle-1.6/bin/gradle s4-tools::installApp
+
+script: "mvn -Pstorm test"
