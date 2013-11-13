@@ -131,7 +131,7 @@ if [ $PLATFORM = 'S4' ]; then
 	# END Reading properties file
 
 	APP_NAME="SamoaS4App"
-	APP_CLASS="com.yahoo.labs.samoa.topology.impl.DoTaskApp"
+	APP_CLASS="com.yahoo.labs.samoa.topology.impl.S4DoTask"
 	NAMED_PARAMETERS=`echo $OPTIONS | sed 's/ /:/g'`
 	
 	echo "Deploying SAMOA Application..."

@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa;
+package com.yahoo.labs.samoa.topology.impl;
 
 /*
  * #%L
@@ -38,14 +38,14 @@ import com.github.javacliparser.Option;
 /**
  * The Class DoTask.
  */
-public class DoTask {
+public class SimpleDoTask {
 
     // TODO: clean up this class for helping ML Developer in SAMOA
     // ======= TODO: clean up code from storm-impl
     private static final String SUPPRESS_STATUS_OUT_MSG = "Suppress the task status output. Normally it is sent to stderr.";
     private static final String SUPPRESS_RESULT_OUT_MSG = "Suppress the task result output. Normally it is sent to stdout.";
     private static final String STATUS_UPDATE_FREQ_MSG = "Wait time in milliseconds between status updates.";
-    private static final Logger logger = LoggerFactory.getLogger(DoTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleDoTask.class);
 
     /**
      * The main method.

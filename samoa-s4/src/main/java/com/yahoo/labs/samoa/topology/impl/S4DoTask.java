@@ -53,9 +53,9 @@ import com.google.inject.name.Named;
 /**
  * The Class DoTaskApp.
  */
-final public class DoTaskApp extends App {
+final public class S4DoTask extends App {
 
-	private final Logger logger = LoggerFactory.getLogger(DoTaskApp.class);
+	private final Logger logger = LoggerFactory.getLogger(S4DoTask.class);
 
 	Task task;
 
@@ -63,7 +63,7 @@ final public class DoTaskApp extends App {
 	@Named("evalTask")
 	public String evalTask;
 
-	public DoTaskApp() {
+	public S4DoTask() {
 		super();
 	}
 

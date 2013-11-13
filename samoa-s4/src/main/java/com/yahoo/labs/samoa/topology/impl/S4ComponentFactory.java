@@ -44,7 +44,7 @@ public class S4ComponentFactory implements ComponentFactory {
 	public static final Logger logger = LoggerFactory
 			.getLogger(S4ComponentFactory.class);
 
-	protected DoTaskApp app;
+	protected S4DoTask app;
 
 	@Override
 	public ProcessingItem createPi(Processor processor, int paralellism) {
@@ -98,7 +98,7 @@ public class S4ComponentFactory implements ComponentFactory {
 	 * 
 	 * @param app
 	 */
-	public void setApp(DoTaskApp app) {
+	public void setApp(S4DoTask app) {
 		this.app = app;
 	}
 }

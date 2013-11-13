@@ -48,7 +48,7 @@ public class S4ProcessingItem extends ProcessingElement implements
 
 	private Processor processor;
 	private int paralellismLevel;
-	private DoTaskApp app;
+	private S4DoTask app;
 
 	private static final String NAME="PROCESSING-ITEM-";
 	private static int OBJ_COUNTER=0;
@@ -62,7 +62,7 @@ public class S4ProcessingItem extends ProcessingElement implements
 		super(app);
 		super.setName(NAME+OBJ_COUNTER);
 		OBJ_COUNTER++;
-		this.app = (DoTaskApp) app;
+		this.app = (S4DoTask) app;
 		this.paralellismLevel = 1;
 	}
 

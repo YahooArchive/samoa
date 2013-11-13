@@ -17,13 +17,18 @@
   limitations under the License.
   #L%
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>samoa-instances</artifactId>
-    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <name>samoa-instances</name>
     <description>Instances for SAMOA</description>
+
+    <artifactId>samoa-instances</artifactId>
     <parent>
         <groupId>com.yahoo.labs.samoa</groupId>
         <artifactId>samoa</artifactId>

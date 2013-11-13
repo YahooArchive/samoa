@@ -77,7 +77,7 @@ public class S4Submitter implements ISubmitter {
 		}
 
 		String[] args = { "-c=testCluster2",
-				"-appClass=" + DoTaskApp.class.getName(),
+				"-appClass=" + S4DoTask.class.getName(),
 				"-appName=" + "samoaApp",
 				"-p=evalTask=" + task.getClass().getSimpleName(),
 				"-zk=localhost:2181", "-s4r=" + appURIString };
