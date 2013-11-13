@@ -104,7 +104,7 @@
                 </executions>
             </plugin>
 
-            <!-- SAMOA S4 assembly -->
+            <!-- SAMOA assembly -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
