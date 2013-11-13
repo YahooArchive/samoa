@@ -14,14 +14,13 @@
 	</properties>
 
 	<artifactId>samoa-storm</artifactId>
-	<version>0.0.1</version>
 
 	<name>samoa-storm</name>
 	<description>Storm bindings for SAMOA</description>
 	<parent>
 		<groupId>com.yahoo.labs.samoa</groupId>
 		<artifactId>samoa</artifactId>
-		<version>0.0.1</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
