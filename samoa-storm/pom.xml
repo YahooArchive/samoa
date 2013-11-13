@@ -78,7 +78,6 @@
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Implementation-Vendor>Yahoo Labs</Implementation-Vendor>
 							<Implementation-Vendor-Id>SAMOA</Implementation-Vendor-Id>
-							<Main-Class>com.yahoo.labs.samoa.DoTask</Main-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>
