@@ -1,0 +1,16 @@
+language: java
+
+# install S4 dependencies
+install:
+  - git clone https://github.com/apache/incubator-s4.git
+  - cd incubator-s4
+  - gradle wrapper
+  - gradle install
+  - gradle s4-tools::installApp
+  - cd ..
+  - mvn install -DskipTests=true -B
+
+script: "mvn -B -Pstorm,s4 test"
+
+# disable email notifications
+email: false

@@ -25,7 +25,6 @@
     </properties>
 
     <artifactId>samoa-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>samoa-api</name>
@@ -33,7 +32,7 @@
     <parent>
         <groupId>com.yahoo.labs.samoa</groupId>
         <artifactId>samoa</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -64,7 +63,7 @@
         <dependency>
             <groupId>com.yahoo.labs.samoa</groupId>
             <artifactId>samoa-instances</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

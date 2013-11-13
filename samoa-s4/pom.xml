@@ -25,14 +25,13 @@
     </properties>
 
     <artifactId>samoa-s4</artifactId>
-    <version>0.0.1</version>
 
     <name>samoa-s4</name>
     <description>S4 bindings for SAMOA</description>
     <parent>
       <groupId>com.yahoo.labs.samoa</groupId>
       <artifactId>samoa</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
