@@ -41,6 +41,7 @@ JAR_FILE=`echo ${JAR_PATH##*/}`
 JAR_DIR=`echo ${JAR_PATH%/*?}`
 OPTIONS=$3
 
+echo "Deploying to $PLATFORM"
 
 if [ $PLATFORM = 'S4' ]; then
 
@@ -69,7 +70,6 @@ if [ $PLATFORM = 'S4' ]; then
 	}
 	# END Local functions
 
-	echo "Deploying to "$PLATFORM
 	curr_dir=`pwd`
 	if [ -f /tmp/httpPID ]; then
 		pid=`more /tmp/httpPID`
@@ -144,7 +144,6 @@ if [ $PLATFORM = 'S4' ]; then
 	
 elif [ $PLATFORM = 'STORM' ]; then
 
-	echo "Deploying to platform "$PLATFORM
 	if [ -z $STORM_HOME ];then
 	    echo "STORM_HOME is not set!"
 	    echo "Please set STORM_HOME into your Storm installation"
@@ -185,9 +184,23 @@ elif [ $PLATFORM = 'STORM' ]; then
 	    fi
 	done
 	
-	DEPLOYABLE=$2
+	DEPLOYABLE=$JAR_PATH
 
-	$STORM_EXEC jar $DEPLOYABLE com.yahoo.labs.samoa.topology.impl.StormDoTask$COMPLETE_ARG $NUM_WORKER $MODE_ARG
+	$STORM_EXEC jar $DEPLOYABLE com.yahoo.labs.samoa.topology.impl.StormDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
+
+elif [ $PLATFORM = 'LOCAL' ]; then
+
+	COMPLETE_ARG=""
+	COUNTER=0
+	for var in "$@"
+	do
+	    COUNTER=`expr $COUNTER + 1`
+	    if [ $COUNTER -gt 2 ];then
+	        COMPLETE_ARG="$COMPLETE_ARG $var"
+	    fi
+	done
+
+	java -cp $JAR_PATH com.yahoo.labs.samoa.topology.impl.SimpleDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
 else
 	echo "Specify a valid platform."
 	echo "usage: samoa <platform>"
