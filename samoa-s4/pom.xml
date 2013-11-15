@@ -21,17 +21,17 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <artifactId>samoa-s4</artifactId>
 
     <name>samoa-s4</name>
     <description>S4 bindings for SAMOA</description>
+
+    <artifactId>samoa-s4</artifactId>
     <parent>
-      <groupId>com.yahoo.labs.samoa</groupId>
-      <artifactId>samoa</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+        <groupId>com.yahoo.labs.samoa</groupId>
+        <artifactId>samoa</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -80,25 +80,10 @@
 
     <build>
         <plugins>
-            <!--plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.7</version>
-
                 <configuration>
                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
                     <overWriteReleases>false</overWriteReleases>
@@ -115,12 +100,11 @@
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
-
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- SAMOA S4 assembly -->
+            <!-- SAMOA assembly -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
@@ -139,7 +123,7 @@
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Vendor>Yahoo Labs</Implementation-Vendor>
                             <Implementation-Vendor-Id>SAMOA</Implementation-Vendor-Id>
-                            <S4-App-Class>com.yahoo.labs.samoa.topology.impl.DoTaskApp</S4-App-Class>
+                            <S4-App-Class>com.yahoo.labs.samoa.topology.impl.S4DoTask</S4-App-Class>
                             <S4-Version>0.6.0-incubating</S4-Version>
                         </manifestEntries>
                     </archive>
