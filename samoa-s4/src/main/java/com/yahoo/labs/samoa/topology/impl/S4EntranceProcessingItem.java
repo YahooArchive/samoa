@@ -33,7 +33,7 @@ public class S4EntranceProcessingItem extends ProcessingElement implements
 		EntranceProcessingItem {
 
 	private Processor processor;
-	DoTaskApp app;
+	S4DoTask app;
 	private int paralellism;
 
 	/**
@@ -44,7 +44,7 @@ public class S4EntranceProcessingItem extends ProcessingElement implements
 	 */
 	public S4EntranceProcessingItem(App app) {
 		super(app);
-		this.app = (DoTaskApp) app;
+		this.app = (S4DoTask) app;
 		// this.setSingleton(true);
 	}
 

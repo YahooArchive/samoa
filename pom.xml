@@ -17,20 +17,22 @@
   limitations under the License.
   #L%
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <groupId>com.yahoo.labs.samoa</groupId>
-    <artifactId>samoa</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
 
     <name>SAMOA</name>
     <description>Scalable Advanced Massive Online Analysis</description>
+    <url>http://github.com/yahoo/samoa</url>
     <packaging>pom</packaging>
+    
+    <groupId>com.yahoo.labs.samoa</groupId>
+    <artifactId>samoa</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
     <organization>
         <name>Yahoo! Labs</name>
@@ -38,7 +40,18 @@
     </organization>
 
     <profiles>
-        <profile>
+         <profile>
+            <id>local</id>
+               <activation>
+                  <activeByDefault>true</activeByDefault>
+               </activation>
+            <modules>
+                <module>samoa-instances</module>
+                <module>samoa-api</module>
+                <module>samoa-local</module>
+            </modules>
+        </profile>
+         <profile>
             <id>storm</id>
             <modules>
                 <module>samoa-instances</module>
@@ -79,6 +92,7 @@
         <roots>
 		<root>samoa-api</root>
                 <root>samoa-instances</root>
+                <root>samoa-local</root>
 		<root>samoa-storm</root>
 		<root>samoa-s4</root>
 		<root>src/main/resources</root>
@@ -123,7 +137,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

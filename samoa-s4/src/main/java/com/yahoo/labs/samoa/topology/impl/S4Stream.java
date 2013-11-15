@@ -46,7 +46,7 @@ public class S4Stream implements Stream {
 	private static final Logger logger = LoggerFactory
 			.getLogger(S4Stream.class);
 
-	private DoTaskApp app;
+	private S4DoTask app;
 	private int processingItemParalellism;
 	private String streamID;
 	private int shuffleCounter;
@@ -57,7 +57,7 @@ public class S4Stream implements Stream {
 	/* The stream list */
 	public List<StreamType> streams;
 
-	public S4Stream(DoTaskApp app) {
+	public S4Stream(S4DoTask app) {
 		super();
 		this.app = app;
 		this.processingItemParalellism = 1;
@@ -67,7 +67,7 @@ public class S4Stream implements Stream {
 		OBJ_COUNTER++;
 	}
 	
-	public S4Stream(DoTaskApp app, S4ProcessingItem pi) {
+	public S4Stream(S4DoTask app, S4ProcessingItem pi) {
 		super();
 		this.app = app;
 		this.processingItemParalellism = 1;
