@@ -167,7 +167,7 @@ final public class InstanceContentEvent implements ContentEvent {
 	@Override
 	public String getKey() {
 		//System.out.println("InstanceContentEvent "+Long.toString(this.instanceIndex));
-		return Long.toString(this.instanceIndex);
+		return Long.toString(this.getClassifierIndex());
 	}
 
 	@Override

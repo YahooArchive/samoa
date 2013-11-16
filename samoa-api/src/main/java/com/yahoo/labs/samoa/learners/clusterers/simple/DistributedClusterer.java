@@ -51,7 +51,7 @@ public final class DistributedClusterer implements Learner, Configurable {
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
-			"Clusterer to use.", LocalClustererAdapter.class, MOAClustererAdapter.class.getName());
+			"Clusterer to use.", LocalClustererAdapter.class, ClustreamClustererAdapter.class.getName());
 	
         public IntOption paralellismOption = new IntOption("paralellismOption",
 			'P', "The paralellism level for concurrent processes", 2, 1,
