@@ -48,7 +48,7 @@ public final class SingleLearner implements Learner, Configurable {
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
-			"Learner to train.", LocalClustererAdapter.class, MOAClustererAdapter.class.getName());
+			"Learner to train.", LocalClustererAdapter.class, ClustreamClustererAdapter.class.getName());
 	
 	private TopologyBuilder builder;
 

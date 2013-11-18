@@ -31,10 +31,10 @@ import com.yahoo.labs.samoa.moa.classifiers.functions.MajorityClass;
 
 /**
  *
- * Base class for moa classifiers.
+ * Base class for adapting external classifiers.
  *
  */
-public class MOAClassifierAdapter implements LocalClassifierAdapter, Configurable {
+public class SimpleClassifierAdapter implements LocalClassifierAdapter, Configurable {
 
     /**
      *
@@ -69,7 +69,7 @@ public class MOAClassifierAdapter implements LocalClassifierAdapter, Configurabl
      * @param learner the learner
      * @param dataset the dataset
      */
-    public MOAClassifierAdapter(com.yahoo.labs.samoa.moa.classifiers.Classifier learner, Instances dataset) {
+    public SimpleClassifierAdapter(com.yahoo.labs.samoa.moa.classifiers.Classifier learner, Instances dataset) {
         this.learner = learner.copy();
         this.isInit = false;
         this.dataset = dataset;
@@ -81,7 +81,7 @@ public class MOAClassifierAdapter implements LocalClassifierAdapter, Configurabl
      * @param learner the learner
      * @param dataset the dataset
      */
-    public MOAClassifierAdapter() {
+    public SimpleClassifierAdapter() {
         this.learner = ((com.yahoo.labs.samoa.moa.classifiers.Classifier) this.learnerOption.getValue()).copy();
         this.isInit = false;
         //this.dataset = dataset;
@@ -93,8 +93,8 @@ public class MOAClassifierAdapter implements LocalClassifierAdapter, Configurabl
      * @return the learner
      */
     @Override
-    public MOAClassifierAdapter create() {
-        MOAClassifierAdapter l = new MOAClassifierAdapter(learner, dataset);
+    public SimpleClassifierAdapter create() {
+        SimpleClassifierAdapter l = new SimpleClassifierAdapter(learner, dataset);
         if (dataset == null) {
             System.out.println("dataset null while creating");
         }

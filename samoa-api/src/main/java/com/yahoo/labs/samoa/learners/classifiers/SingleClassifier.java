@@ -47,7 +47,7 @@ public final class SingleClassifier implements Learner, Configurable {
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
-			"Classifier to train.", LocalClassifierAdapter.class, MOAClassifierAdapter.class.getName());
+			"Classifier to train.", LocalClassifierAdapter.class, SimpleClassifierAdapter.class.getName());
 	
 	private TopologyBuilder builder;
         

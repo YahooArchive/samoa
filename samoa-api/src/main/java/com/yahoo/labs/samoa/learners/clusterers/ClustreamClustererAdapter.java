@@ -32,10 +32,10 @@ import com.yahoo.labs.samoa.moa.clusterers.clustream.Clustream;
 
 /**
  *
- * Base class for moa classifiers.
+ *  Base class for adapting Clustream clusterer.
  *
  */
-public class MOAClustererAdapter implements LocalClustererAdapter, Configurable {
+public class ClustreamClustererAdapter implements LocalClustererAdapter, Configurable {
 
     /**
      *
@@ -70,7 +70,7 @@ public class MOAClustererAdapter implements LocalClustererAdapter, Configurable 
      * @param learner the learner
      * @param dataset the dataset
      */
-    public MOAClustererAdapter(com.yahoo.labs.samoa.moa.clusterers.Clusterer learner, Instances dataset) {
+    public ClustreamClustererAdapter(com.yahoo.labs.samoa.moa.clusterers.Clusterer learner, Instances dataset) {
         this.learner = learner.copy();
         this.isInit = false;
         this.dataset = dataset;
@@ -82,7 +82,7 @@ public class MOAClustererAdapter implements LocalClustererAdapter, Configurable 
      * @param learner the learner
      * @param dataset the dataset
      */
-    public MOAClustererAdapter() {
+    public ClustreamClustererAdapter() {
         this.learner = ((com.yahoo.labs.samoa.moa.clusterers.Clusterer) this.learnerOption.getValue()).copy();
         this.isInit = false;
         //this.dataset = dataset;
@@ -94,8 +94,8 @@ public class MOAClustererAdapter implements LocalClustererAdapter, Configurable 
      * @return the learner
      */
     @Override
-    public MOAClustererAdapter create() {
-        MOAClustererAdapter l = new MOAClustererAdapter(learner, dataset);
+    public ClustreamClustererAdapter create() {
+        ClustreamClustererAdapter l = new ClustreamClustererAdapter(learner, dataset);
         if (dataset == null) {
             System.out.println("dataset null while creating");
         }
