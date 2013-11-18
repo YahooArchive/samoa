@@ -24,7 +24,6 @@ import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 import com.yahoo.labs.samoa.moa.core.Measurement;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Utils;
-//import weka.core.Utils;
 
 /**
  * Classification evaluator that performs basic incremental evaluation.
@@ -48,6 +47,10 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
 
     protected int numClasses;
 
+    private double weightCorrectNoChangeClassifier;
+
+    private int lastSeenClass;
+
     @Override
     public void reset() {
         reset(this.numClasses);
@@ -63,6 +66,8 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
         }
         this.weightObserved = 0.0;
         this.weightCorrect = 0.0;
+        this.weightCorrectNoChangeClassifier = 0.0;
+        this.lastSeenClass = 0;
     }
 
     @Override
@@ -83,19 +88,29 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
             }
             if(rowKappa.length > 0){
             	this.rowKappa[predictedClass] += weight;
+            }       
+            if (columnKappa.length > 0) {
+                this.columnKappa[trueClass] += weight;
             }
-            
-			if (columnKappa.length > 0) {
-				this.columnKappa[trueClass] += weight;
-			}
         }
+        if (this.lastSeenClass == trueClass) {
+            this.weightCorrectNoChangeClassifier += weight;
+        }
+        this.lastSeenClass = trueClass;
     }
 
     @Override
     public Measurement[] getPerformanceMeasurements() {
-        return new Measurement[] { new Measurement("classified instances", getTotalWeightObserved()),
-                new Measurement("classifications correct (percent)", getFractionCorrectlyClassified() * 100.0),
-                new Measurement("Kappa Statistic (percent)", getKappaStatistic() * 100.0) };
+        return new Measurement[]{
+            new Measurement("classified instances",
+            getTotalWeightObserved()),
+            new Measurement("classifications correct (percent)",
+            getFractionCorrectlyClassified() * 100.0),
+            new Measurement("Kappa Statistic (percent)",
+            getKappaStatistic() * 100.0),
+            new Measurement("Kappa Temporal Statistic (percent)",
+            getKappaTemporalStatistic() * 100.0)
+        };
 
     }
 
@@ -104,7 +119,8 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
     }
 
     public double getFractionCorrectlyClassified() {
-        return this.weightObserved > 0.0 ? this.weightCorrect / this.weightObserved : 0.0;
+        return this.weightObserved > 0.0 ? this.weightCorrect
+                / this.weightObserved : 0.0;
     }
 
     public double getFractionIncorrectlyClassified() {
@@ -116,8 +132,20 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
             double p0 = getFractionCorrectlyClassified();
             double pc = 0.0;
             for (int i = 0; i < this.numClasses; i++) {
-                pc += (this.rowKappa[i] / this.weightObserved) * (this.columnKappa[i] / this.weightObserved);
+                pc += (this.rowKappa[i] / this.weightObserved)
+                        * (this.columnKappa[i] / this.weightObserved);
             }
+            return (p0 - pc) / (1.0 - pc);
+        } else {
+            return 0;
+        }
+    }
+
+    public double getKappaTemporalStatistic() {
+        if (this.weightObserved > 0.0) {
+            double p0 = this.weightCorrect / this.weightObserved;
+            double pc = this.weightCorrectNoChangeClassifier / this.weightObserved;
+
             return (p0 - pc) / (1.0 - pc);
         } else {
             return 0;
@@ -126,6 +154,7 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
 
     @Override
     public void getDescription(StringBuilder sb, int indent) {
-        Measurement.getMeasurementsDescription(getPerformanceMeasurements(), sb, indent);
+        Measurement.getMeasurementsDescription(getPerformanceMeasurements(),
+                sb, indent);
     }
 }
