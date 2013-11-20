@@ -5,10 +5,6 @@ This version of the Agreement allows a person or entity to submit Contributions 
 
 Please read this document carefully before signing and keep a copy for your records.
 
-Please fill in the information below regarding the contributor (whether the Contribution is being made on behalf of an individual person or an entity):
-
-Name of Individual Contributor (if applicable) ￼ Name of Entity Contributor (if applicable) ￼￼ Point of Contact for Entity Contributor (if applicable) ￼ Please provide the information below for the individual contributor or point of contact for the entity contributor ￼ Address
-
 ##TERMS AND CONDITIONS##
 
 You accept and agree to the following terms and conditions for Your present and future Contributions submitted to Yahoo!, in return for the opportunity to have the Contributions be considered for inclusion in one or more Yahoo! open source projects. Except for the license granted herein to Yahoo! and recipients of software distributed or otherwise made available by Yahoo!, You reserve all right, title, and interest in and to Your Contributions.
