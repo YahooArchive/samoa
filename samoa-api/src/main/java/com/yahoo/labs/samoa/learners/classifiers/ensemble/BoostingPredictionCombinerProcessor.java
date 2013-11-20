@@ -166,7 +166,7 @@ public class BoostingPredictionCombinerProcessor extends PredictionCombinerProce
 	/**
 	 * Sets the training stream.
 	 *
-	 * @param predictionStream the new training stream
+	 * @param trainingStream the new training stream
 	 */
 	public void setTrainingStream(Stream trainingStream) {
 		this.trainingStream = trainingStream;
