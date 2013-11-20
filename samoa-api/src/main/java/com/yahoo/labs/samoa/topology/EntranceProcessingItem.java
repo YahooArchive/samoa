@@ -33,7 +33,7 @@ public interface EntranceProcessingItem extends IProcessingItem {
 	/**
 	 * 
 	 * 
-	 * @param instance
+	 * @param inst
 	 */
 	void put(Instance inst);
 
