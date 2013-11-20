@@ -24,32 +24,38 @@
 # 			Scalable Advanced Massive Online Analysis a.k.a SAMOA				#
 # =====================================================================================================	#
 # -----------------------------------------------------------------------------------------------------	#
-# SAMOA is a scalabe data stream machine learning processing framework that 				#
-# can be used to implement machine learning algorithms on top of distributed				#
-# stream processing engines.										#
+# SAMOA is a framework for mining big data streams. It contains machine learning			#
+# algorithms that run on top of distributed stream processing engines.					#
 # 													#
 # Usage:												#
-# ./samoa <platform> <jar-location> <task & options>							#
+# ./samoa <platform> <jar> <task & options>								#
 # Example:												#
-# ./samoa S4 /foo/bar/SAMOA-S4-0.0.1.jar "ClusteringTask -s (RandomRBFGeneratorEvents -K 5 -a 2)" 	#
+# ./samoa storm /path/to/SAMOA-Storm-0.0.1.jar "ClusteringTask -s (RandomRBFGeneratorEvents -K 5 -a 2)"	#
 #													#
 # -----------------------------------------------------------------------------------------------------	#
 
-PLATFORM=`echo $1 | tr '[:lower:]' '[:upper:]'`
+usage() {
+echo "Usage: $(basename $0) <platform> <jar> <task & options>" && exit 1
+}
+[ "$#" -ge 3 ] || usage
+
+echo $0
+BASE_DIR=$(dirname $0)
+PLATFORM=${1:-NONE}
+PLATFORM=$(echo $PLATFORM | tr '[:lower:]' '[:upper:]')
 JAR_PATH=$2
-JAR_FILE=`echo ${JAR_PATH##*/}`
-JAR_DIR=`echo ${JAR_PATH%/*?}`
+JAR_FILE=$(basename $JAR_PATH)
+JAR_DIR=$(dirname $JAR_PATH)
 OPTIONS=$3
 
-echo "Deploying to $PLATFORM"
 
 if [ $PLATFORM = 'S4' ]; then
 
+	echo "Deploying to $PLATFORM"
 	# Local functions
 	deployLocal() 
 	{
 		# Make sure to kill S4 processes before re-deploying
-
 		echo "Starting Zookeeper..."
 		(cd $S4_HOME ; . s4 zkServer -clean -port=${ZK_SERVER_PORT} &)
 		sleep 10
@@ -63,10 +69,11 @@ if [ $PLATFORM = 'S4' ]; then
 		sleep 5
 	}
 
-	PROPERTY_VALUE=
+	SAMOA_S4_PROPERTIES=samoa-s4.properties
+	PROPERTY_VALUE=""
 	readProperty() {
 	    property=$1
-	    PROPERTY_VALUE=`sed '/^\#/d' samoa-s4.properties | grep $property  | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+	    PROPERTY_VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_S4_PROPERTIES | grep $property  | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
 	}
 	# END Local functions
 
@@ -134,7 +141,7 @@ if [ $PLATFORM = 'S4' ]; then
 	APP_CLASS="com.yahoo.labs.samoa.topology.impl.S4DoTask"
 	NAMED_PARAMETERS=`echo $OPTIONS | sed 's/ /:/g'`
 	
-	echo "Deploying SAMOA Application..."
+	echo "Deploying SAMOA..."
 	(cd $S4_HOME ; . s4 deploy -s4r=http://${APP_SERVER_IP}:${APP_SERVER_PORT}/${JAR_FILE} -c=${CLUSTER_NAME} -p=evalTask=${NAMED_PARAMETERS}  -appClass=${APP_CLASS} -appName=${APP_NAME} -zk=${ZK_SERVER}:${ZK_SERVER_PORT})
 
     # should wait for app to be deployed
@@ -144,6 +151,7 @@ if [ $PLATFORM = 'S4' ]; then
 	
 elif [ $PLATFORM = 'STORM' ]; then
 
+	echo "Deploying to $PLATFORM"
 	if [ -z $STORM_HOME ];then
 	    echo "STORM_HOME is not set!"
 	    echo "Please set STORM_HOME into your Storm installation"
@@ -165,7 +173,7 @@ elif [ $PLATFORM = 'STORM' ]; then
 	VALUE=""
 	getvalue()
         {
-	    VALUE=`sed '/^\#/d' $SAMOA_STORM_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+	    VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_STORM_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
         }
 
 	getvalue "$NUM_WORKER_OPTION"
@@ -190,6 +198,7 @@ elif [ $PLATFORM = 'STORM' ]; then
 
 elif [ $PLATFORM = 'LOCAL' ]; then
 
+	echo "Deploying to $PLATFORM"
 	COMPLETE_ARG=""
 	COUNTER=0
 	for var in "$@"
@@ -203,6 +212,6 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	java -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
 else
 	echo "Specify a valid platform."
-	echo "usage: samoa <platform>"
+	echo "Usage: samoa <platform> <jar> <task & options>"
 fi
 
