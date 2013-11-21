@@ -52,12 +52,24 @@ cd samoa
 mvn -Ps4 package
 ```
 
-The deployable jars for SAMOA will be in `target/SAMOA-S4-0.0.1.jar`.
+###Local Test Mode
+
+If you want to test SAMOA in a local environment, simply clone the repository and install SAMOA.
+
+```bash
+git clone git@github.com:yahoo/samoa.git
+cd samoa
+mvn package
+```
+
+The deployable jar for SAMOA will be in `target/SAMOA-Local-0.0.1.jar`.
 
 ## Documentation
 
 The documentation is intended to give an introduction on how to use SAMOA in the various different ways possible. 
 As a user you can use it to develop new algorithms and test different Stream Processing Engines.
+
+* [0 Getting Started in 5 minutes](../../wiki/Getting Started)
 
 * [1 Scalable Advanced Massive Online Analysis](../../wiki/Scalable Advanced Massive Online Analysis)
     * [1.0 Building SAMOA](../../wiki/Building SAMOA)
