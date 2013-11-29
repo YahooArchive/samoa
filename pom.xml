@@ -23,6 +23,22 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven-dependency-plugin.version>2.7</maven-dependency-plugin.version>
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+
+        <metrics-core.version>2.2.0</metrics-core.version>
+        <jcip-annotations.version>1.0</jcip-annotations.version>
+        <commons-lang3.version>3.1</commons-lang3.version>
+        <javacliparser.version>0.5.0</javacliparser.version>
+        <guava.version>13.0.1</guava.version>
+        <kryo.version>2.17</kryo.version>
+        <miniball.version>1.0.3</miniball.version>
+        <slf4j-simple.version>1.7.5</slf4j-simple.version>
+        <junit.version>4.10</junit.version>
+        <s4.version>0.6.0-incubating</s4.version>
+        <storm.version>0.8.2</storm.version>
+        <slf4j-log4j12.version>1.7.2</slf4j-log4j12.version>
     </properties>
 
     <name>SAMOA</name>
