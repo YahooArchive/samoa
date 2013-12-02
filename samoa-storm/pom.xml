@@ -46,27 +46,27 @@
         <dependency>
             <groupId>com.yahoo.labs.samoa</groupId>
             <artifactId>samoa-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>storm</groupId>
             <artifactId>storm</artifactId>
-            <version>0.8.2</version>
+            <version>${storm.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.2</version>
+            <version>${slf4j-log4j12.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -76,7 +76,7 @@
             <!-- SAMOA assembly -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
+                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <finalName>SAMOA-Storm-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
