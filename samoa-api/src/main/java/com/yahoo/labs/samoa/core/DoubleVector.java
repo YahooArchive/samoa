@@ -20,74 +20,102 @@ package com.yahoo.labs.samoa.core;
  * #L%
  */
 
+import java.util.Arrays;
+
 import com.google.common.primitives.Doubles;
 
-public class DoubleVector implements java.io.Serializable{
+public class DoubleVector implements java.io.Serializable {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 8243012708860261398L;
-	
-	private double[] doubleArray;
-	
-	public DoubleVector(){
-		this.doubleArray = new double[0];
-	}
-	
-	public DoubleVector(double[] toCopy){
-		this.doubleArray = new double[toCopy.length];
-		System.arraycopy(toCopy, 0, this.doubleArray, 0, toCopy.length);
-	}
-	
-	public DoubleVector(DoubleVector toCopy){
-		this(toCopy.getArrayRef());
-	}
-	
-	public double[] getArrayRef(){
-		return this.doubleArray;
-	}
-	
-	public double[] getArrayCopy(){
-		return Doubles.concat(this.doubleArray);
-	}
-	
-	public int numNonZeroEntries(){
-		int count = 0;
-		for(double element: this.doubleArray){
-			if(element != 0.0){
-				count++;
-			}
-		}
-		return count;
-	}
-		
-	public void setValue(int i, double v){
-		if(i >= doubleArray.length){
-			this.doubleArray = Doubles.ensureCapacity(this.doubleArray, i+1, 0);
-		}
-		this.doubleArray[i] = v;
-	}
-	
-	public void addToValue(int i, double v){
-		if(i >= doubleArray.length){
-			this.doubleArray = Doubles.ensureCapacity(this.doubleArray, i+1, 0);
-		}
-		this.doubleArray[i] += v;
-	}
-	
-	public double sumOfValues(){
-		double sum = 0.0;
-		for (double element: this.doubleArray){
-			sum += element;
-		}
-		return sum;
-	}
-	
-	public void getSingleLineDescription(StringBuilder out){
-		out.append("{");
-		out.append(Doubles.join("|", this.doubleArray));
-		out.append("}");
-	}
-	
+    private static final long serialVersionUID = 8243012708860261398L;
+
+    private double[] doubleArray;
+
+    public DoubleVector() {
+        this.doubleArray = new double[0];
+    }
+
+    public DoubleVector(double[] toCopy) {
+        this.doubleArray = new double[toCopy.length];
+        System.arraycopy(toCopy, 0, this.doubleArray, 0, toCopy.length);
+    }
+
+    public DoubleVector(DoubleVector toCopy) {
+        this(toCopy.getArrayRef());
+    }
+
+    public double[] getArrayRef() {
+        return this.doubleArray;
+    }
+
+    public double[] getArrayCopy() {
+        return Doubles.concat(this.doubleArray);
+    }
+
+    public int numNonZeroEntries() {
+        int count = 0;
+        for (double element : this.doubleArray) {
+            if (Double.compare(element, 0.0) != 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void setValue(int index, double value) {
+        if (index >= doubleArray.length) {
+            this.doubleArray = Doubles.ensureCapacity(this.doubleArray, index + 1, 0);
+        }
+        this.doubleArray[index] = value;
+    }
+
+    public void addToValue(int index, double value) {
+        if (index >= doubleArray.length) {
+            this.doubleArray = Doubles.ensureCapacity(this.doubleArray, index + 1, 0);
+        }
+        this.doubleArray[index] += value;
+    }
+
+    public double sumOfValues() {
+        double sum = 0.0;
+        for (double element : this.doubleArray) {
+            sum += element;
+        }
+        return sum;
+    }
+
+    public void getSingleLineDescription(StringBuilder out) {
+        out.append("{");
+        out.append(Doubles.join("|", this.doubleArray));
+        out.append("}");
+    }
+
+    @Override
+    public String toString() {
+        return "DoubleVector [doubleArray=" + Arrays.toString(doubleArray) + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(doubleArray);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof DoubleVector))
+            return false;
+        DoubleVector other = (DoubleVector) obj;
+        if (!Arrays.equals(doubleArray, other.doubleArray))
+            return false;
+        return true;
+    }
 }

@@ -27,7 +27,7 @@
 
     <name>samoa-api</name>
     <description>API and algorithms for SAMOA</description>
-    
+
     <artifactId>samoa-api</artifactId>
     <parent>
         <groupId>com.yahoo.labs.samoa</groupId>
@@ -77,10 +77,18 @@
             <artifactId>kryo</artifactId>
             <version>${kryo.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>com.dreizak</groupId>
             <artifactId>miniball</artifactId>
             <version>${miniball.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
