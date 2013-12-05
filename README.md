@@ -28,7 +28,7 @@ in multiple SPEs, i.e., code the algorithms once and execute them in multiple SP
 
 ## Build
 
-###Storm
+###Storm mode
 
 Simply clone the repository and install SAMOA.
 ```bash
@@ -39,7 +39,7 @@ mvn -Pstorm package
 
 The deployable jar for SAMOA will be in `target/SAMOA-Storm-0.0.1.jar`.
 
-###S4
+###S4 mode
 
 If you want to compile SAMOA for S4, you will need to install the S4 dependencies
 manually as explained in [Executing SAMOA with Apache S4](../../wiki/Executing-SAMOA-with-Apache-S4).
@@ -52,7 +52,7 @@ cd samoa
 mvn -Ps4 package
 ```
 
-###Local Test Mode
+###Local mode
 
 If you want to test SAMOA in a local environment, simply clone the repository and install SAMOA.
 
