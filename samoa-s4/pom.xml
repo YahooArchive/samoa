@@ -38,13 +38,13 @@
         <dependency>
             <groupId>com.yahoo.labs.samoa</groupId>
             <artifactId>samoa-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.javacliparser</groupId>
             <artifactId>javacliparser</artifactId>
-            <version>0.5.0</version>
+            <version>${javacliparser.version}</version>
         </dependency>
 
         <!-- S4 dependencies need to be installed separately as they are 
@@ -52,28 +52,28 @@
         <dependency>
             <groupId>org.apache.s4</groupId>
             <artifactId>s4-base</artifactId>
-            <version>0.6.0-incubating</version>
+            <version>${s4.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.s4</groupId>
             <artifactId>s4-comm</artifactId>
-            <version>0.6.0-incubating</version>
+            <version>${s4.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.s4</groupId>
             <artifactId>s4-core</artifactId>
-            <version>0.6.0-incubating</version>
+            <version>${s4.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -83,7 +83,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.7</version>
+                <version>${maven-dependency-plugin.version}</version>
                 <configuration>
                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
                     <overWriteReleases>false</overWriteReleases>
@@ -107,7 +107,7 @@
             <!-- SAMOA assembly -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
+                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/samoa-s4.xml</descriptor>

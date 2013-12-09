@@ -10,7 +10,7 @@ install:
   - cd ..
   - mvn install -DskipTests=true -B
 
-script: "mvn -B -Pstorm,s4 test"
+script: "mvn -B -Plocal,storm,s4 test"
 
 notifications:
   email:
