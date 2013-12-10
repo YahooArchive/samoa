@@ -33,7 +33,7 @@ import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.learners.classifiers.SingleClassifier;
+import com.yahoo.labs.samoa.learners.classifiers.trees.VerticalHoeffdingTree;
 
 /**
  * The Bagging Classifier by Oza and Russell.
@@ -45,7 +45,7 @@ public class Bagging implements Learner , Configurable {
 	
 	/** The base learner option. */
 	public ClassOption baseLearnerOption = new ClassOption("baseLearner", 'l',
-			"Classifier to train.", Learner.class, SingleClassifier.class.getName());
+			"Classifier to train.", Learner.class, VerticalHoeffdingTree.class.getName());
 
         
 	/** The ensemble size option. */
