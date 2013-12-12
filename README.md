@@ -92,14 +92,14 @@ As a user you can use it to develop new algorithms and test different Stream Pro
 
 ## Slides
 
-<script async class="speakerdeck-embed" data-id="fee15d509f0a0130a1252e07bed0c63d" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+[![SAMOA Slides](http://yahoo.github.io/samoa/samoa-slides.jpg)](https://speakerdeck.com/gdfm/samoa-a-platform-for-mining-big-data-streams)
 
-<p>G. De Francisci Morales <a href="http://melmeric.files.wordpress.com/2013/04/samoa-a-platform-for-mining-big-data-streams.pdf">SAMOA: A Platform for Mining Big Data Streams</a>
-Keynote Talk at <a href="http://www.ramss.ws/2013/program/">RAMSS ’13</a>: 2nd International Workshop on Real-Time Analysis and Mining of Social Streams WWW, Rio De Janeiro, 2013.</p>
+G. De Francisci Morales [SAMOA: A Platform for Mining Big Data Streams](http://melmeric.files.wordpress.com/2013/04/samoa-a-platform-for-mining-big-data-streams.pdf)
+Keynote Talk at [RAMSS ’13](http://www.ramss.ws/2013/program/): 2nd International Workshop on Real-Time Analysis and Mining of Social Streams WWW, Rio De Janeiro, 2013.
 
 ## SAMOA Developer's Guide
 
-<p><a href="http://yahoo.github.io/samoa/SAMOA-Developers-Guide-0-0-1.pdf"><img style="max-width:95%;border:3px solid black;" src="Manual.png" alt="SAMOA Developer's guide" height="250"> </a></p>
+<p><a href="http://yahoo.github.io/samoa/SAMOA-Developers-Guide-0-0-1.pdf"><img style="max-width:95%;border:3px solid black;" src="http://yahoo.github.io/samoa/Manual.png" alt="SAMOA Developer's guide" height="250"> </a></p>
 
 ## Contributors
 [List of contributors to the SAMOA project](http://yahoo.github.io/samoa/contributors.html)
