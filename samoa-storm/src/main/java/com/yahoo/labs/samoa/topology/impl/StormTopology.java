@@ -20,6 +20,8 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
+import backtype.storm.topology.TopologyBuilder;
+
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.Topology;
 
@@ -30,12 +32,12 @@ import com.yahoo.labs.samoa.topology.Topology;
  */
 public class StormTopology extends Topology {
 	
-	private backtype.storm.topology.TopologyBuilder builder;
+	private TopologyBuilder builder;
 	private final String topologyName;
 	
 	public StormTopology(String topologyName){
 		super();
-		this.builder = new backtype.storm.topology.TopologyBuilder();
+		this.builder = new TopologyBuilder();
 		this.topologyName = topologyName;
 	}
 	
@@ -46,7 +48,7 @@ public class StormTopology extends Topology {
 		super.addProcessingItem(procItem, parallelismHint);
 	}
 	
-	public backtype.storm.topology.TopologyBuilder getStormBuilder(){
+	public TopologyBuilder getStormBuilder(){
 		return builder;
 	}
 	
