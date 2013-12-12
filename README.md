@@ -37,7 +37,7 @@ cd samoa
 mvn -Pstorm package
 ```
 
-The deployable jar for SAMOA will be in `target/SAMOA-Storm-0.0.1.jar`.
+The deployable jar for SAMOA will be in `target/SAMOA-Storm-0.0.1-SNAPSHOT.jar`.
 
 ###S4 mode
 
@@ -62,7 +62,7 @@ cd samoa
 mvn package
 ```
 
-The deployable jar for SAMOA will be in `target/SAMOA-Local-0.0.1.jar`.
+The deployable jar for SAMOA will be in `target/SAMOA-Local-0.0.1-SNAPSHOT.jar`.
 
 ## Documentation
 
@@ -90,6 +90,19 @@ As a user you can use it to develop new algorithms and test different Stream Pro
     * [3.8 Processing Item](../../wiki/Processing Item)
 * [4 Developing New Tasks in SAMOA](../../wiki/Developing New Tasks in SAMOA)
 
+## Slides
+
+[![SAMOA Slides](http://yahoo.github.io/samoa/samoa-slides.jpg)](https://speakerdeck.com/gdfm/samoa-a-platform-for-mining-big-data-streams)
+
+G. De Francisci Morales [SAMOA: A Platform for Mining Big Data Streams](http://melmeric.files.wordpress.com/2013/04/samoa-a-platform-for-mining-big-data-streams.pdf)
+Keynote Talk at [RAMSS ’13](http://www.ramss.ws/2013/program/): 2nd International Workshop on Real-Time Analysis and Mining of Social Streams WWW, Rio De Janeiro, 2013.
+
+## SAMOA Developer's Guide
+
+<p><a href="http://yahoo.github.io/samoa/SAMOA-Developers-Guide-0-0-1.pdf"><img style="max-width:95%;border:3px solid black;" src="http://yahoo.github.io/samoa/Manual.png" alt="SAMOA Developer's guide" height="250"> </a></p>
+
+## Contributors
+[List of contributors to the SAMOA project](http://yahoo.github.io/samoa/contributors.html)
 
 ## License
 
