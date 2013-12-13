@@ -20,31 +20,38 @@ package com.yahoo.labs.samoa.core;
  * #L%
  */
 
+import java.io.Serializable;
+
+import com.github.javacliparser.Configurable;
+
 /**
  * The Interface Processor.
  */
-public interface Processor extends java.io.Serializable{
-	
-	/**
-	 * Process.
-	 *
-	 * @param event the event
-	 * @return true, if successful
-	 */
-	boolean process(ContentEvent event);
-	
-	/**
-	 * On create.
-	 *
-	 * @param id the id
-	 */
-	void onCreate(int id);
-	
-	/**
-	 * New processor.
-	 *
-	 * @param p the p
-	 * @return the processor
-	 */
-	Processor newProcessor(Processor p);
+public interface Processor extends Serializable, Configurable {
+
+    /**
+     * Entry point for the {@link Processor} code. This method is called once for every event received.
+     * 
+     * @param event
+     *            the event to be processed.
+     * @return true if successful, false otherwise.
+     */
+    boolean process(ContentEvent event);
+
+    /**
+     * Initializes the Processor. This method is called once after the topology is set up and before any call to the {@link process} method.
+     * 
+     * @param the
+     *            identifier of the processor.
+     */
+    void onCreate(int id);
+
+    /**
+     * New processor.
+     * 
+     * @param p
+     *            p
+     * @return the processor
+     */
+    Processor newProcessor(Processor p);
 }
