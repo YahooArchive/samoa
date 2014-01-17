@@ -27,9 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.tasks.Task;
+import com.yahoo.labs.samoa.topology.impl.ParallelComponentFactory;
+import com.yahoo.labs.samoa.topology.impl.ParallelEngine;
 import com.yahoo.labs.samoa.topology.impl.SimpleComponentFactory;
 import com.yahoo.labs.samoa.topology.impl.SimpleEngine;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.FlagOption;
 import com.github.javacliparser.IntOption;
@@ -57,6 +58,17 @@ public class LocalDoTask {
     public static void main(String[] args) {
 
         ArrayList<String> tmpArgs = new ArrayList<String>(Arrays.asList(args));
+        
+        // Check if number of threads is specified
+        int pos = tmpArgs.size() - 1;
+        int numThreads = 0;
+        try {
+        	numThreads = Integer.parseInt(tmpArgs.get(pos));
+        	tmpArgs.remove(pos);
+        }
+        catch (NumberFormatException e) {
+        	// do nothing
+        }
 
         args = tmpArgs.toArray(new String[0]);
 
@@ -90,8 +102,23 @@ public class LocalDoTask {
             System.out.println("Fail to initialize the task" + e);
             return;
         }
-        task.setFactory(new SimpleComponentFactory());
-        task.init();
-        SimpleEngine.submitTopology(task.getTopology());
+        
+        // depend on the user-specified numThreads
+        // we either call Simple-package or Parallel-package
+        // This is because I need to compare the 2 packages
+        if (numThreads > 1) {
+        	logger.info("Will be running with multithreading");
+        	task.setFactory(new ParallelComponentFactory());
+            task.init();
+            ParallelEngine.setNumberOfThreads(numThreads);
+            ParallelEngine.submitTopology(task.getTopology());
+        }
+        else {
+        	logger.info("Will be running with the Simple-package");
+        	task.setFactory(new SimpleComponentFactory());
+            task.init();
+            SimpleEngine.submitTopology(task.getTopology());
+        }
+        
     }
 }
