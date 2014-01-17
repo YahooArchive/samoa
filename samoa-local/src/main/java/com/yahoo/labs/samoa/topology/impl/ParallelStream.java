@@ -52,7 +52,7 @@ public class ParallelStream implements Stream {
         this.listProcessingItem = new LinkedList<IProcessingItem>();
         this.listTypeStream = new LinkedList<Integer>();
         this.listParallelism = new LinkedList<Integer>();
-        shuffleCounter = -1;
+        shuffleCounter = 0;
     }
     
     /*
@@ -91,9 +91,9 @@ public class ParallelStream implements Stream {
         	parallelism = this.listParallelism.get(i);
         	switch(type) {
         	case ParallelProcessingItem.SHUFFLE:
-        		shuffleCounter++;
         		index = shuffleCounter % parallelism;
         		pi.processEvent(event, index);
+        		shuffleCounter++;
         		break;
         	case ParallelProcessingItem.GROUP_BY_KEY:
         		HashCodeBuilder hb = new HashCodeBuilder();

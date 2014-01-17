@@ -43,14 +43,6 @@ public class ParallelWorkerProcessingItem extends ParallelProcessingItem {
 		/* Do nothing */
 	}
 	
-	public void setProcessor(Processor processor) {
-		this.processor = processor;
-	}
-	
-	public void copyProcessor(Processor processor) {
-		this.processor = processor.newProcessor(processor);
-	}
-	
 	public void processEvent(ContentEvent event) {
 		this.getProcessor().process(event);
 	}

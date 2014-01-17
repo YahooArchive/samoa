@@ -49,7 +49,6 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 	public ParallelMasterProcessingItem(Processor processor, int parallelismHint) {
 		super(processor);
 		this.parallelismHint = parallelismHint;
-		//this.shuffleCounter = 0;
 		this.threadPoolOffset = 0;
 	}
 	
@@ -81,10 +80,6 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 		if (index < this.arrayProcessingItem.length && index >= 0)
 			return this.arrayProcessingItem[index];
 		return null;
-	}
-	
-	public int getWorkerProcessingItemCount() {
-		return this.arrayProcessingItem.length;
 	}
 	
 	/*
