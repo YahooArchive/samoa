@@ -48,6 +48,8 @@ public class SimpleComponentFactory implements ComponentFactory {
 
     public Stream createStream(IProcessingItem sourcePi) {
         SimpleStream stream = new SimpleStream(sourcePi);
+        if (sourcePi instanceof SimpleEntranceProcessingItem)
+            ((SimpleEntranceProcessingItem) sourcePi).setOutputStream(stream); // FIXME should be done somewhere else
         return stream;
     }
 

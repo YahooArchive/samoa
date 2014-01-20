@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.yahoo.labs.samoa.topology.impl;
 
 /*
@@ -24,19 +20,26 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
+import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.TopologyStarter;
-import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 
 class SimpleEntranceProcessingItem implements EntranceProcessingItem {
 
     protected EntranceProcessor entranceProcessor;
     protected TopologyStarter topologyStarter;
+    protected SimpleStream outputStream;
 
     public TopologyStarter getTopologyStarter() {
         return topologyStarter;
+    }
+
+    public SimpleEntranceProcessingItem setOutputStream(SimpleStream stream) {
+        if (this.outputStream != null)
+            throw new IllegalStateException("Output stream for an EntrancePI can be initialized only once");
+        this.outputStream = stream;
+        return this;
     }
 
     public SimpleEntranceProcessingItem(EntranceProcessor processor, TopologyStarter starter) {
@@ -44,12 +47,14 @@ class SimpleEntranceProcessingItem implements EntranceProcessingItem {
         this.topologyStarter = starter;
     }
 
-    public void put(Instance inst) {
-        // do nothing, we not need this method
-    }
-
-    public Processor getProcessor() {
+    @Override
+    public EntranceProcessor getProcessor() {
         return this.entranceProcessor;
     }
 
+    @Override
+    public boolean inject(ContentEvent event) {
+        outputStream.put(event);
+        return false;
+    }
 }

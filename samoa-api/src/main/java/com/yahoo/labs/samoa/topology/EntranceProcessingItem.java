@@ -20,21 +20,25 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
-import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 
 /**
  * Entrance processing item interface.
- * 
- * @author severien
- *
  */
 public interface EntranceProcessingItem extends IProcessingItem {
-	
-	/**
-	 * 
-	 * 
-	 * @param inst
-	 */
-	void put(Instance inst);
 
+    @Override
+    /**
+     * Gets the processing item processor.
+     * 
+     * @return Processor
+     */
+    public EntranceProcessor getProcessor();
+    
+    /**
+     * Inject an event into the topology.
+     * @return
+     */
+    public boolean inject(ContentEvent event);
 }

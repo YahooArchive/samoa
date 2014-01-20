@@ -133,9 +133,8 @@ public class PrequentialEvaluation implements Task, Configurable {
 
         //instantiate PrequentialSourceProcessor and its output stream (sourcePiOutputStream)
         preqSource = new PrequentialSourceProcessor();
-        preqSource.setStreamSource(
-                (InstanceStream) this.streamTrainOption.getValue());
-
+        preqSource.setStreamSource((InstanceStream) this.streamTrainOption.getValue());
+        preqSource.setMaxNumInstances(instanceLimitOption.getValue());
         //TODO: refactor component creation, use Factory.createTopoStarter(this)
         //inside Factory, we will use the public options attribute
         //TODO: integrate time limit into TopologyStarter and PrequentialSourceProcessor
