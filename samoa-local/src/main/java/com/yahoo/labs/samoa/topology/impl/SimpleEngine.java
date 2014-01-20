@@ -24,21 +24,16 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
+import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.Topology;
 
-/**
- * 
- * @author abifet
- */
 public class SimpleEngine {
 
     public static void submitTopology(Topology topology) {
-        SimpleTopology st = (SimpleTopology) topology;
-        // System.out.println("Start topology"+ st.getEntranceProcessingItem().getProcessor().toString());
-        SimpleEntranceProcessingItem pi = st.getEntranceProcessingItem();
-        pi.getProcessor().onCreate(0);
-        // st.getTopologyStarter().start(); //pi.
-        st.run();
+        SimpleTopology simpleTopology = (SimpleTopology) topology;
+        EntranceProcessingItem epi = simpleTopology.getEntranceProcessingItem();
+        epi.getProcessor().onCreate(0);
+        simpleTopology.run();
         Runtime.getRuntime().exit(0); // terminates execution and all launched threads
     }
 

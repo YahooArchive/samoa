@@ -24,12 +24,16 @@ import java.io.Serializable;
 
 import com.github.javacliparser.Configurable;
 
+/**
+ * An EntranceProcessor is a specific kind of processor dedicated to providing events to inject in the topology. It can be connected to a single output stream.
+ */
 public interface EntranceProcessor extends Serializable, Configurable, Processor {
 
     /**
      * Initializes the Processor. This method is called once after the topology is set up and before any call to the {@link nextTuple} method.
      * 
-     * @param the identifier of the processor.
+     * @param the
+     *            identifier of the processor.
      */
     public void onCreate(int id);
 

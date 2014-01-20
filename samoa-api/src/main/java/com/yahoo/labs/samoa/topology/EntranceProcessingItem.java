@@ -20,7 +20,6 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 
 /**
@@ -32,13 +31,22 @@ public interface EntranceProcessingItem extends IProcessingItem {
     /**
      * Gets the processing item processor.
      * 
-     * @return Processor
+     * @return the embedded EntranceProcessor. 
      */
     public EntranceProcessor getProcessor();
-    
+
     /**
-     * Inject an event into the topology.
-     * @return
+     * Inject the next event into the topology.
+     * 
+     * @return true if there are more events to inject, false otherwise.
      */
-    public boolean inject(ContentEvent event);
+    public boolean injectNextEvent();
+
+    /**
+     * Set the single output stream for this EntranceProcessingItem.
+     * 
+     * @param stream the stream
+     * @return the current instance of the EntranceProcessingItem for fluent interface.
+     */
+    public EntranceProcessingItem setOutputStream(Stream stream);
 }

@@ -22,7 +22,6 @@ package com.yahoo.labs.samoa.topology.impl;
 
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.topology.ComponentFactory;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
@@ -33,28 +32,23 @@ import com.yahoo.labs.samoa.topology.Topology;
 public class SimpleComponentFactory implements ComponentFactory {
 
     public ProcessingItem createPi(Processor processor, int paralellism) {
-        SimpleProcessingItem pi = new SimpleProcessingItem(processor, paralellism);
-        return pi;
+        return new SimpleProcessingItem(processor, paralellism);
     }
 
     public ProcessingItem createPi(Processor processor) {
         return this.createPi(processor, 1);
     }
 
-    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor, TopologyStarter starter) {
-        SimpleEntranceProcessingItem pi = new SimpleEntranceProcessingItem(processor, starter);
-        return pi;
+    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
+        return new SimpleEntranceProcessingItem(processor);
     }
 
     public Stream createStream(IProcessingItem sourcePi) {
         SimpleStream stream = new SimpleStream(sourcePi);
-        if (sourcePi instanceof SimpleEntranceProcessingItem)
-            ((SimpleEntranceProcessingItem) sourcePi).setOutputStream(stream); // FIXME should be done somewhere else
         return stream;
     }
 
     public Topology createTopology(String topoName) {
         return new SimpleTopology(topoName);
     }
-
 }

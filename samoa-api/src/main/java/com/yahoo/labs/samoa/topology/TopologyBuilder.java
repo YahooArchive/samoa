@@ -19,55 +19,51 @@ package com.yahoo.labs.samoa.topology;
  * limitations under the License.
  * #L%
  */
-import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.TopologyStarter;
-import com.yahoo.labs.samoa.streams.PrequentialSourceProcessor;
-import com.yahoo.labs.samoa.streams.PrequentialSourceTopologyStarter;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yahoo.labs.samoa.core.EntranceProcessor;
+import com.yahoo.labs.samoa.core.Processor;
+
 /**
  * Builder class that creates topology components and assemble them together.
- *
- * @author severien
- *
+ * 
  */
 public class TopologyBuilder {
 
-    //TODO:
+    // TODO:
     // Possible options:
-    //1. we may convert this as interface and platform dependent builder will inherit this method
-    //2. refactor by combining TopologyBuilder, ComponentFactory and Topology
-    //-ve -> fat class where it has capabilities to instantiate specific component and connecting them
-    //+ve -> easy abstraction for SAMOA developer "you just implement your builder logic here!"
+    // 1. we may convert this as interface and platform dependent builder will inherit this method
+    // 2. refactor by combining TopologyBuilder, ComponentFactory and Topology
+    // -ve -> fat class where it has capabilities to instantiate specific component and connecting them
+    // +ve -> easy abstraction for SAMOA developer "you just implement your builder logic here!"
     private ComponentFactory componentFactory;
     private Topology topology;
     private Map<Processor, IProcessingItem> mapProcessorToProcessingItem;
 
-    //TODO: refactor, temporary constructor used by Storm code
+    // TODO: refactor, temporary constructor used by Storm code
     public TopologyBuilder() {
-        //TODO: initialize _componentFactory using dynamic binding
-        //for now, use StormComponentFactory
-        //should the factory be Singleton (?)
-        //ans: at the moment, no, i.e. each builder will has its associated factory!
-        //and the factory will be instantiated using dynamic binding
-        //this.componentFactory = new StormComponentFactory();
+        // TODO: initialize _componentFactory using dynamic binding
+        // for now, use StormComponentFactory
+        // should the factory be Singleton (?)
+        // ans: at the moment, no, i.e. each builder will has its associated factory!
+        // and the factory will be instantiated using dynamic binding
+        // this.componentFactory = new StormComponentFactory();
     }
 
-    //TODO: refactor, temporary constructor used by S4 code
+    // TODO: refactor, temporary constructor used by S4 code
     public TopologyBuilder(ComponentFactory theFactory) {
         this.componentFactory = theFactory;
     }
 
     /**
      * Initiates topology with a specific name.
-     *
+     * 
      * @param topologyName
      */
     public void initTopology(String topologyName) {
         if (this.topology != null) {
-            //TODO: possible refactor this code later
+            // TODO: possible refactor this code later
             System.out.println("Topology has been initialized before!");
             return;
         }
@@ -75,9 +71,8 @@ public class TopologyBuilder {
     }
 
     /**
-     * Creates a processing item with a specific processor and its paralellism
-     * level.
-     *
+     * Creates a processing item with a specific processor and its paralellism level.
+     * 
      * @param processor
      * @param paralellism
      * @return ProcessingItem
@@ -94,37 +89,37 @@ public class TopologyBuilder {
 
     /**
      * Creates a platform specific entrance processing item.
-     *
+     * 
      * @param processor
      * @param starter
      * @return
      */
-    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor, TopologyStarter starter) {
+    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
         if (this.mapProcessorToProcessingItem == null) {
             this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         }
-        EntranceProcessingItem epi = this.componentFactory.createEntrancePi(processor, starter);
-        this.topology.addEntrancePi(epi, starter);
+        EntranceProcessingItem epi = this.componentFactory.createEntrancePi(processor);
+        this.topology.addEntrancePi(epi);
         this.mapProcessorToProcessingItem.put(processor, epi);
         return epi;
     }
 
     /**
      * Creates a platform specific stream.
-     *
-     * @param sourcePi source processing item.
+     * 
+     * @param sourcePi
+     *            source processing item.
      * @return
      */
     public Stream createStream(IProcessingItem sourcePi) {
         Stream stream = this.componentFactory.createStream(sourcePi);
-
         this.topology.addStream(stream);
         return stream;
     }
 
     /**
      * Returns the platform specific topology.
-     *
+     * 
      * @return
      */
     public Topology build() {
@@ -145,7 +140,7 @@ public class TopologyBuilder {
     }
 
     public ProcessingItem connectInputShuffleStream(Stream inputStream, Processor processor) {
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         ProcessingItem ret = null;
         if (pi != null) {
             ret = pi.connectInputShuffleStream(inputStream);
@@ -154,7 +149,7 @@ public class TopologyBuilder {
     }
 
     public ProcessingItem connectInputKeyStream(Stream inputStream, Processor processor) {
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         ProcessingItem ret = null;
         if (pi != null) {
             ret = pi.connectInputKeyStream(inputStream);
@@ -163,7 +158,7 @@ public class TopologyBuilder {
     }
 
     public ProcessingItem connectInputAllStream(Stream inputStream, Processor processor) {
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         ProcessingItem ret = null;
         if (pi != null) {
             ret = pi.connectInputAllStream(inputStream);
@@ -173,53 +168,52 @@ public class TopologyBuilder {
 
     public Stream createInputShuffleStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
-        ProcessingItem ret = null;
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         if (pi != null) {
-            ret = pi.connectInputShuffleStream(inputStream);
+            pi.connectInputShuffleStream(inputStream);
         }
         return inputStream;
     }
 
     public Stream createInputKeyStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
-        ProcessingItem ret = null;
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         if (pi != null) {
-            ret = pi.connectInputKeyStream(inputStream);
+            pi.connectInputKeyStream(inputStream);
         }
-       return inputStream;
+        return inputStream;
     }
 
     public Stream createInputAllStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         if (pi != null) {
             pi.connectInputAllStream(inputStream);
         }
-       return inputStream;
+        return inputStream;
     }
 
     public Stream createStream(Processor processor) {
-        IProcessingItem pi = this.mapProcessorToProcessingItem.get(processor);
+        IProcessingItem pi = mapProcessorToProcessingItem.get(processor);
         Stream ret = null;
-        if (pi != null) {
+        if (pi != null)
             ret = this.createStream(pi);
-        }
+        if (pi instanceof EntranceProcessingItem)
+            ((EntranceProcessingItem) pi).setOutputStream(ret);
         return ret;
     }
 
-    public EntranceProcessingItem addEntranceProcessor(EntranceProcessor entranceProcessor, TopologyStarter starter) {
-        if (this.mapProcessorToProcessingItem == null) {
-            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
+    public EntranceProcessingItem addEntranceProcessor(EntranceProcessor entranceProcessor) {
+        if (mapProcessorToProcessingItem == null) {
+            mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         }
-        EntranceProcessingItem pi = createEntrancePi(entranceProcessor, starter);
-        this.mapProcessorToProcessingItem.put(entranceProcessor, pi);
+        EntranceProcessingItem pi = createEntrancePi(entranceProcessor);
+        mapProcessorToProcessingItem.put(entranceProcessor, pi);
         return pi;
     }
-    
-    public ProcessingItem getProcessingItem(Processor processor){
-        ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
+
+    public ProcessingItem getProcessingItem(Processor processor) {
+        ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         return pi;
     }
 }

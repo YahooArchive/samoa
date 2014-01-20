@@ -22,29 +22,16 @@ package com.yahoo.labs.samoa.topology.impl;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
+import com.yahoo.labs.samoa.topology.Stream;
 
 class SimpleEntranceProcessingItem implements EntranceProcessingItem {
 
     protected EntranceProcessor entranceProcessor;
-    protected TopologyStarter topologyStarter;
-    protected SimpleStream outputStream;
+    protected Stream outputStream;
 
-    public TopologyStarter getTopologyStarter() {
-        return topologyStarter;
-    }
-
-    public SimpleEntranceProcessingItem setOutputStream(SimpleStream stream) {
-        if (this.outputStream != null)
-            throw new IllegalStateException("Output stream for an EntrancePI can be initialized only once");
-        this.outputStream = stream;
-        return this;
-    }
-
-    public SimpleEntranceProcessingItem(EntranceProcessor processor, TopologyStarter starter) {
+    public SimpleEntranceProcessingItem(EntranceProcessor processor) {
         this.entranceProcessor = processor;
-        this.topologyStarter = starter;
     }
 
     @Override
@@ -53,8 +40,17 @@ class SimpleEntranceProcessingItem implements EntranceProcessingItem {
     }
 
     @Override
-    public boolean inject(ContentEvent event) {
-        outputStream.put(event);
-        return false;
+    public boolean injectNextEvent() {
+        ContentEvent nextEvent = this.entranceProcessor.nextEvent();
+        outputStream.put(nextEvent);
+        return !nextEvent.isLastEvent();
+    }
+
+    @Override
+    public EntranceProcessingItem setOutputStream(Stream stream) {
+        if (this.outputStream != null)
+            throw new IllegalStateException("Output stream for an EntrancePI sohuld be initialized only once");
+        this.outputStream = stream;
+        return this;
     }
 }

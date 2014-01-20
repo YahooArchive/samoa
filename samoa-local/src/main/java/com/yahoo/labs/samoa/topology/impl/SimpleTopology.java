@@ -24,51 +24,31 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.Topology;
 
-/**
- * 
- * @author abifet
- */
 public class SimpleTopology extends Topology {
 
     public String topologyName;
-
-    private SimpleEntranceProcessingItem entrancePi;
-    private TopologyStarter starter;
-
-    public TopologyStarter getTopologyStarter() {
-        return starter;
-    }
+    private EntranceProcessingItem entrancePi; // TODO allow multiple EntrancePIs
 
     public void run() {
-        ContentEvent event;
-        do {
-            event = this.entrancePi.getProcessor().nextEvent();
-            this.entrancePi.inject(event); // FIXME refactor everything inside EntrancePI
-        } while (!event.isLastEvent());
+        while (this.entrancePi.injectNextEvent())
+            // inject events from the EntrancePI
+            ;
     }
 
     SimpleTopology(String topoName) {
         this.topologyName = topoName;
     }
 
-    public SimpleEntranceProcessingItem getEntranceProcessingItem() {
-        /*
-         * SimpleEntranceProcessingItem ret = null; for (IProcessingItem pi : this.processingItems) { if (pi instanceof SimpleEntranceProcessingItem) { ret =
-         * (SimpleEntranceProcessingItem) pi; break; } } return ret;
-         */
+    public EntranceProcessingItem getEntranceProcessingItem() {
         return entrancePi;
     }
 
     @Override
-    public void addEntrancePi(EntranceProcessingItem epi, TopologyStarter starter) {
-        this.starter = starter;
-        this.entrancePi = (SimpleEntranceProcessingItem) epi;
+    public void addEntrancePi(EntranceProcessingItem epi) {
+        this.entrancePi = epi;
         this.addProcessingItem(epi);
     }
-
 }

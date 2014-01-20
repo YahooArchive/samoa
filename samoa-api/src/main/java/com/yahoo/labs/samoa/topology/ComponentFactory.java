@@ -22,68 +22,57 @@ package com.yahoo.labs.samoa.topology;
 
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.TopologyStarter;
 
 /**
  * ComponentFactory interface. Provides platform specific components.
- * 
- * @author severien
- * 
  */
 public interface ComponentFactory {
 
-	/**
-	 * Creates a platform specific processing item with the specified processor.
-	 * 
-	 * @param processor
-	 *            contains the logic for this processing item.
-	 * @return ProcessingItem
-	 */
-	public ProcessingItem createPi(Processor processor);
+    /**
+     * Creates a platform specific processing item with the specified processor.
+     * 
+     * @param processor
+     *            contains the logic for this processing item.
+     * @return ProcessingItem
+     */
+    public ProcessingItem createPi(Processor processor);
 
-	/**
-	 * Creates a platform specific processing item with the specified processor.
-	 * Additionally sets the parallelism level.
-	 * 
-	 * @param processor
-	 *            contains the logic for this processing item.
-	 * @param paralellism
-	 *            defines the amount of instances of this processing item will
-	 *            be created.
-	 * @return ProcessingItem
-	 */
-	public ProcessingItem createPi(Processor processor, int paralellism);
+    /**
+     * Creates a platform specific processing item with the specified processor. Additionally sets the parallelism level.
+     * 
+     * @param processor
+     *            contains the logic for this processing item.
+     * @param paralellism
+     *            defines the amount of instances of this processing item will be created.
+     * @return ProcessingItem
+     */
+    public ProcessingItem createPi(Processor processor, int paralellism);
 
-	/**
-	 * Creates a platform specific processing item with the specified processor
-	 * that is the entrance point in the topology. This processing item can
-	 * either generate a stream of data or connect to an external stream of
-	 * data.
-	 * 
-	 * @param entranceProcessor
-	 *            contains the logic for this processing item.
-	 * @param starter
-	 *            TopologyStarter
-	 * @return EntranceProcessingItem
-	 */
-	public EntranceProcessingItem createEntrancePi(EntranceProcessor entranceProcessor,
-			TopologyStarter starter);
+    /**
+     * Creates a platform specific processing item with the specified processor that is the entrance point in the topology. This processing item can either
+     * generate a stream of data or connect to an external stream of data.
+     * 
+     * @param entranceProcessor
+     *            contains the logic for this processing item.
+     * @return EntranceProcessingItem
+     */
+    public EntranceProcessingItem createEntrancePi(EntranceProcessor entranceProcessor);
 
-	/**
-	 * Creates a platform specific stream.
-	 * 
-	 * @param sourcePi
-	 *            source processing item which will provide the events for this
-	 *            stream.
-	 * @return Stream
-	 */
-	public Stream createStream(IProcessingItem sourcePi);
+    /**
+     * Creates a platform specific stream.
+     * 
+     * @param sourcePi
+     *            source processing item which will provide the events for this stream.
+     * @return Stream
+     */
+    public Stream createStream(IProcessingItem sourcePi);
 
-	/**
-	 * Creates a platform specific topology.
-	 * 
-	 * @param topoName Topology name.
-	 * @return Topology
-	 */
-	public Topology createTopology(String topoName);
+    /**
+     * Creates a platform specific topology.
+     * 
+     * @param topoName
+     *            Topology name.
+     * @return Topology
+     */
+    public Topology createTopology(String topoName);
 }
