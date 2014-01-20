@@ -41,8 +41,7 @@ public interface Processor extends Serializable, Configurable {
     /**
      * Initializes the Processor. This method is called once after the topology is set up and before any call to the {@link process} method.
      * 
-     * @param the
-     *            identifier of the processor.
+     * @param the identifier of the processor.
      */
     void onCreate(int id);
 
@@ -50,7 +49,7 @@ public interface Processor extends Serializable, Configurable {
      * New processor.
      * 
      * @param p
-     *            p
+     * 
      * @return the processor
      */
     Processor newProcessor(Processor p);

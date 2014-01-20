@@ -22,6 +22,7 @@ package com.yahoo.labs.samoa.streams;
 
 import com.yahoo.labs.samoa.evaluation.ClusteringEvaluationContentEvent;
 import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Arinto Murdopo
  *
  */
-public final class ClusteringSourceProcessor implements Processor {
+public final class ClusteringSourceProcessor implements EntranceProcessor {
 
 	private static final long serialVersionUID = 4169053337917578558L;
 
@@ -157,5 +158,11 @@ public final class ClusteringSourceProcessor implements Processor {
             evalEvent = new ClusteringEvaluationContentEvent(gtClustering, instance, false);
             evaluationStream.put(evalEvent);
        }
+    }
+
+    @Override
+    public ContentEvent nextEvent() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

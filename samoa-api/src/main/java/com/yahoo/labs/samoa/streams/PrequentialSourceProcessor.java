@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instance;
@@ -39,7 +40,7 @@ import com.yahoo.labs.samoa.topology.Stream;
  * @author Arinto Murdopo
  *
  */
-public final class PrequentialSourceProcessor implements Processor {
+public final class PrequentialSourceProcessor implements EntranceProcessor {
 
 	private static final long serialVersionUID = 4169053337917578558L;
 
@@ -57,6 +58,12 @@ public final class PrequentialSourceProcessor implements Processor {
 		//of source processor does not need this method
 		return false;
 	}
+	
+    @Override
+    public ContentEvent nextEvent() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 	@Override
 	public void onCreate(int id) {

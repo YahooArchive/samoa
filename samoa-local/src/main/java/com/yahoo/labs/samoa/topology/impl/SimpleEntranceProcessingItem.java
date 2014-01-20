@@ -24,26 +24,23 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 
-/**
- *
- * @author abifet
- */
-class SimpleEntranceProcessingItem implements EntranceProcessingItem{
+class SimpleEntranceProcessingItem implements EntranceProcessingItem {
 
-    protected Processor processor;
+    protected EntranceProcessor entranceProcessor;
     protected TopologyStarter topologyStarter;
 
     public TopologyStarter getTopologyStarter() {
         return topologyStarter;
     }
-    
-    public SimpleEntranceProcessingItem(Processor processor, TopologyStarter starter) {
-        this.processor = processor;
+
+    public SimpleEntranceProcessingItem(EntranceProcessor processor, TopologyStarter starter) {
+        this.entranceProcessor = processor;
         this.topologyStarter = starter;
     }
 
@@ -52,7 +49,7 @@ class SimpleEntranceProcessingItem implements EntranceProcessingItem{
     }
 
     public Processor getProcessor() {
-        return this.processor;
+        return this.entranceProcessor;
     }
-    
+
 }

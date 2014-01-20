@@ -19,6 +19,7 @@ package com.yahoo.labs.samoa.topology;
  * limitations under the License.
  * #L%
  */
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.streams.PrequentialSourceProcessor;
@@ -98,7 +99,7 @@ public class TopologyBuilder {
      * @param starter
      * @return
      */
-    public EntranceProcessingItem createEntrancePi(Processor processor, TopologyStarter starter) {
+    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor, TopologyStarter starter) {
         if (this.mapProcessorToProcessingItem == null) {
             this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         }
@@ -193,9 +194,8 @@ public class TopologyBuilder {
     public Stream createInputAllStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
         ProcessingItem pi = (ProcessingItem) this.mapProcessorToProcessingItem.get(processor);
-        ProcessingItem ret = null;
         if (pi != null) {
-            ret = pi.connectInputAllStream(inputStream);
+            pi.connectInputAllStream(inputStream);
         }
        return inputStream;
     }
@@ -209,12 +209,12 @@ public class TopologyBuilder {
         return ret;
     }
 
-    public EntranceProcessingItem addEntranceProcessor(Processor processor, TopologyStarter starter) {
+    public EntranceProcessingItem addEntranceProcessor(EntranceProcessor entranceProcessor, TopologyStarter starter) {
         if (this.mapProcessorToProcessingItem == null) {
             this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         }
-        EntranceProcessingItem pi = createEntrancePi(processor, starter);
-        this.mapProcessorToProcessingItem.put(processor, pi);
+        EntranceProcessingItem pi = createEntrancePi(entranceProcessor, starter);
+        this.mapProcessorToProcessingItem.put(entranceProcessor, pi);
         return pi;
     }
     

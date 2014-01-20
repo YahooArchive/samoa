@@ -24,10 +24,20 @@ import java.io.Serializable;
 
 import com.github.javacliparser.Configurable;
 
-public interface EntranceProcessor extends Serializable, Configurable{
-	
-	public void onCreate(int id);
-	
-	public ContentEvent nextTuple();
+public interface EntranceProcessor extends Serializable, Configurable, Processor {
+
+    /**
+     * Initializes the Processor. This method is called once after the topology is set up and before any call to the {@link nextTuple} method.
+     * 
+     * @param the identifier of the processor.
+     */
+    public void onCreate(int id);
+
+    /**
+     * Provides the next tuple to be processed by the topology. This method is the entry point for external events into the topology.
+     * 
+     * @return the next event to be processed.
+     */
+    public ContentEvent nextEvent();
 
 }

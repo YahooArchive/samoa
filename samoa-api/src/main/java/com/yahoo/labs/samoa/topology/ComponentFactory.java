@@ -20,6 +20,7 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.TopologyStarter;
 
@@ -42,7 +43,7 @@ public interface ComponentFactory {
 
 	/**
 	 * Creates a platform specific processing item with the specified processor.
-	 * Additionally sets the paralellism level.
+	 * Additionally sets the parallelism level.
 	 * 
 	 * @param processor
 	 *            contains the logic for this processing item.
@@ -55,17 +56,17 @@ public interface ComponentFactory {
 
 	/**
 	 * Creates a platform specific processing item with the specified processor
-	 * that is the entrace point in the topology. This processing item can
+	 * that is the entrance point in the topology. This processing item can
 	 * either generate a stream of data or connect to an external stream of
 	 * data.
 	 * 
-	 * @param processor
+	 * @param entranceProcessor
 	 *            contains the logic for this processing item.
 	 * @param starter
 	 *            TopologyStarter
 	 * @return EntranceProcessingItem
 	 */
-	public EntranceProcessingItem createEntrancePi(Processor processor,
+	public EntranceProcessingItem createEntrancePi(EntranceProcessor entranceProcessor,
 			TopologyStarter starter);
 
 	/**
