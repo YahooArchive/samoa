@@ -39,7 +39,6 @@ class SimpleEntranceProcessingItem implements EntranceProcessingItem {
         return this.entranceProcessor;
     }
 
-    @Override
     public boolean injectNextEvent() {
         ContentEvent nextEvent = this.entranceProcessor.nextEvent();
         outputStream.put(nextEvent);

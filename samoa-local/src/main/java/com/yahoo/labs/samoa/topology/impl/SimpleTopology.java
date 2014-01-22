@@ -30,7 +30,7 @@ import com.yahoo.labs.samoa.topology.Topology;
 public class SimpleTopology extends Topology {
 
     public String topologyName;
-    private EntranceProcessingItem entrancePi; // TODO allow multiple EntrancePIs
+    private SimpleEntranceProcessingItem entrancePi; // TODO allow multiple EntrancePIs
 
     public void run() {
         while (this.entrancePi.injectNextEvent())
@@ -48,7 +48,7 @@ public class SimpleTopology extends Topology {
 
     @Override
     public void addEntrancePi(EntranceProcessingItem epi) {
-        this.entrancePi = epi;
+        this.entrancePi = (SimpleEntranceProcessingItem) epi;
         this.addProcessingItem(epi);
     }
 }

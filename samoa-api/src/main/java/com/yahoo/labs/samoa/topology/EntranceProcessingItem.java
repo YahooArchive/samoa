@@ -36,16 +36,10 @@ public interface EntranceProcessingItem extends IProcessingItem {
     public EntranceProcessor getProcessor();
 
     /**
-     * Inject the next event into the topology.
-     * 
-     * @return true if there are more events to inject, false otherwise.
-     */
-    public boolean injectNextEvent();
-
-    /**
      * Set the single output stream for this EntranceProcessingItem.
      * 
-     * @param stream the stream
+     * @param stream
+     *            the stream
      * @return the current instance of the EntranceProcessingItem for fluent interface.
      */
     public EntranceProcessingItem setOutputStream(Stream stream);
