@@ -61,9 +61,14 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
     }
 
     @Override
+    public boolean hasNext() {
+        return streamSource.hasMoreInstances() && numInstanceSent < numberInstances;
+    }
+
+    @Override
     public ContentEvent nextEvent() {
         InstanceContentEvent contentEvent = null;
-        if (streamSource.hasMoreInstances() && numInstanceSent < numberInstances) {
+        if (hasNext()) {
             numInstanceSent++;
             contentEvent = new InstanceContentEvent(numInstanceSent, nextInstance(), true, true);
         } else {

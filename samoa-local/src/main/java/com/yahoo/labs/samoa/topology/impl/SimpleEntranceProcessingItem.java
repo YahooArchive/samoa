@@ -40,9 +40,13 @@ class SimpleEntranceProcessingItem implements EntranceProcessingItem {
     }
 
     public boolean injectNextEvent() {
-        ContentEvent nextEvent = this.entranceProcessor.nextEvent();
-        outputStream.put(nextEvent);
-        return !nextEvent.isLastEvent();
+        if (entranceProcessor.hasNext()) {
+            ContentEvent nextEvent = this.entranceProcessor.nextEvent();
+            outputStream.put(nextEvent);
+            return entranceProcessor.hasNext();
+        } else
+            return false;
+        // return !nextEvent.isLastEvent();
     }
 
     @Override

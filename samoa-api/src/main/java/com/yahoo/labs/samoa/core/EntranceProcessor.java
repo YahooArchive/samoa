@@ -36,6 +36,13 @@ public interface EntranceProcessor extends Serializable, Configurable, Processor
      *            identifier of the processor.
      */
     public void onCreate(int id);
+    
+    /**
+     * Checks whether a new event is ready to be processed.
+     * 
+     * @return true if the EntranceProcessor is ready to provide the next event, false otherwise.
+     */
+    public boolean hasNext();
 
     /**
      * Provides the next tuple to be processed by the topology. This method is the entry point for external events into the topology.

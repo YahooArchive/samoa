@@ -29,6 +29,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
+import backtype.storm.utils.Utils;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
@@ -144,8 +145,11 @@ class StormEntranceProcessingItem implements StormTopologyNode, EntranceProcessi
 
         @Override
         public void nextTuple() {
-            Values value = newValues(entranceProcessor.nextEvent());
-            collector.emit(outputStream.getOutputId(), value);
+            if (entranceProcessor.hasNext()) {
+                Values value = newValues(entranceProcessor.nextEvent());
+                collector.emit(outputStream.getOutputId(), value);
+            } else
+                Utils.sleep(1000);
             // StormTupleInfo tupleInfo = tupleInfoQueue.poll(50, TimeUnit.MILLISECONDS);
             // if (tupleInfo != null) {
             // Values value = newValues(tupleInfo.getContentEvent());
