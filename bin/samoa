@@ -199,6 +199,19 @@ elif [ $PLATFORM = 'STORM' ]; then
 elif [ $PLATFORM = 'LOCAL' ]; then
 
 	echo "Deploying to $PLATFORM"
+	
+	SAMOA_LOCAL_PROPERTIES=samoa-local.properties
+	THREADS_OPTION='samoa.local.threads'
+
+	VALUE=""
+	getvalue()
+        {
+	    VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_LOCAL_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+        }
+
+	getvalue "$THREADS_OPTION"
+	NUM_THREADS="$VALUE"
+	
 	COMPLETE_ARG=""
 	COUNTER=0
 	for var in "$@"
@@ -208,8 +221,8 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	        COMPLETE_ARG="$COMPLETE_ARG $var"
 	    fi
 	done
-
-	java -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
+	
+	java -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_THREADS
 else
 	echo "Specify a valid platform."
 	echo "Usage: samoa <platform> <jar> <task & options>"
