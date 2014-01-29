@@ -64,6 +64,16 @@ final class ActiveLearningNode extends LearningNode {
 		return id;
 	}
 
+        protected AttributeBatchContentEvent[] attributeBatchContentEvent;
+
+    public AttributeBatchContentEvent[] getAttributeBatchContentEvent() {
+        return this.attributeBatchContentEvent;
+    }
+
+    public void setAttributeBatchContentEvent(AttributeBatchContentEvent[] attributeBatchContentEvent) {
+        this.attributeBatchContentEvent = attributeBatchContentEvent;
+    }
+        
 	@Override
 	void learnFromInstance(Instance inst, ModelAggregatorProcessor proc) {
 		//TODO: what statistics should we keep for unused instance?
@@ -93,7 +103,20 @@ final class ActiveLearningNode extends LearningNode {
 					.weight(inst.weight())
 					.isNominal(inst.attribute(instAttIndex).isNominal())
 					.build();
-			proc.sendToAttributeStream(ace);
+                        if (this.attributeBatchContentEvent == null){
+                            this.attributeBatchContentEvent = new AttributeBatchContentEvent[inst.numAttributes() - 1];
+		}
+                        if (this.attributeBatchContentEvent[i] == null){
+                            this.attributeBatchContentEvent[i] = new AttributeBatchContentEvent.Builder(
+					this.id, i, key)
+					//.attrValue(inst.value(instAttIndex))
+					//.classValue((int) inst.classValue())
+					//.weight(inst.weight()]
+					.isNominal(inst.attribute(instAttIndex).isNominal())
+					.build();
+	}
+                        this.attributeBatchContentEvent[i].add(ace);
+			//proc.sendToAttributeStream(ace);
 		}
 	}
 	
