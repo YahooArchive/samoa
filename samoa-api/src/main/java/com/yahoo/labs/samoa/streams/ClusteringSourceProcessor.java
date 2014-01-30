@@ -54,7 +54,7 @@ public final class ClusteringSourceProcessor implements Processor {
 	private StreamSource streamSource;
 	private Instance firstInstance;
 	private boolean isInited = false;
-        private Random random; 
+	private Random random = new Random(); 
 	private int id;
 	private double samplingThreshold;
         
@@ -68,7 +68,6 @@ public final class ClusteringSourceProcessor implements Processor {
 	@Override
 	public void onCreate(int id) {
 		this.id = id;
-                this.random = new Random();
 		logger.debug("Creating ClusteringSourceProcessor with id {}", this.id);
 	}
 
