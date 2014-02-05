@@ -33,6 +33,8 @@ import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
+import static com.yahoo.labs.samoa.moa.core.Utils.maxIndex;
 import com.yahoo.labs.samoa.topology.Stream;
 //import weka.core.Instance;
 
@@ -107,15 +109,29 @@ final public class LocalClassifierProcessor implements Processor {
 	 * @param event the event
 	 */
 	private void updateStats(InstanceContentEvent event) {
-		model.trainOnInstance(event.getInstance());
-		instancesCount++;
+                Instance inst = event.getInstance();
+		this.model.trainOnInstance(inst);
+		this.instancesCount++;
 		if (instancesCount % 10000 == 0) {
 			logger.info("Trained model using {} events with classifier id {}",
 					instancesCount, this.modelId); //getId());
 		}
+                if (this.changeDetector != null) {
+                    boolean correctlyClassifies = this.correctlyClassifies(inst);
+                    double oldEstimation = this.changeDetector.getEstimation();
+                    this.changeDetector.input(correctlyClassifies ? 0 : 1);
+                    if (this.changeDetector.getEstimation() > oldEstimation) {
+                        //Start a new classifier
+                        this.model.resetLearning();
+                        this.changeDetector.resetLearning();
+                    }
+                }
 	}
 
-	
+	private boolean correctlyClassifies(Instance inst) {
+            return maxIndex(model.getVotesForInstance(inst)) == (int) inst.classValue();
+        }
+        
 	/** The test. */
 	protected int test; //to delete
 	
@@ -186,5 +202,16 @@ final public class LocalClassifierProcessor implements Processor {
 		newProcessor.setOutputStream(originProcessor.getOutputStream());
 		return newProcessor;
 	}
+        
+        protected ChangeDetector changeDetector;    
+        
+        public ChangeDetector getChangeDetector() {
+            return this.changeDetector;
+        }
+
+        public void setChangeDetector(ChangeDetector cd) {
+            this.changeDetector = cd;
+        }
+        
 
 }
