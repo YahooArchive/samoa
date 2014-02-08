@@ -32,9 +32,6 @@ import com.yahoo.labs.samoa.topology.Topology;
 /**
  * ComponentFactory for running with multithreading in local mode
  * Written based on SimpleComponentFactory
- * TODO: consider refactoring Simple/Parallel Engine, Topology, 
- * ComponentFactory and EntranceProcessingItem since they
- * are very similar to each other.
  * @author Anh Thu Vu
  */
 public class ParallelComponentFactory implements ComponentFactory {

@@ -28,9 +28,6 @@ import com.yahoo.labs.samoa.topology.Topology;
 /**
  * Multithreaded Topology in local mode
  * Written based on SimpleTopology
- * TODO: consider refactoring Simple/Parallel Engine, Topology, 
- * ComponentFactory and EntranceProcessingItem since they
- * are very similar to each other.
  * @author Anh Thu Vu
  */
 public class ParallelTopology extends Topology {
@@ -71,5 +68,13 @@ public class ParallelTopology extends Topology {
     			mpi.createWorkerProcessingItem();
     		}
     	}
+    }
+    
+    public void setupPriorityLevel() {
+    	this.entrancePi.setupPriorityLevel();
+    }
+    
+    public void setupEntranceProcessingItem() {
+    	this.entrancePi.updateEntranceProcessingItem();
     }
 }

@@ -202,6 +202,7 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	
 	SAMOA_LOCAL_PROPERTIES=samoa-local.properties
 	THREADS_OPTION='samoa.local.threads'
+	QUEUE_LIMIT_OPTION='samoa.local.queuelimit'
 
 	VALUE=""
 	getvalue()
@@ -211,6 +212,9 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 
 	getvalue "$THREADS_OPTION"
 	NUM_THREADS="$VALUE"
+
+	getvalue "$QUEUE_LIMIT_OPTION"
+	QUEUE_LIMIT="$VALUE"
 	
 	COMPLETE_ARG=""
 	COUNTER=0
@@ -222,7 +226,7 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	    fi
 	done
 	
-	java -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_THREADS
+	java -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_THREADS $QUEUE_LIMIT
 else
 	echo "Specify a valid platform."
 	echo "Usage: samoa <platform> <jar> <task & options>"

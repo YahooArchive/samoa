@@ -20,6 +20,8 @@ package com.yahoo.labs.samoa.streams;
  * #L%
  */
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 
@@ -50,6 +52,8 @@ public final class PrequentialSourceProcessor implements Processor {
 	private Instance firstInstance;
 	private boolean isInited = false;
 	private int id;
+	private boolean isPaused = false;
+	private ReentrantLock lock = new ReentrantLock();
 	
 	@Override
 	public boolean process(ContentEvent event) {
@@ -84,6 +88,19 @@ public final class PrequentialSourceProcessor implements Processor {
 		initStreamSource(sourceStream);
                 
 		while(streamSource.hasMoreInstances() && numInstanceSent < numberInstances){
+			
+			try {
+				while (isPaused) {
+					lock.lock();
+					isPaused = false;
+					lock.unlock();
+					logger.info("Queue is full. Will sleep now.");
+					Thread.sleep(500);
+				}
+			} catch (InterruptedException e) {
+				logger.error("Interrupted while pausing.");
+			}
+			
 			numInstanceSent++;
 			InstanceContentEvent contentEvent = 
 					new InstanceContentEvent(numInstanceSent, nextInstance(), true, true);
@@ -133,5 +150,14 @@ public final class PrequentialSourceProcessor implements Processor {
         
         this.streamSource = new StreamSource(stream);
         firstInstance = streamSource.nextInstance().getData();
+    }
+    
+    public void notifyQueueIsFull() {
+    	lock.lock();
+    	try {
+    		isPaused = true;
+    	} finally {
+    		lock.unlock();
+    	}
     }
 }

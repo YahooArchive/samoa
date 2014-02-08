@@ -42,7 +42,7 @@ public class ParallelProcessingTaskTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		task = new ParallelProcessingTask(pi, event);
+		task = new ParallelProcessingTask(pi, event, 0, 0);
 	}
 
 	@Test

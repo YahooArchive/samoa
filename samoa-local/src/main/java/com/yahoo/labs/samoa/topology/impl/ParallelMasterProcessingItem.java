@@ -20,11 +20,15 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.utils.PriorityThreadPoolExecutor;
 
 /**
  * Main ProcessingItem in local mode with multithreading
@@ -38,6 +42,8 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 	private final int parallelismHint;
 	private IProcessingItem[] arrayProcessingItem;
 	private int threadPoolOffset;
+	private List<Stream> outputStreams;
+	private ParallelEntranceProcessingItem epi = null;
 	
 	/*
 	 * Constructor & Setup
@@ -48,6 +54,7 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 	
 	public ParallelMasterProcessingItem(Processor processor, int parallelismHint) {
 		super(processor);
+		this.outputStreams = new ArrayList<Stream>();
 		this.parallelismHint = parallelismHint;
 		this.threadPoolOffset = 0;
 	}
@@ -61,7 +68,8 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 		if (this.arrayProcessingItem == null && this.getParalellism() > 0) {
 			this.arrayProcessingItem = new IProcessingItem[this.getParalellism()];
 			for (int i=0; i<this.getParalellism(); i++) {
-				this.arrayProcessingItem[i] = new ParallelWorkerProcessingItem(this.getProcessor().newProcessor(this.getProcessor()));
+				this.arrayProcessingItem[i] = 
+						new ParallelWorkerProcessingItem(this.getProcessor().newProcessor(this.getProcessor()));
 				this.arrayProcessingItem[i].getProcessor().onCreate(i);
 			}
 		}
@@ -80,6 +88,30 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 		if (index < this.arrayProcessingItem.length && index >= 0)
 			return this.arrayProcessingItem[index];
 		return null;
+	}
+	
+	public void updatePriorityLevel(int priority) {
+		for (Stream stream:outputStreams) {
+			if (stream instanceof ParallelStream) {
+				ParallelStream pStream = (ParallelStream) stream;
+				pStream.updatePriorityLevel(priority);
+			}
+		}
+	}
+	
+	public void updateEntranceProcessingItem(ParallelEntranceProcessingItem epi) {
+		if (this.epi != null) return;
+		this.epi = epi;
+		for (Stream stream:outputStreams) {
+			if (stream instanceof ParallelStream) {
+				ParallelStream pStream = (ParallelStream) stream;
+				pStream.updateEntranceProcessingItem(epi);;
+			}
+		}
+	}
+	
+	public void addOutputStream(Stream stream) {
+		this.outputStreams.add(stream);
 	}
 	
 	/*
@@ -110,12 +142,21 @@ public class ParallelMasterProcessingItem extends ParallelProcessingItem {
 	 */
 	@Override
 	public void processEvent(ContentEvent event) {
-		this.processEvent(event, 0);
+		this.processEvent(event, 0, 0);
 	}
 	
-	public void processEvent(ContentEvent event, int index) {
-		ParallelProcessingTask task = new ParallelProcessingTask(this.getWorkerProcessingItem(index), event);
-		ParallelEngine.getExecutorService(index+threadPoolOffset).execute(task);
+	public void processEvent(ContentEvent event, int priorityLevel) {
+		this.processEvent(event, priorityLevel, 0);
+	}
+	
+	public void processEvent(ContentEvent event, int priorityLevel, int index) {
+		PriorityThreadPoolExecutor pool = (PriorityThreadPoolExecutor) ParallelEngine.getExecutorService(index+threadPoolOffset);
+		ParallelProcessingTask task = 
+				new ParallelProcessingTask(this.getWorkerProcessingItem(index), event, priorityLevel, pool.nextSequenceNumber());
+		pool.submit(task);
+		if (pool.isQueueFull()) {
+			this.epi.notifyQueueIsFull();
+		}
 	}
 
 }

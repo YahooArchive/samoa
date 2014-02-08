@@ -20,23 +20,85 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.core.TopologyStarter;
+import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.streams.PrequentialSourceProcessor;
+import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
+import com.yahoo.labs.samoa.topology.Stream;
 
 /**
  * EntranceProcessingItem in local mode with multithreading
  * For now, it's exactly the same as SimpleEntranceProcessingItem
- * TODO: consider refactoring Simple/Parallel Engine, Topology, 
- * ComponentFactory and EntranceProcessingItem since they
- * are very similar to each other.
  * @author Anh Thu Vu
  */
-public class ParallelEntranceProcessingItem extends SimpleEntranceProcessingItem {
-
+public class ParallelEntranceProcessingItem implements EntranceProcessingItem {
+	private final Processor processor;
+	private final TopologyStarter topologyStarter;
+	private List<Stream> outputStreams;
+	
     /*
      * Constructor
      */
     public ParallelEntranceProcessingItem(Processor processor, TopologyStarter starter) {
-        super(processor, starter);
+        this.processor = processor;
+        this.topologyStarter = starter;
+        this.outputStreams = new ArrayList<Stream>();
     }
+
+	@Override
+	public Processor getProcessor() {
+		return processor;
+	}
+	
+	public TopologyStarter getTopologyStarter() {
+		return topologyStarter;
+	}
+
+	@Override
+	public void put(Instance inst) {
+		// do nothing
+	}
+	
+	/*
+	 * Record the list of output streams
+	 */
+	public void addOutputStream(Stream stream) {
+		this.outputStreams.add(stream);
+	}
+	
+	/*
+	 * Get notified when a queue is full
+	 * Currently only work with PrequentialSourceProcessor
+	 */
+	public void notifyQueueIsFull() {
+		if (this.processor instanceof PrequentialSourceProcessor) {
+			((PrequentialSourceProcessor) this.processor).notifyQueueIsFull();
+		}
+	}
+	
+	/*
+	 * Setup methods
+	 */
+	public void setupPriorityLevel() {
+		for (Stream stream:outputStreams) {
+			if (stream instanceof ParallelStream) {
+				ParallelStream pStream = (ParallelStream) stream;
+				pStream.updatePriorityLevel(1);
+			}
+		}
+	}
+	
+	public void updateEntranceProcessingItem() {
+		for (Stream stream:outputStreams) {
+			if (stream instanceof ParallelStream) {
+				ParallelStream pStream = (ParallelStream) stream;
+				pStream.updateEntranceProcessingItem(this);
+			}
+		}
+	}
+	
 }

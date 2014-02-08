@@ -23,16 +23,21 @@ package com.yahoo.labs.samoa.topology.impl;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 
-public class ParallelProcessingTask implements Runnable {
+public class ParallelProcessingTask implements Runnable, Comparable<ParallelProcessingTask> {
 	private IProcessingItem pi;
 	private ContentEvent contentEvent;
+	private int priorityLevel = 0;
+	private long taskSequence = 0;
+	
 	
 	/*
 	 * Constructor
 	 */
-	ParallelProcessingTask(IProcessingItem pi, ContentEvent contentEvent) {
+	ParallelProcessingTask(IProcessingItem pi, ContentEvent contentEvent, int priorityLevel, long sequenceNumber) {
 		this.pi = pi;
 		this.contentEvent = contentEvent;
+		this.priorityLevel = priorityLevel;
+		this.taskSequence = sequenceNumber;
 	}
 	
 	/*
@@ -50,4 +55,18 @@ public class ParallelProcessingTask implements Runnable {
 	public void run() {
 		pi.getProcessor().process(contentEvent);
 	}
+
+	@Override
+	public int compareTo(ParallelProcessingTask task) {
+		if (task.priorityLevel == this.priorityLevel) {
+			if (task != this) {
+				if (this.taskSequence > task.taskSequence) return 1;
+				if (this.taskSequence < task.taskSequence) return -1;
+			}
+			return 0;
+		}
+		return task.priorityLevel - this.priorityLevel;
+	}
+	
+	
 }

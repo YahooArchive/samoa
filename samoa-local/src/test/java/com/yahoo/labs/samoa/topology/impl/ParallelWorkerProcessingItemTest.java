@@ -21,7 +21,6 @@ package com.yahoo.labs.samoa.topology.impl;
  */
 
 import static org.junit.Assert.*;
-import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
 import mockit.Verifications;

@@ -20,22 +20,16 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import com.yahoo.labs.samoa.topology.Topology;
+import com.yahoo.labs.samoa.utils.PriorityThreadPoolExecutor;
 
 /**
  * Multithreaded Engine in local mode
  * Written based on SimpleEngine
- * TODO: consider refactoring Simple/Parallel Engine, Topology, 
- * ComponentFactory and EntranceProcessingItem since they
- * are very similar to each other.
  * @author Anh Thu Vu
  */
 public class ParallelEngine {
@@ -44,11 +38,11 @@ public class ParallelEngine {
 	 * Executors (Thread pool)
 	 */
 	private static List<ExecutorService> executors = new ArrayList<ExecutorService>();
-
-	public static void setNumberOfThreads(int numThreads) {
+	
+	public static void setNumberOfThreadsAndQueueLimit(int numThreads, int limit) {
 		if (executors.size() < numThreads) {
 			for (int i = executors.size(); i<numThreads; i++) {
-				executors.add(Executors.newSingleThreadExecutor());
+				executors.add(new PriorityThreadPoolExecutor(limit));
 			}
 		}
 	}
@@ -66,11 +60,10 @@ public class ParallelEngine {
 	 * Start topology
 	 */
 	public static void submitTopology(Topology topology) {
-		if (getNumberOfThreads() <= 1)
-			setNumberOfThreads(2);
-		
         ParallelTopology st = (ParallelTopology) topology;
         st.createWorkerProcessingItems();
+        st.setupPriorityLevel();
+        st.setupEntranceProcessingItem();
         ParallelEntranceProcessingItem epi = st.getEntranceProcessingItem();
         epi.getProcessor().onCreate(0);
         st.getTopologyStarter().start();

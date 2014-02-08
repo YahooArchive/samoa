@@ -22,11 +22,6 @@ package com.yahoo.labs.samoa.topology.impl;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.NonStrictExpectations;
@@ -35,13 +30,11 @@ import mockit.Verifications;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
+import com.yahoo.labs.samoa.utils.PriorityThreadPoolExecutor;
 
 public class ParallelMasterProcessingItemTest {
     
@@ -56,7 +49,7 @@ public class ParallelMasterProcessingItemTest {
 	@Mocked private ContentEvent event;
 	@Mocked private ParallelProcessingTask task;
 	
-	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private final PriorityThreadPoolExecutor executor = new PriorityThreadPoolExecutor();
 	private IProcessingItem worker;
 
 	@Before
@@ -126,13 +119,13 @@ public class ParallelMasterProcessingItemTest {
 		
 		new NonStrictExpectations() {
 			{
-				new ParallelProcessingTask(worker, event);
+				new ParallelProcessingTask(worker, event, anyInt, anyLong);
 				result = task;
 				
 				ParallelEngine.getExecutorService(anyInt);
 				result = executor;
 				
-				executor.execute(task); times=1;
+				executor.submit(task); times=1;
 			}
 		};
 		

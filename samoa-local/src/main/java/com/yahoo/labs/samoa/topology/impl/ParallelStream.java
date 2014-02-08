@@ -31,9 +31,6 @@ import com.yahoo.labs.samoa.topology.Stream;
 
 /**
  * Stream in local mode with multithreading
- * TODO: consider refactoring Simple/Parallel Engine, Topology, 
- * ComponentFactory and EntranceProcessingItem since they
- * are very similar to each other.
  * @author Anh Thu Vu
  */
 public class ParallelStream implements Stream {
@@ -43,12 +40,21 @@ public class ParallelStream implements Stream {
     private List<Integer> listTypeStream;
     private List<Integer> listParallelism;
     private int shuffleCounter;
+    private int priorityLevel = 0;
     
     /*
      * Constructor
      */
     public ParallelStream(IProcessingItem sourcePi) {
         this.sourcePi = sourcePi;
+        if (sourcePi instanceof ParallelEntranceProcessingItem) {
+        	ParallelEntranceProcessingItem pSourcePi = (ParallelEntranceProcessingItem) sourcePi;
+        	pSourcePi.addOutputStream(this);
+        }
+        else if (sourcePi instanceof ParallelMasterProcessingItem) {
+        	ParallelMasterProcessingItem pSourcePi = (ParallelMasterProcessingItem) sourcePi;
+        	pSourcePi.addOutputStream(this);
+        }
         this.listProcessingItem = new LinkedList<IProcessingItem>();
         this.listTypeStream = new LinkedList<Integer>();
         this.listParallelism = new LinkedList<Integer>();
@@ -65,6 +71,33 @@ public class ParallelStream implements Stream {
     
     public IProcessingItem getSourcePi() {
     	return sourcePi;
+    }
+    
+    public int getPriorityLevel() {
+    	return priorityLevel;
+    }
+    
+    /*
+     * Setters
+     */
+    public void updatePriorityLevel(int priority) {
+    	if (this.priorityLevel > 0) return; // should need to be set ONCE only
+    	this.priorityLevel = priority;
+    	for (IProcessingItem pi:listProcessingItem) {
+    		if (pi instanceof ParallelMasterProcessingItem) {
+    			ParallelMasterProcessingItem mpi = (ParallelMasterProcessingItem) pi;
+    			mpi.updatePriorityLevel(priority+1);
+    		}
+    	}
+    }
+    
+    public void updateEntranceProcessingItem(ParallelEntranceProcessingItem epi) {
+    	for (IProcessingItem pi:listProcessingItem) {
+    		if (pi instanceof ParallelMasterProcessingItem) {
+    			ParallelMasterProcessingItem mpi = (ParallelMasterProcessingItem) pi;
+    			mpi.updateEntranceProcessingItem(epi);
+    		}
+    	}
     }
     
     /*
@@ -92,18 +125,18 @@ public class ParallelStream implements Stream {
         	switch(type) {
         	case ParallelProcessingItem.SHUFFLE:
         		index = shuffleCounter % parallelism;
-        		pi.processEvent(event, index);
+        		pi.processEvent(event, priorityLevel, index);
         		shuffleCounter++;
         		break;
         	case ParallelProcessingItem.GROUP_BY_KEY:
         		HashCodeBuilder hb = new HashCodeBuilder();
     	        hb.append(event.getKey());
     	        index = hb.build() % parallelism;
-    	        pi.processEvent(event, index);
+    	        pi.processEvent(event, priorityLevel, index);
     	        break;
         	case ParallelProcessingItem.BROADCAST:
         		for (index=0; index<parallelism; index++) {
-        			pi.processEvent(event, index);
+        			pi.processEvent(event, priorityLevel, index);
         		}
         		break;
         	}
