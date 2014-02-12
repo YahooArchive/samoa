@@ -131,6 +131,9 @@
                         <root>samoa-s4</root>
                         <root>bin</root>
                     </roots>
+                    <excludes>
+                        <exclude>**/target/**</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
