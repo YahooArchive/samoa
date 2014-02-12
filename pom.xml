@@ -56,6 +56,14 @@
             </modules>
         </profile>
         <profile>
+            <id>threads</id>
+            <modules>
+                <module>samoa-instances</module>
+                <module>samoa-api</module>
+                <module>samoa-threads</module>
+            </modules>
+        </profile>
+        <profile>
             <id>storm</id>
             <modules>
                 <module>samoa-instances</module>

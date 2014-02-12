@@ -206,9 +206,41 @@ elif [ $PLATFORM = 'STORM' ]; then
 		java -cp $CLASSPATH com.yahoo.labs.samoa.LocalStormDoTask $COMPLETE_ARG $NUM_WORKER
 	fi
 
+elif [ $PLATFORM = 'THREADS' ]; then
+	
+	echo "Deploying to LOCAL with MULTITHREADING"
+	
+	SAMOA_THREADS_PROPERTIES=samoa-threads.properties
+	NUM_THREADS_OPTION='samoa.threads.numthreads'
+	SOURCE_DELAY_OPTION='samoa.threads.sourcedelay'
+	
+	VALUE=""
+        getvalue()
+        {
+            VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_THREADS_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+        }
+
+        getvalue "$NUM_THREADS_OPTION"
+        NUM_THREADS="$VALUE"
+	getvalue "$SOURCE_DELAY_OPTION"
+        SOURCE_DELAY="$VALUE"
+
+	COMPLETE_ARG=""
+        COUNTER=0
+        for var in "$@"
+        do
+            COUNTER=`expr $COUNTER + 1`
+            if [ $COUNTER -gt 2 ];then
+                COMPLETE_ARG="$COMPLETE_ARG $var"
+            fi
+        done
+
+	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalThreadsDoTask $COMPLETE_ARG $NUM_THREADS $SOURCE_DELAY
+
 elif [ $PLATFORM = 'LOCAL' ]; then
 
 	echo "Deploying to $PLATFORM"
+        echo $JAR_PATH
 	COMPLETE_ARG=""
 	COUNTER=0
 	for var in "$@"
@@ -218,6 +250,8 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	        COMPLETE_ARG="$COMPLETE_ARG $var"
 	    fi
 	done
+
+        echo $COMPLETE_ARG
 
 	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
 else
