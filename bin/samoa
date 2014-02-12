@@ -240,7 +240,6 @@ elif [ $PLATFORM = 'THREADS' ]; then
 elif [ $PLATFORM = 'LOCAL' ]; then
 
 	echo "Deploying to $PLATFORM"
-        echo $JAR_PATH
 	COMPLETE_ARG=""
 	COUNTER=0
 	for var in "$@"
@@ -250,8 +249,6 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	        COMPLETE_ARG="$COMPLETE_ARG $var"
 	    fi
 	done
-
-        echo $COMPLETE_ARG
 
 	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
 else
