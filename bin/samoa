@@ -208,8 +208,6 @@ elif [ $PLATFORM = 'STORM' ]; then
 
 elif [ $PLATFORM = 'THREADS' ]; then
 	
-	echo "Deploying to LOCAL with MULTITHREADING"
-	
 	SAMOA_THREADS_PROPERTIES=samoa-threads.properties
 	NUM_THREADS_OPTION='samoa.threads.numthreads'
 	SOURCE_DELAY_OPTION='samoa.threads.sourcedelay'
@@ -224,6 +222,8 @@ elif [ $PLATFORM = 'THREADS' ]; then
         NUM_THREADS="$VALUE"
 	getvalue "$SOURCE_DELAY_OPTION"
         SOURCE_DELAY="$VALUE"
+
+	echo "Deploying to LOCAL with MULTITHREADING:" $NUM_THREADS "threads, delay:" $SOURCE_DELAY"ms."
 
 	COMPLETE_ARG=""
         COUNTER=0
