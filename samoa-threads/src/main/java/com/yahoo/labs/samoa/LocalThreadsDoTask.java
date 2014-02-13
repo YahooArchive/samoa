@@ -14,6 +14,10 @@ import com.yahoo.labs.samoa.tasks.Task;
 import com.yahoo.labs.samoa.topology.impl.ThreadsComponentFactory;
 import com.yahoo.labs.samoa.topology.impl.ThreadsEngine;
 
+/**
+ * @author Anh Thu Vu
+ *
+ */
 public class LocalThreadsDoTask {
 	// TODO: clean up this class for helping ML Developer in SAMOA
     // TODO: clean up code from storm-impl
