@@ -85,7 +85,15 @@ public class ThreadsProcessingItem implements ProcessingItem {
 		}
 	}
 	
+	public List<ThreadsWorkerProcessingItem> getWorkerProcessingItems() {
+		return this.listWorkerPi;
+	}
+	
 	public void processEvent(ContentEvent event, int counter) {
+		if (this.listWorkerPi == null || this.listWorkerPi.size() < this.parallelismHint) {
+			throw new IllegalStateException("ThreadsWorkerProcessingItem(s) need to be setup before process any event (ThreadsTopology.start()).");
+		}
+		
 		ThreadsWorkerProcessingItem workerPi = this.listWorkerPi.get(counter);
 		ThreadsEventRunnable runnable = new ThreadsEventRunnable(workerPi, event);
 		ThreadsEngine.getThreadWithIndex(workerPi.getThreadIndex()).submit(runnable);

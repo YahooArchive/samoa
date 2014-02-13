@@ -37,6 +37,14 @@ public class ThreadsEventRunnable implements Runnable {
 		this.event = event;
 	}
 	
+	public ProcessingItem getProcessingItem() {
+		return this.pi;
+	}
+	
+	public ContentEvent getContentEvent() {
+		return this.event;
+	}
+	
 	@Override
 	public void run() {
 		ThreadsWorkerProcessingItem workerPi = (ThreadsWorkerProcessingItem) pi;

@@ -20,8 +20,8 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -34,25 +34,27 @@ import com.yahoo.labs.samoa.topology.Stream;
  *
  */
 public class ThreadsStream implements Stream {
-	private List<DestinationPIWrapper> listDestination;
+	private Set<DestinationPIWrapper> listDestination;
 	private int counter = 0;
 	private int maxCounter = 1;
 	
 	public ThreadsStream(IProcessingItem sourcePi) {
-		listDestination = new ArrayList<DestinationPIWrapper>();
+		listDestination = new HashSet<DestinationPIWrapper>();
 	}
 	
 	public void addDestination(IProcessingItem pi, int parallelismHint, EventAllocationType type) {
 		listDestination.add(new DestinationPIWrapper(pi, parallelismHint, type));
 		maxCounter *= parallelismHint;
 	}
+	
+	public Set<DestinationPIWrapper> getDestinations() {
+		return this.listDestination;
+	}
 
 	@Override
 	public synchronized void put(ContentEvent event) {
-        DestinationPIWrapper destination;
         ThreadsProcessingItem pi;
-        for (int i = 0; i < this.listDestination.size(); i++) {
-            destination = this.listDestination.get(i);
+        for (DestinationPIWrapper destination:listDestination) {
             pi = (ThreadsProcessingItem) destination.getProcessingItem();
             counter++;
             if (counter >= maxCounter) counter = 0;

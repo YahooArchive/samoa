@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Anh Thu Vu
@@ -35,6 +36,9 @@ public class ThreadsEngine {
 	
 	private static final List<ExecutorService> threadPool = new ArrayList<ExecutorService>();
 	
+	/*
+	 * Create and manage threads
+	 */
 	public static void setNumberThreads(int numThreads) {
 		if (threadPool.size() > numThreads)
 			throw new IllegalStateException("You cannot set a numThreads smaller than the current size of the threads pool.");
@@ -54,6 +58,9 @@ public class ThreadsEngine {
 		return threadPool.get(index);
 	}
 	
+	/*
+	 * Submit topology and start
+	 */
 	private static void submitTopology(Topology topology, int delay) {
 		ThreadsTopology tTopology = (ThreadsTopology) topology;
 		tTopology.start(delay);
@@ -62,6 +69,25 @@ public class ThreadsEngine {
 	public static void submitTopology(Topology topology, int delay, int numThreads) {
 		ThreadsEngine.setNumberThreads(numThreads);
 		ThreadsEngine.submitTopology(topology, delay);
+	}
+	
+	/* 
+	 * Stop
+	 */
+	public static void shutdown() {
+		for (ExecutorService pool:threadPool) {
+			pool.shutdown();
+		}
+		
+		for (ExecutorService pool:threadPool) {
+			try {
+				pool.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		threadPool.clear();
 	}
 
 }

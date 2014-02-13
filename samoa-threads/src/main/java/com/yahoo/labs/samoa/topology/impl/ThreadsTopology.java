@@ -46,6 +46,9 @@ public class ThreadsTopology extends Topology {
     }
 
     public void run(int delay) {
+    	if (entrancePi == null) 
+    		throw new IllegalStateException("You need to set entrance PI before run the topology.");
+    		
     	while(entrancePi.injectNextEvent()) {
     		if (delay > 0) {
     			try {

@@ -45,10 +45,21 @@ public class ThreadsEntranceProcessingItem implements EntranceProcessingItem {
 
 	@Override
 	public EntranceProcessingItem setOutputStream(Stream stream) {
-		if (this.outputStream != null)
-            throw new IllegalStateException("Output stream for an EntrancePI should be initialized only once");
+		if (this.outputStream != null) {
+			if (this.outputStream == stream) return this;
+			else 
+				throw new IllegalStateException("Output stream for an EntrancePI should be initialized only once");
+		}
         this.outputStream = stream;
         return this;
+	}
+	
+	/* 
+	 * Useful for verification.
+	 * Not used right now except for junit test.
+	 */
+	public Stream getOutputStream() {
+		return this.outputStream;
 	}
 	
 	public boolean injectNextEvent() {
