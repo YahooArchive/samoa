@@ -223,18 +223,23 @@ elif [ $PLATFORM = 'THREADS' ]; then
 	getvalue "$SOURCE_DELAY_OPTION"
         SOURCE_DELAY="$VALUE"
 
-	echo "Deploying to LOCAL with MULTITHREADING:" $NUM_THREADS "threads, delay:" $SOURCE_DELAY"ms."
-
 	COMPLETE_ARG=""
         COUNTER=0
         for var in "$@"
         do
             COUNTER=`expr $COUNTER + 1`
-            if [ $COUNTER -gt 2 ];then
+            # If number of threads and source delay parameters are provided 
+            # from commandline: overwrite the values in properties file
+            if [ $COUNTER == 5 ];then
+                SOURCE_DELAY=$var
+            elif [ $COUNTER == 4 ]; then
+                NUM_THREADS=$var
+            elif [ $COUNTER -gt 2 ];then
                 COMPLETE_ARG="$COMPLETE_ARG $var"
             fi
         done
-
+        
+        echo "Deploying to LOCAL with MULTITHREADING:" $NUM_THREADS "threads, delay:" $SOURCE_DELAY"ms." 
 	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalThreadsDoTask $COMPLETE_ARG $NUM_THREADS $SOURCE_DELAY
 
 elif [ $PLATFORM = 'LOCAL' ]; then

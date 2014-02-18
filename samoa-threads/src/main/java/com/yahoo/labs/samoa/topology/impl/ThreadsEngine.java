@@ -55,6 +55,9 @@ public class ThreadsEngine {
 	}
 	
 	public static ExecutorService getThreadWithIndex(int index) {
+		if (threadPool.size() <= 0 )
+			throw new IllegalStateException("Try to get ExecutorService from an empty pool.");
+		index %= threadPool.size();
 		return threadPool.get(index);
 	}
 	

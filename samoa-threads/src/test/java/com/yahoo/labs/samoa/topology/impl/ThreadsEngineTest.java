@@ -85,10 +85,25 @@ public class ThreadsEngineTest {
 	}
 
 	@Test
-	public void testGetThreadWithIndex() {
+	public void testGetThreadWithIndexWithinPoolSize() {
 		ThreadsEngine.setNumberThreads(numThreads);
 		for (int i=0; i<numThreads; i++) {
 			assertNotNull("ExecutorService is not initialized correctly.", ThreadsEngine.getThreadWithIndex(i));
+		}
+	}
+	
+	@Test
+	public void testGetThreadWithIndexOutOfPoolSize() {
+		ThreadsEngine.setNumberThreads(numThreads);
+		for (int i=0; i<numThreads+3; i++) {
+			assertNotNull("ExecutorService is not initialized correctly.", ThreadsEngine.getThreadWithIndex(i));
+		}
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testGetThreadWithIndexFromEmptyPool() {
+		for (int i=0; i<numThreads; i++) {
+			ThreadsEngine.getThreadWithIndex(i);
 		}
 	}
 
