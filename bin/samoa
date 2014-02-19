@@ -209,7 +209,7 @@ elif [ $PLATFORM = 'LOCAL' ]; then
 	    fi
 	done
 
-	java -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
+	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
 else
 	echo "Specify a valid platform."
 	echo "Usage: samoa <platform> <jar> <task & options>"
