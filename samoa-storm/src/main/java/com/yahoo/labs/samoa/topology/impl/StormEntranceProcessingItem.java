@@ -40,7 +40,6 @@ import com.yahoo.labs.samoa.topology.Stream;
  * EntranceProcessingItem implementation for Storm.
  */
 class StormEntranceProcessingItem implements StormTopologyNode, EntranceProcessingItem {
-
     private final EntranceProcessor entranceProcessor;
     private final StormEntranceSpout piSpout;
     private final String piSpoutUuidStr;

@@ -49,6 +49,6 @@ public class SimpleTopology extends Topology {
     @Override
     public void addEntrancePi(EntranceProcessingItem epi) {
         this.entrancePi = (SimpleEntranceProcessingItem) epi;
-        this.addProcessingItem(epi);
+        super.addProcessingItem(epi);
     }
 }
