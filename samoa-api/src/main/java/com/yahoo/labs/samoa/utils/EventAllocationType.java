@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.topology.impl;
+package com.yahoo.labs.samoa.utils;
 
 /*
  * #%L

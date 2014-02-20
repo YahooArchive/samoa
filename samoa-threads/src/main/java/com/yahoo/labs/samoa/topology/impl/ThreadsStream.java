@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
  * @author Anh Thu Vu

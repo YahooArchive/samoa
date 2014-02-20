@@ -21,6 +21,7 @@ package com.yahoo.labs.samoa.topology.impl;
  */
 
 import com.yahoo.labs.samoa.topology.IProcessingItem;
+import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
  * @author Anh Thu Vu

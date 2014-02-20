@@ -27,6 +27,7 @@ import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
  * @author Anh Thu Vu
