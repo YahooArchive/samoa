@@ -72,7 +72,7 @@ public final class DistributedClusterer implements Learner, Configurable {
 	public void init(TopologyBuilder builder, Instances dataset, int parallelism){
 		this.builder = builder;
 		this.dataset = dataset;
-                this.parallelism = this.parallelism;
+                this.parallelism = parallelism;
 		this.setLayout();
 	}
 
