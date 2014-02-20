@@ -116,7 +116,7 @@ public class PrequentialEvaluation implements Task, Configurable {
             builder = new TopologyBuilder();
             logger.debug("Sucessfully instantiating TopologyBuilder");
 
-            builder.initTopology(evaluationNameOption.getValue());
+            builder.initTopology(evaluationNameOption.getValue(), sourceDelayOption.getValue());
             logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
         }
 
@@ -164,7 +164,7 @@ public class PrequentialEvaluation implements Task, Configurable {
         builder = new TopologyBuilder(factory);
         logger.debug("Sucessfully instantiating TopologyBuilder");
 
-        builder.initTopology(evaluationNameOption.getValue());
+        builder.initTopology(evaluationNameOption.getValue(), sourceDelayOption.getValue());
         logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
 
     }

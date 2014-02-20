@@ -19,6 +19,7 @@ import com.yahoo.labs.samoa.topology.impl.ThreadsEngine;
  *
  */
 public class LocalThreadsDoTask {
+	
 	// TODO: clean up this class for helping ML Developer in SAMOA
     // TODO: clean up code from storm-impl
     private static final String SUPPRESS_STATUS_OUT_MSG = "Suppress the task status output. Normally it is sent to stderr.";
@@ -36,21 +37,22 @@ public class LocalThreadsDoTask {
 
         ArrayList<String> tmpArgs = new ArrayList<String>(Arrays.asList(args));
         
-        // Get parameters for multithreading mode (number of threads and delay)
-        int numThreads = 0;
-        int delay = 0;
-        try {
-        	int pos = tmpArgs.size() - 1;
-        	delay = Integer.parseInt(tmpArgs.get(pos));
-        	tmpArgs.remove(pos);
-        	pos--;
-        	numThreads = Integer.parseInt(tmpArgs.get(pos));
-        	tmpArgs.remove(pos);
-        } catch (Exception e) {
-        	System.out.println("Please make sure that you set numthreads and sourcedelay properties in bin/samoa-threads.properties");
-        	System.out.println(e.getStackTrace());
+        // Get number of threads for multithreading mode
+        int numThreads = 1;
+        for (int i=0; i<tmpArgs.size()-1; i++) {
+        	if (tmpArgs.get(i).equals("-t")) {
+        		try {
+        			numThreads = Integer.parseInt(tmpArgs.get(i+1));
+        			tmpArgs.remove(i+1);
+        			tmpArgs.remove(i);
+        		} catch (NumberFormatException e) {
+        			System.err.println("Invalid number of threads.");
+        			System.err.println(e.getStackTrace());
+        		}
+        	}
         }
-
+        logger.info("Number of threads:{}", numThreads);
+        
         args = tmpArgs.toArray(new String[0]);
 
         FlagOption suppressStatusOutOpt = new FlagOption("suppressStatusOut", 'S', SUPPRESS_STATUS_OUT_MSG);
@@ -79,6 +81,6 @@ public class LocalThreadsDoTask {
         }
         task.setFactory(new ThreadsComponentFactory());
         task.init();
-        ThreadsEngine.submitTopology(task.getTopology(), delay, numThreads);
+        ThreadsEngine.submitTopology(task.getTopology(), numThreads);
     }
 }

@@ -63,12 +63,32 @@ public class TopologyBuilder {
      * @param topologyName
      */
     public void initTopology(String topologyName) {
+    	this.initTopology(topologyName, 0);
+    }
+    
+    /**
+     * Initiates topology with a specific name and a delay between consecutive instances.
+     * 
+     * @param topologyName
+     * @param delay
+     * 			delay between injections of two instances from source (in milliseconds)
+     */
+    public void initTopology(String topologyName, int delay) {
         if (this.topology != null) {
             // TODO: possible refactor this code later
             System.out.println("Topology has been initialized before!");
             return;
         }
         this.topology = componentFactory.createTopology(topologyName);
+        
+        // TODO: 
+        // Should we:
+        // 1) Include the delay in Topology interface?
+        // 2) Have another interface that extends Topology, i.e. TopologyWithDelay?
+        // Choose no. 2 for now
+        if (delay > 0 && this.topology instanceof TopologyWithDelay) {
+        	((TopologyWithDelay) this.topology).setSourceDelay(delay);
+        }
     }
 
     /**

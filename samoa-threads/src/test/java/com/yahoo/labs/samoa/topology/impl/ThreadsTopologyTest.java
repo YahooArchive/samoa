@@ -28,8 +28,6 @@ import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
-
 /**
  * @author Anh Thu Vu
  *
@@ -58,6 +56,7 @@ public class ThreadsTopologyTest {
 	@Test
 	public void testRunWithDelay() {
 		topology.addEntrancePi(entrancePi);
+		topology.setSourceDelay(delay);
 		new Expectations() {
 			{
 				entrancePi.injectNextEvent();
@@ -67,7 +66,7 @@ public class ThreadsTopologyTest {
 				result=false; times=1;
 			}
 		};
-		topology.run(delay);
+		topology.run();
 		new Verifications() {
 			{
 				try {
@@ -82,6 +81,7 @@ public class ThreadsTopologyTest {
 	@Test
 	public void testRunWithoutDelay() {
 		topology.addEntrancePi(entrancePi);
+		topology.setSourceDelay(0);
 		new Expectations() {
 			{
 				entrancePi.injectNextEvent();
@@ -91,7 +91,7 @@ public class ThreadsTopologyTest {
 				result=false; times=1;
 			}
 		};
-		topology.run(0);
+		topology.run();
 		new Verifications() {
 			{
 				try {
@@ -105,7 +105,7 @@ public class ThreadsTopologyTest {
 	
 	@Test(expected=IllegalStateException.class)
 	public void testRunWithoutEntrancePI() {
-		topology.run(delay);
+		topology.run();
 	}
 
 }

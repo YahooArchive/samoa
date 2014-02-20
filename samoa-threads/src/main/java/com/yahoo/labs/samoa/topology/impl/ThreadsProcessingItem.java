@@ -43,7 +43,7 @@ public class ThreadsProcessingItem implements ProcessingItem {
 	public ThreadsProcessingItem(Processor processor, int parallelismHint) {
 		this.processor = processor;
 		this.parallelismHint = parallelismHint;
-		this.offset = (int) (Math.random()*ThreadsEngine.getNumberThreads());
+		this.offset = (int) (Math.random()*ThreadsEngine.getNumberOfThreads());
 	}
 
 	@Override

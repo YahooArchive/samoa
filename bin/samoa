@@ -208,39 +208,18 @@ elif [ $PLATFORM = 'STORM' ]; then
 
 elif [ $PLATFORM = 'THREADS' ]; then
 	
-	SAMOA_THREADS_PROPERTIES=samoa-threads.properties
-	NUM_THREADS_OPTION='samoa.threads.numthreads'
-	SOURCE_DELAY_OPTION='samoa.threads.sourcedelay'
-	
-	VALUE=""
-        getvalue()
-        {
-            VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_THREADS_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
-        }
-
-        getvalue "$NUM_THREADS_OPTION"
-        NUM_THREADS="$VALUE"
-	getvalue "$SOURCE_DELAY_OPTION"
-        SOURCE_DELAY="$VALUE"
-
+	echo "Deploying to LOCAL with MULTITHREADING."
 	COMPLETE_ARG=""
         COUNTER=0
         for var in "$@"
         do
             COUNTER=`expr $COUNTER + 1`
-            # If number of threads and source delay parameters are provided 
-            # from commandline: overwrite the values in properties file
-            if [ $COUNTER == 5 ];then
-                SOURCE_DELAY=$var
-            elif [ $COUNTER == 4 ]; then
-                NUM_THREADS=$var
-            elif [ $COUNTER -gt 2 ];then
+            if [ $COUNTER -gt 2 ];then
                 COMPLETE_ARG="$COMPLETE_ARG $var"
             fi
         done
         
-        echo "Deploying to LOCAL with MULTITHREADING:" $NUM_THREADS "threads, delay:" $SOURCE_DELAY"ms." 
-	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalThreadsDoTask $COMPLETE_ARG $NUM_THREADS $SOURCE_DELAY
+	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalThreadsDoTask $COMPLETE_ARG
 
 elif [ $PLATFORM = 'LOCAL' ]; then
 

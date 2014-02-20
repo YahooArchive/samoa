@@ -36,7 +36,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
+import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
  * @author Anh Thu Vu
