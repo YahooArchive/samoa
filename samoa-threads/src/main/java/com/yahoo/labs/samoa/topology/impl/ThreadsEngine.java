@@ -39,7 +39,7 @@ public class ThreadsEngine {
 	/*
 	 * Create and manage threads
 	 */
-	public static void setNumberThreads(int numThreads) {
+	public static void setNumberOfThreads(int numThreads) {
 		if (threadPool.size() > numThreads)
 			throw new IllegalStateException("You cannot set a numThreads smaller than the current size of the threads pool.");
 		
@@ -50,7 +50,7 @@ public class ThreadsEngine {
 		}
 	}
 	
-	public static int getNumberThreads() {
+	public static int getNumberOfThreads() {
 		return threadPool.size();
 	}
 	
@@ -70,7 +70,7 @@ public class ThreadsEngine {
 	}
 	
 	public static void submitTopology(Topology topology, int delay, int numThreads) {
-		ThreadsEngine.setNumberThreads(numThreads);
+		ThreadsEngine.setNumberOfThreads(numThreads);
 		ThreadsEngine.submitTopology(topology, delay);
 	}
 	
