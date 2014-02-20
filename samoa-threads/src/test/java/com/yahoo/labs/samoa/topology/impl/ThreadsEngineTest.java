@@ -38,8 +38,6 @@ public class ThreadsEngineTest {
 	private final int numThreads = 4;
 	private final int numThreadsSmaller = 3;
 	private final int numThreadsLarger = 5;
-	
-	private final int delay = 10;
 
 	@After
 	public void cleanup() {
@@ -47,14 +45,14 @@ public class ThreadsEngineTest {
 	}
 	
 	@Test
-	public void testSetNumThreadsSimple() {
+	public void testSetNumberOfThreadsSimple() {
 		ThreadsEngine.setNumberOfThreads(numThreads);
 		assertEquals("Number of threads is not set correctly.", numThreads,
 				ThreadsEngine.getNumberOfThreads(),0);
 	}
 	
 	@Test
-	public void testSetNumThreadsRepeat() {
+	public void testSetNumberOfThreadsRepeat() {
 		ThreadsEngine.setNumberOfThreads(numThreads);
 		ThreadsEngine.setNumberOfThreads(numThreads);
 		assertEquals("Number of threads is not set correctly.", numThreads,
@@ -62,7 +60,7 @@ public class ThreadsEngineTest {
 	}
 	
 	@Test
-	public void testSetNumThreadsIncrease() {
+	public void testSetNumberOfThreadsIncrease() {
 		ThreadsEngine.setNumberOfThreads(numThreads);
 		ThreadsEngine.setNumberOfThreads(numThreadsLarger);
 		assertEquals("Number of threads is not set correctly.", numThreadsLarger,
@@ -70,9 +68,21 @@ public class ThreadsEngineTest {
 	}
 	
 	@Test(expected=IllegalStateException.class)
-	public void testSetNumThreadsDecrease() {
+	public void testSetNumberOfThreadsDecrease() {
 		ThreadsEngine.setNumberOfThreads(numThreads);
 		ThreadsEngine.setNumberOfThreads(numThreadsSmaller);
+		// Exception expected
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testSetNumberOfThreadsNegative() {
+		ThreadsEngine.setNumberOfThreads(-1);
+		// Exception expected
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testSetNumberOfThreadsZero() {
+		ThreadsEngine.setNumberOfThreads(0);
 		// Exception expected
 	}
 	
@@ -108,9 +118,9 @@ public class ThreadsEngineTest {
 
 	@Test
 	public void testSubmitTopology() {
-		ThreadsEngine.submitTopology(topology, delay, numThreads);
+		ThreadsEngine.submitTopology(topology, numThreads);
 		new Verifications() {{
-		    topology.start(delay); times=1;
+		    topology.start(); times=1;
 		}};
 		assertEquals("Number of threads is not set correctly.", numThreads,
 				ThreadsEngine.getNumberOfThreads(),0);
