@@ -31,7 +31,7 @@ public class SimpleEngine {
     public static void submitTopology(Topology topology) {
         SimpleTopology simpleTopology = (SimpleTopology) topology;
         simpleTopology.run();
-        Runtime.getRuntime().exit(0); // terminates execution and all launched threads
+        //Runtime.getRuntime().exit(0); // terminates execution and all launched threads
     }
 
 }

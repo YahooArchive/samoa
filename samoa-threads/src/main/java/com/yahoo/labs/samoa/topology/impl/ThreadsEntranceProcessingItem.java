@@ -20,7 +20,6 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
@@ -63,10 +62,29 @@ public class ThreadsEntranceProcessingItem implements EntranceProcessingItem {
 	}
 	
 	public boolean injectNextEvent() {
-		boolean hasNext = this.processor.hasNext();
-    	ContentEvent nextEvent = this.processor.nextEvent();
-        outputStream.put(nextEvent);
-        return hasNext;
+		if (processor.hasNext()) {
+			this.outputStream.put(processor.nextEvent());
+			return true;
+		}
+		return false;
+	}
+	
+	public void startSendingEvents() {
+		if (outputStream == null) 
+			throw new IllegalStateException("Try sending events from EntrancePI while outputStream is not set.");
+		
+		while(!processor.isFinished()) {
+			if (!injectNextEvent()) {	
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
+		}
+		
+		// Send last event
+		this.outputStream.put(processor.nextEvent());
 	}
 
 }

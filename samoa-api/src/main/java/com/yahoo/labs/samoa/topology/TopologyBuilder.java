@@ -80,15 +80,6 @@ public class TopologyBuilder {
             return;
         }
         this.topology = componentFactory.createTopology(topologyName);
-        
-        // TODO: 
-        // Should we:
-        // 1) Include the delay in Topology interface?
-        // 2) Have another interface that extends Topology, i.e. TopologyWithDelay?
-        // Choose no. 2 for now
-        if (delay > 0 && this.topology instanceof TopologyWithDelay) {
-        	((TopologyWithDelay) this.topology).setSourceDelay(delay);
-        }
     }
 
     /**

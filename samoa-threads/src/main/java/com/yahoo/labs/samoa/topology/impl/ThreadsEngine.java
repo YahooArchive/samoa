@@ -80,7 +80,7 @@ public class ThreadsEngine {
 	/* 
 	 * Stop
 	 */
-	public static void shutdown() {
+	public static void clearThreadPool() {
 		for (ExecutorService pool:threadPool) {
 			pool.shutdown();
 		}

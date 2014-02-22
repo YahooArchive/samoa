@@ -41,7 +41,7 @@ public class ThreadsEngineTest {
 
 	@After
 	public void cleanup() {
-		ThreadsEngine.shutdown();
+		ThreadsEngine.clearThreadPool();
 	}
 	
 	@Test
@@ -87,9 +87,9 @@ public class ThreadsEngineTest {
 	}
 	
 	@Test
-	public void testShutDown() {
+	public void testClearThreadPool() {
 		ThreadsEngine.setNumberOfThreads(numThreads);
-		ThreadsEngine.shutdown();
+		ThreadsEngine.clearThreadPool();
 		assertEquals("ThreadsEngine was not shutdown properly.", 0, ThreadsEngine.getNumberOfThreads());
 	}
 

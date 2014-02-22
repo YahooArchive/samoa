@@ -22,14 +22,12 @@ package com.yahoo.labs.samoa.topology.impl;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
 
 /**
  * @author Anh Thu Vu
  *
  */
-public class ThreadsWorkerProcessingItem implements ProcessingItem {
+public class ThreadsWorkerProcessingItem {
 
 	private Processor processor;
 	private int threadIndex;
@@ -43,29 +41,8 @@ public class ThreadsWorkerProcessingItem implements ProcessingItem {
 		return this.threadIndex;
 	}
 	
-	@Override
 	public Processor getProcessor() {
 		return this.processor;
-	}
-
-	@Override
-	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
-		return null;
-	}
-
-	@Override
-	public ProcessingItem connectInputKeyStream(Stream inputStream) {
-		return null;
-	}
-
-	@Override
-	public ProcessingItem connectInputAllStream(Stream inputStream) {
-		return null;
-	}
-
-	@Override
-	public int getParalellism() {
-		return 0;
 	}
 
 	public void processEvent(ContentEvent event) {

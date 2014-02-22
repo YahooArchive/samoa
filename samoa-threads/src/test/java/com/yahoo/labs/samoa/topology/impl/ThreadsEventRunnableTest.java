@@ -50,7 +50,7 @@ public class ThreadsEventRunnableTest {
 
 	@Test
 	public void testConstructor() {
-		assertSame("ProcessingItem is not set correctly.",workerPi,task.getProcessingItem());
+		assertSame("WorkerProcessingItem is not set correctly.",workerPi,task.getWorkerProcessingItem());
 		assertSame("ContentEvent is not set correctly.",event,task.getContentEvent());
 	}
 	

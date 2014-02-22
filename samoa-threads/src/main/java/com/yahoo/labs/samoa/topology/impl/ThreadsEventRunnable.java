@@ -21,28 +21,27 @@ package com.yahoo.labs.samoa.topology.impl;
  */
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
 
 /**
  * Runnable class where each object corresponds to a ContentEvent and an assigned PI. 
- * When a PI receives a ContentEvent, it will create a ThreadsEventRunnable with a replica of itself (a worker PI)
- * and the received ContentEvent. This runnable is then submitted to a thread queue waiting to be executed.
+ * When a PI receives a ContentEvent, it will create a ThreadsEventRunnable with the received ContentEvent
+ * and an assigned workerPI. This runnable is then submitted to a thread queue waiting to be executed.
  * The worker PI will process the received event when the runnable object is executed/run.
  * @author Anh Thu Vu
  *
  */
 public class ThreadsEventRunnable implements Runnable {
 
-	private ProcessingItem pi;
+	private ThreadsWorkerProcessingItem workerPi;
 	private ContentEvent event;
 	
-	public ThreadsEventRunnable(ProcessingItem pi, ContentEvent event) {
-		this.pi = pi;
+	public ThreadsEventRunnable(ThreadsWorkerProcessingItem workerPi, ContentEvent event) {
+		this.workerPi = workerPi;
 		this.event = event;
 	}
 	
-	public ProcessingItem getProcessingItem() {
-		return this.pi;
+	public ThreadsWorkerProcessingItem getWorkerProcessingItem() {
+		return this.workerPi;
 	}
 	
 	public ContentEvent getContentEvent() {
@@ -51,7 +50,6 @@ public class ThreadsEventRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		ThreadsWorkerProcessingItem workerPi = (ThreadsWorkerProcessingItem) pi;
 		workerPi.processEvent(event);
 	}
 

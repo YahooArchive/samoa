@@ -23,7 +23,6 @@ import static org.junit.Assert.*;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
-import mockit.Verifications;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +38,6 @@ public class ThreadsTopologyTest {
 	@Mocked private ThreadsEntranceProcessingItem entrancePi;
 	@Mocked private Thread unused;
 	
-	private int delay = 10;
-	
 	@Before
 	public void setUp() throws Exception {
 		topology = new ThreadsTopology("testTopology");
@@ -54,53 +51,14 @@ public class ThreadsTopologyTest {
 	}
 	
 	@Test
-	public void testRunWithDelay() {
+	public void testRun() {
 		topology.addEntrancePi(entrancePi);
-		topology.setSourceDelay(delay);
 		new Expectations() {
 			{
-				entrancePi.injectNextEvent();
-				result=true; times=5;
-				
-				entrancePi.injectNextEvent();
-				result=false; times=1;
+				entrancePi.startSendingEvents();
 			}
 		};
 		topology.run();
-		new Verifications() {
-			{
-				try {
-					Thread.sleep(delay); times=5;
-				} catch (InterruptedException e) {
-					
-				}
-			}
-		};
-	}
-	
-	@Test
-	public void testRunWithoutDelay() {
-		topology.addEntrancePi(entrancePi);
-		topology.setSourceDelay(0);
-		new Expectations() {
-			{
-				entrancePi.injectNextEvent();
-				result=true; times=5;
-				
-				entrancePi.injectNextEvent();
-				result=false; times=1;
-			}
-		};
-		topology.run();
-		new Verifications() {
-			{
-				try {
-					Thread.sleep(anyInt); times=0;
-				} catch (InterruptedException e) {
-					
-				}
-			}
-		};
 	}
 	
 	@Test(expected=IllegalStateException.class)

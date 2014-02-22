@@ -22,8 +22,8 @@ package com.yahoo.labs.samoa.topology.impl;
 import static org.junit.Assert.*;
 import mockit.Expectations;
 import mockit.Mocked;
-import mockit.NonStrictExpectations;
 import mockit.Tested;
+import mockit.Verifications;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +43,8 @@ public class ThreadsEntranceProcessingItemTest {
 	@Mocked private EntranceProcessor entranceProcessor;
 	@Mocked private Stream outputStream, anotherStream;
 	@Mocked private ContentEvent event;
+	
+	@Mocked private Thread unused;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -76,25 +78,58 @@ public class ThreadsEntranceProcessingItemTest {
 		entrancePi.setOutputStream(anotherStream);
 	}
 	
-	// TODO: check that if entranceProcessor.hasNext() == false, event.isLast==true
 	@Test
-	public void testInjectNextEvent() {
+	public void testStartSendingEvents() {
 		entrancePi.setOutputStream(outputStream);
-		
-		new NonStrictExpectations() {
-			{
-				entranceProcessor.hasNext();
-			}
-		};
 		new Expectations() {
 			{
-				entranceProcessor.nextEvent();
-				result=event; times=1;
+				for (int i=0; i<1; i++) {
+					entranceProcessor.isFinished(); result=false;
+					entranceProcessor.hasNext(); result=false;
+				}
 				
-				outputStream.put(event); times=1;
+				for (int i=0; i<5; i++) {
+					entranceProcessor.isFinished(); result=false;
+					entranceProcessor.hasNext(); result=true;
+					entranceProcessor.nextEvent(); result=event;
+					outputStream.put(event);
+				}
+				
+				for (int i=0; i<2; i++) {
+					entranceProcessor.isFinished(); result=false;
+					entranceProcessor.hasNext(); result=false;
+				}
+				
+				for (int i=0; i<5; i++) {
+					entranceProcessor.isFinished(); result=false;
+					entranceProcessor.hasNext(); result=true;
+					entranceProcessor.nextEvent(); result=event;
+					outputStream.put(event);
+				}
+				
+				entranceProcessor.isFinished();
+				result=true; times=1;
+				
+				// Send last event
+				entranceProcessor.nextEvent(); result=event;
+				outputStream.put(event);
 			}
 		};
-		entrancePi.injectNextEvent();
+		entrancePi.startSendingEvents();
+		new Verifications() {
+			{
+				try {
+					Thread.sleep(anyInt); times=3;
+				} catch (InterruptedException e) {
+					
+				}
+			}
+		};
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testStartSendingEventsError() {
+		entrancePi.startSendingEvents();
 	}
 
 }

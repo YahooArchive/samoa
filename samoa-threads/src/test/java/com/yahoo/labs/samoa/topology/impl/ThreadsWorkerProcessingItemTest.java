@@ -52,7 +52,6 @@ public class ThreadsWorkerProcessingItemTest {
 	public void testConstructor() {
 		assertSame("Processor is not set correctly.",processor,workerPi.getProcessor());
 		assertEquals("Thread index is not set correctly.",threadIndex,workerPi.getThreadIndex(),0);
-		assertEquals("Parallelism is not set correctly.",0,workerPi.getParalellism(),0);
 	}
 	
 	@Test

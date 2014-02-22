@@ -20,19 +20,15 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.topology.TopologyWithDelay;
+import com.yahoo.labs.samoa.topology.Topology;
 
 /**
  * @author Anh Thu Vu
  *
  */
-public class ThreadsTopology extends TopologyWithDelay {
-	private static final Logger logger = LoggerFactory.getLogger(ThreadsTopology.class);
+public class ThreadsTopology extends Topology {
 	
 	public String topologyName;
     private ThreadsEntranceProcessingItem entrancePi;
@@ -49,29 +45,17 @@ public class ThreadsTopology extends TopologyWithDelay {
     	if (entrancePi == null) 
     		throw new IllegalStateException("You need to set entrance PI before run the topology.");
     		
-    	while(entrancePi.injectNextEvent()) {
-    		if (this.getSourceDelay() > 0) {
-    			try {
-    				Thread.sleep(this.getSourceDelay());
-    			} catch (InterruptedException e) {
-    				logger.error("Topology was interrupted while sleeping.");
-    			}
-    		}
-    	}
+    	entrancePi.startSendingEvents();
     }
     
     public void start() {
         this.setupWorkers();
     	this.run();
     }
-
-    public ThreadsTopology(String topoName) {
-        this(topoName, 0);
-    }
     
-    public ThreadsTopology(String topoName, int delay) {
+    public ThreadsTopology(String topoName) {
+    	super();
     	this.topologyName = topoName;
-    	this.setSourceDelay(delay);;
     }
 
     public EntranceProcessingItem getEntranceProcessingItem() {
