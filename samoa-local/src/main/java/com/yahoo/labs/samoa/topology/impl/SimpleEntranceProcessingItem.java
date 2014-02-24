@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.yahoo.labs.samoa.topology.impl;
 
 /*
@@ -24,35 +20,40 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.TopologyStarter;
-import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
+import com.yahoo.labs.samoa.topology.Stream;
 
-/**
- *
- * @author abifet
- */
-class SimpleEntranceProcessingItem implements EntranceProcessingItem{
+class SimpleEntranceProcessingItem implements EntranceProcessingItem {
 
-    protected Processor processor;
-    protected TopologyStarter topologyStarter;
+    protected EntranceProcessor entranceProcessor;
+    protected Stream outputStream;
 
-    public TopologyStarter getTopologyStarter() {
-        return topologyStarter;
-    }
-    
-    public SimpleEntranceProcessingItem(Processor processor, TopologyStarter starter) {
-        this.processor = processor;
-        this.topologyStarter = starter;
+    public SimpleEntranceProcessingItem(EntranceProcessor processor) {
+        this.entranceProcessor = processor;
     }
 
-    public void put(Instance inst) {
-        // do nothing, we not need this method
+    @Override
+    public EntranceProcessor getProcessor() {
+        return this.entranceProcessor;
     }
 
-    public Processor getProcessor() {
-        return this.processor;
+    public boolean injectNextEvent() {
+        if (entranceProcessor.hasNext()) {
+            ContentEvent nextEvent = this.entranceProcessor.nextEvent();
+            outputStream.put(nextEvent);
+            return entranceProcessor.hasNext();
+        } else
+            return false;
+        // return !nextEvent.isLastEvent();
     }
-    
+
+    @Override
+    public EntranceProcessingItem setOutputStream(Stream stream) {
+        if (this.outputStream != null)
+            throw new IllegalStateException("Output stream for an EntrancePI sohuld be initialized only once");
+        this.outputStream = stream;
+        return this;
+    }
 }

@@ -37,14 +37,10 @@ import backtype.storm.utils.Utils;
  *
  */
 public class StormDoTask {
-
 	private static final Logger logger = LoggerFactory.getLogger(StormDoTask.class);
-	
 	private static String localFlag = "local";
 	private static String clusterFlag = "cluster";
 	
-	
-
 	/**
 	 * The main method.
 	 * 

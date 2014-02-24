@@ -20,21 +20,27 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
-import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 
 /**
  * Entrance processing item interface.
- * 
- * @author severien
- *
  */
 public interface EntranceProcessingItem extends IProcessingItem {
-	
-	/**
-	 * 
-	 * 
-	 * @param inst
-	 */
-	void put(Instance inst);
 
+    @Override
+    /**
+     * Gets the processing item processor.
+     * 
+     * @return the embedded EntranceProcessor. 
+     */
+    public EntranceProcessor getProcessor();
+
+    /**
+     * Set the single output stream for this EntranceProcessingItem.
+     * 
+     * @param stream
+     *            the stream
+     * @return the current instance of the EntranceProcessingItem for fluent interface.
+     */
+    public EntranceProcessingItem setOutputStream(Stream stream);
 }

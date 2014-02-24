@@ -24,7 +24,6 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import java.util.List;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
