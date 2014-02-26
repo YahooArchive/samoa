@@ -25,6 +25,7 @@ import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 
 /**
+ * EntranceProcessingItem for multithreaded engine.
  * @author Anh Thu Vu
  *
  */

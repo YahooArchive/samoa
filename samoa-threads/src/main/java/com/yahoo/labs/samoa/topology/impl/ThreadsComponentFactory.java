@@ -30,6 +30,7 @@ import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.Topology;
 
 /**
+ * ComponentFactory for multithreaded engine
  * @author Anh Thu Vu
  *
  */

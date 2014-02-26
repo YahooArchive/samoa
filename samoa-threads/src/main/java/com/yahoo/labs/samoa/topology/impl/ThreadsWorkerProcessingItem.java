@@ -24,6 +24,9 @@ import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 
 /**
+ * Lightweight replicas of ThreadProcessingItem.
+ * ThreadsProcessingItem manages a list of these objects and 
+ * assigns each incoming message to be processed by one of them. 
  * @author Anh Thu Vu
  *
  */

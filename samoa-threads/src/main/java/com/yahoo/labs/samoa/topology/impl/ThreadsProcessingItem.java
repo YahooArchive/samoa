@@ -30,6 +30,7 @@ import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
+ * ProcessingItem for multithreaded engine.
  * @author Anh Thu Vu
  *
  */

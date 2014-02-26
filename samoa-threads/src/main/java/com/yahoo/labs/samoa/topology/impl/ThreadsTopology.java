@@ -25,6 +25,7 @@ import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.Topology;
 
 /**
+ * Topology for multithreaded engine.
  * @author Anh Thu Vu
  *
  */

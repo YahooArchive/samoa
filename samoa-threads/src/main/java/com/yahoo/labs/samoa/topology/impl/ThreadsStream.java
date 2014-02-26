@@ -31,6 +31,7 @@ import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
+ * Stream for multithreaded engine.
  * @author Anh Thu Vu
  *
  */

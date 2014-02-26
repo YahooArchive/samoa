@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Multithreaded engine.
  * @author Anh Thu Vu
  *
  */

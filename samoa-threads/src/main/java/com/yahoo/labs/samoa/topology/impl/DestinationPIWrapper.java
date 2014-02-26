@@ -24,6 +24,9 @@ import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
+ * An object of this class contains information about a destination
+ * of a stream: the ProcessingItem, its parallelismHint, and 
+ * partitioning scheme.
  * @author Anh Thu Vu
  *
  */
