@@ -77,7 +77,28 @@ final class LocalStatisticsProcessor implements Processor {
 	@Override
 	public boolean process(ContentEvent event) {
 		//process AttributeContentEvent by updating the subset of local statistics
-		if (event instanceof AttributeContentEvent) {
+                if (event instanceof AttributeBatchContentEvent) {
+                        AttributeBatchContentEvent abce = (AttributeBatchContentEvent) event;
+                        List<ContentEvent> contentEventList = abce.getContentEventList();
+                            for (ContentEvent contentEvent: contentEventList ){
+                            AttributeContentEvent ace = (AttributeContentEvent) contentEvent;
+                            Long learningNodeId = Long.valueOf(ace.getLearningNodeId());
+                            Integer obsIndex = Integer.valueOf(ace.getObsIndex());
+
+                            AttributeClassObserver obs = localStats.get(
+                                            learningNodeId, obsIndex);
+
+                            if (obs == null) {
+                                    obs = ace.isNominal() ? newNominalClassObserver()
+                                                    : newNumericClassObserver();
+                                    localStats.put(ace.getLearningNodeId(), obsIndex, obs);
+                            }
+                            obs.observeAttributeClass(ace.getAttrVal(), ace.getClassVal(),
+                                            ace.getWeight());
+                            }
+			
+		
+            /*if (event instanceof AttributeContentEvent) {
 			AttributeContentEvent ace = (AttributeContentEvent) event;
 			Long learningNodeId = Long.valueOf(ace.getLearningNodeId());
 			Integer obsIndex = Integer.valueOf(ace.getObsIndex());
@@ -92,7 +113,7 @@ final class LocalStatisticsProcessor implements Processor {
 			}
 			obs.observeAttributeClass(ace.getAttrVal(), ace.getClassVal(),
 					ace.getWeight());
-			
+		*/	
 		} else if (event instanceof ComputeContentEvent) {
 			//process ComputeContentEvent by calculating the local statistic
 			//and send back the calculation results via computation result stream.
