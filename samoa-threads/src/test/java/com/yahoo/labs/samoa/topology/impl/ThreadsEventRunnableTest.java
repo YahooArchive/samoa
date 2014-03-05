@@ -37,7 +37,7 @@ public class ThreadsEventRunnableTest {
 
 	@Tested private ThreadsEventRunnable task;
 	
-	@Mocked private ThreadsWorkerProcessingItem workerPi;
+	@Mocked private ThreadsProcessingItemInstance piInstance;
 	@Mocked private ContentEvent event;
 	
 	/**
@@ -45,12 +45,12 @@ public class ThreadsEventRunnableTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		task = new ThreadsEventRunnable(workerPi, event);
+		task = new ThreadsEventRunnable(piInstance, event);
 	}
 
 	@Test
 	public void testConstructor() {
-		assertSame("WorkerProcessingItem is not set correctly.",workerPi,task.getWorkerProcessingItem());
+		assertSame("WorkerProcessingItem is not set correctly.",piInstance,task.getWorkerProcessingItem());
 		assertSame("ContentEvent is not set correctly.",event,task.getContentEvent());
 	}
 	
@@ -59,7 +59,7 @@ public class ThreadsEventRunnableTest {
 		task.run();
 		new Verifications () {
 			{
-				workerPi.processEvent(event); times=1;
+				piInstance.processEvent(event); times=1;
 			}
 		};
 	}

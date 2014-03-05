@@ -24,11 +24,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
-import com.yahoo.labs.samoa.utils.EventAllocationType;
 
 /**
  * Stream for multithreaded engine.
@@ -36,38 +37,47 @@ import com.yahoo.labs.samoa.utils.EventAllocationType;
  *
  */
 public class ThreadsStream implements Stream {
-	private Set<DestinationPIWrapper> listDestination;
+	private static final Logger logger = LoggerFactory.getLogger(ThreadsStream.class);
+	
+	private Set<StreamDestination> destinations;
 	private int counter = 0;
 	private int maxCounter = 1;
 	
 	public ThreadsStream(IProcessingItem sourcePi) {
-		listDestination = new HashSet<DestinationPIWrapper>();
+		destinations = new HashSet<StreamDestination>();
 	}
 	
-	public void addDestination(IProcessingItem pi, int parallelismHint, EventAllocationType type) {
-		listDestination.add(new DestinationPIWrapper(pi, parallelismHint, type));
-		maxCounter *= parallelismHint;
+	public void addDestination(StreamDestination destination) {
+		destinations.add(destination);
+		maxCounter *= destination.getParallelism();
 	}
 	
-	public Set<DestinationPIWrapper> getDestinations() {
-		return this.listDestination;
+	public Set<StreamDestination> getDestinations() {
+		return this.destinations;
 	}
 
 	@Override
 	public synchronized void put(ContentEvent event) {
         ThreadsProcessingItem pi;
-        for (DestinationPIWrapper destination:listDestination) {
+        for (StreamDestination destination:destinations) {
             pi = (ThreadsProcessingItem) destination.getProcessingItem();
             counter++;
             if (counter >= maxCounter) counter = 0;
-            switch (destination.getEventAllocationType()) {
+            switch (destination.getPartitioningScheme()) {
             case SHUFFLE:
                 pi.processEvent(event, counter%destination.getParallelism());
                 break;
             case GROUP_BY_KEY:
-                HashCodeBuilder hb = new HashCodeBuilder();
-                hb.append(event.getKey());
-                int key = hb.build() % destination.getParallelism();
+            	if(event.getKey() == null) {
+            		logger.info("Skipping event with null key:{}",event);
+            		break;
+            	}
+            	// HashCodeBuilder object does not have reset() method
+            	// So all objects that get appended will be included in the 
+            	// computation of the hashcode. 
+            	// To avoid initialize a HashCodeBuilder for each event,
+            	// here I use the static method with reflection on the event's key
+                int key = HashCodeBuilder.reflectionHashCode(event.getKey(), true) % destination.getParallelism();
                 pi.processEvent(event, key);
                 break;
             case BROADCAST:

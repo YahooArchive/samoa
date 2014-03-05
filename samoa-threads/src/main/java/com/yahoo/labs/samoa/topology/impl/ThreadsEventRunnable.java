@@ -32,15 +32,15 @@ import com.yahoo.labs.samoa.core.ContentEvent;
  */
 public class ThreadsEventRunnable implements Runnable {
 
-	private ThreadsWorkerProcessingItem workerPi;
+	private ThreadsProcessingItemInstance workerPi;
 	private ContentEvent event;
 	
-	public ThreadsEventRunnable(ThreadsWorkerProcessingItem workerPi, ContentEvent event) {
+	public ThreadsEventRunnable(ThreadsProcessingItemInstance workerPi, ContentEvent event) {
 		this.workerPi = workerPi;
 		this.event = event;
 	}
 	
-	public ThreadsWorkerProcessingItem getWorkerProcessingItem() {
+	public ThreadsProcessingItemInstance getWorkerProcessingItem() {
 		return this.workerPi;
 	}
 	

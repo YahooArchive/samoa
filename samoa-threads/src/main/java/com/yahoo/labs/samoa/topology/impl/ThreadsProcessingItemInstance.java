@@ -30,12 +30,12 @@ import com.yahoo.labs.samoa.core.Processor;
  * @author Anh Thu Vu
  *
  */
-public class ThreadsWorkerProcessingItem {
+public class ThreadsProcessingItemInstance {
 
 	private Processor processor;
 	private int threadIndex;
 	
-	public ThreadsWorkerProcessingItem(Processor processor, int threadIndex) {
+	public ThreadsProcessingItemInstance(Processor processor, int threadIndex) {
 		this.processor = processor;
 		this.threadIndex = threadIndex;
 	}

@@ -30,11 +30,12 @@ import mockit.NonStrictExpectations;
 import mockit.Tested;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.utils.EventAllocationType;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 /**
  * @author Anh Thu Vu
@@ -48,18 +49,25 @@ public class ThreadsProcessingItemTest {
 	@Mocked private ExecutorService threadPool;
 	@Mocked private ThreadsEventRunnable task;
 	
-	@Mocked private Processor processor;
+	@Mocked private Processor processor, processorReplica;
 	@Mocked private ThreadsStream stream;
+	@Mocked private StreamDestination destination;
 	@Mocked private ContentEvent event;
 	
 	private final int parallelism = 4;
 	private final int counter = 2;
 	
-	private ThreadsWorkerProcessingItem worker;
+	private ThreadsProcessingItemInstance instance;
 	
 	
 	@Before
 	public void setUp() throws Exception {
+		new NonStrictExpectations() {
+			{
+				processor.newProcessor(processor);
+				result=processorReplica;
+			}
+		};
 		pi = new ThreadsProcessingItem(processor, parallelism);
 	}
 
@@ -73,7 +81,8 @@ public class ThreadsProcessingItemTest {
 	public void testConnectInputShuffleStream() {
 		new Expectations() {
 			{
-				stream.addDestination(pi, parallelism, EventAllocationType.SHUFFLE);
+				destination = new StreamDestination(pi, parallelism, PartitioningScheme.SHUFFLE);
+				stream.addDestination(destination);
 			}
 		};
 		pi.connectInputShuffleStream(stream);
@@ -83,7 +92,8 @@ public class ThreadsProcessingItemTest {
 	public void testConnectInputKeyStream() {
 		new Expectations() {
 			{
-				stream.addDestination(pi, parallelism, EventAllocationType.GROUP_BY_KEY);
+				destination = new StreamDestination(pi, parallelism, PartitioningScheme.GROUP_BY_KEY);
+				stream.addDestination(destination);
 			}
 		};
 		pi.connectInputKeyStream(stream);
@@ -93,14 +103,15 @@ public class ThreadsProcessingItemTest {
 	public void testConnectInputAllStream() {
 		new Expectations() {
 			{
-				stream.addDestination(pi, parallelism, EventAllocationType.BROADCAST);
+				destination = new StreamDestination(pi, parallelism, PartitioningScheme.BROADCAST);
+				stream.addDestination(destination);
 			}
 		};
 		pi.connectInputAllStream(stream);
 	}
 	
 	@Test
-	public void testSetupWorkers() {
+	public void testSetupInstances() {
 		new Expectations() {
 			{
 				for (int i=0; i<parallelism; i++) {
@@ -111,13 +122,13 @@ public class ThreadsProcessingItemTest {
 				}
 			}
 		};
-		pi.setupWorkers();
-		List<ThreadsWorkerProcessingItem> workers = pi.getWorkerProcessingItems();
-		assertNotNull("List of workers is null.",workers);
-		assertEquals("Number of workers does not match parallelism.",parallelism,workers.size(),0);
-		for(int i=0; i<workers.size();i++) {
-			assertNotNull("Worker "+i+" is null.",workers.get(i));
-			assertEquals("Worker "+i+" is not a ThreadsWorkerProcessingItem.",ThreadsWorkerProcessingItem.class,workers.get(i).getClass());
+		pi.setupInstances();
+		List<ThreadsProcessingItemInstance> instances = pi.getProcessingItemInstances();
+		assertNotNull("List of PI instances is null.",instances);
+		assertEquals("Number of instances does not match parallelism.",parallelism,instances.size(),0);
+		for(int i=0; i<instances.size();i++) {
+			assertNotNull("Instance "+i+" is null.",instances.get(i));
+			assertEquals("Instance "+i+" is not a ThreadsWorkerProcessingItem.",ThreadsProcessingItemInstance.class,instances.get(i).getClass());
 		}
 	}
 	
@@ -138,17 +149,20 @@ public class ThreadsProcessingItemTest {
 				}
 			}
 		};
-		pi.setupWorkers();
-		worker = pi.getWorkerProcessingItems().get(counter);
+		pi.setupInstances();
 		
+		instance = pi.getProcessingItemInstances().get(counter);
 		new NonStrictExpectations() {
 			{
 				ThreadsEngine.getThreadWithIndex(anyInt);
 				result=threadPool;
 				
-				new ThreadsEventRunnable(worker, event);
-				result=task;
 				
+			}
+		};
+		new Expectations() {
+			{
+				task = new ThreadsEventRunnable(instance, event);
 				threadPool.submit(task);
 			}
 		};

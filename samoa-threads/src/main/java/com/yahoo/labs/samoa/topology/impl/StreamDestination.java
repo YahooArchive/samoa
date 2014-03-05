@@ -21,26 +21,35 @@ package com.yahoo.labs.samoa.topology.impl;
  */
 
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.utils.EventAllocationType;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 /**
- * An object of this class contains information about a destination
- * of a stream: the ProcessingItem, its parallelismHint, and 
- * partitioning scheme.
+ * Represents one destination for streams. It has the info of:
+ * the ProcessingItem, parallelismHint, and partitioning scheme.
+ * Usage:
+ * - When ProcessingItem connects to a stream, it will pass 
+ * a StreamDestination to the stream.
+ * - Stream manages a set of StreamDestination.
  * @author Anh Thu Vu
  *
  */
-public class DestinationPIWrapper {
+public class StreamDestination {
 	private IProcessingItem pi;
 	private int parallelism;
-	private EventAllocationType type;
+	private PartitioningScheme type;
 	
-	public DestinationPIWrapper(IProcessingItem pi, int parallelismHint, EventAllocationType type) {
+	/*
+	 * Constructor
+	 */
+	public StreamDestination(IProcessingItem pi, int parallelismHint, PartitioningScheme type) {
 		this.pi = pi;
 		this.parallelism = parallelismHint;
 		this.type = type;
 	}
 	
+	/*
+	 * Getters
+	 */
 	public IProcessingItem getProcessingItem() {
 		return this.pi;
 	}
@@ -49,7 +58,7 @@ public class DestinationPIWrapper {
 		return this.parallelism;
 	}
 	
-	public EventAllocationType getEventAllocationType() {
+	public PartitioningScheme getPartitioningScheme() {
 		return this.type;
 	}
 

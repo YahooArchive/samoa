@@ -28,5 +28,3 @@ package com.yahoo.labs.samoa.utils;
 public enum PartitioningScheme {
 	SHUFFLE, GROUP_BY_KEY, BROADCAST
 }
-// TODO: use this enum in S4
-// Storm doesn't seem to need this

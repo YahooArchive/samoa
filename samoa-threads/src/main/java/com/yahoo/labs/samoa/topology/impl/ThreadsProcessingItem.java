@@ -27,7 +27,7 @@ import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
-import com.yahoo.labs.samoa.utils.EventAllocationType;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 /**
  * ProcessingItem for multithreaded engine.
@@ -38,67 +38,94 @@ public class ThreadsProcessingItem implements ProcessingItem {
 	
 	private Processor processor;
 	private int parallelismHint;
-	private List<ThreadsWorkerProcessingItem> listWorkerPi;
+	
+	// Replicas of the ProcessingItem.
+	// When ProcessingItem receives an event, it assigns one
+	// of these replicas to process the event.
+	private List<ThreadsProcessingItemInstance> piInstances;
+	
+	// Each replica of ProcessingItem is assigned to one of the
+	// available threads in a round-robin fashion, i.e.: each 
+	// replica is associated with the index of a thread. 
+	// Each ProcessingItem has a random offset variable so that
+	// the allocation of PI replicas to threads are spread evenly
+	// among all threads.
 	private int offset;
 	
+	/*
+	 * Constructor
+	 */
 	public ThreadsProcessingItem(Processor processor, int parallelismHint) {
 		this.processor = processor;
 		this.parallelismHint = parallelismHint;
 		this.offset = (int) (Math.random()*ThreadsEngine.getNumberOfThreads());
 	}
 
+	/*
+	 * Getters
+	 */
 	@Override
 	public Processor getProcessor() {
 		return processor;
 	}
-
-	private ProcessingItem addInputStream(Stream inputStream, EventAllocationType type) {
-		ThreadsStream stream = (ThreadsStream) inputStream;
-		stream.addDestination(this, this.parallelismHint, type);
-		return this;
-	}
 	
-	@Override
-	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
-		return this.addInputStream(inputStream, EventAllocationType.SHUFFLE);
-	}
-
-	@Override
-	public ProcessingItem connectInputKeyStream(Stream inputStream) {
-		return this.addInputStream(inputStream, EventAllocationType.GROUP_BY_KEY);
-	}
-
-	@Override
-	public ProcessingItem connectInputAllStream(Stream inputStream) {
-		return this.addInputStream(inputStream, EventAllocationType.BROADCAST);
-	}
-
 	@Override
 	public int getParalellism() {
 		return this.parallelismHint;
 	}
 	
-	public void setupWorkers() {
-		this.listWorkerPi = new ArrayList<ThreadsWorkerProcessingItem>(parallelismHint);
+	public List<ThreadsProcessingItemInstance> getProcessingItemInstances() {
+		return this.piInstances;
+	}
+
+	/*
+	 * Connects to streams
+	 */
+	private ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
+		StreamDestination destination = new StreamDestination(this, this.parallelismHint, scheme);
+		((ThreadsStream) inputStream).addDestination(destination);
+		return this;
+	}
+	
+	@Override
+	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
+		return this.addInputStream(inputStream, PartitioningScheme.SHUFFLE);
+	}
+
+	@Override
+	public ProcessingItem connectInputKeyStream(Stream inputStream) {
+		return this.addInputStream(inputStream, PartitioningScheme.GROUP_BY_KEY);
+	}
+
+	@Override
+	public ProcessingItem connectInputAllStream(Stream inputStream) {
+		return this.addInputStream(inputStream, PartitioningScheme.BROADCAST);
+	}
+
+	/*
+	 * Process the received event.
+	 */
+	public void processEvent(ContentEvent event, int counter) {
+		if (this.piInstances == null || this.piInstances.size() < this.parallelismHint)
+			throw new IllegalStateException("ThreadsWorkerProcessingItem(s) need to be setup before process any event (i.e. in ThreadsTopology.start()).");
+		
+		ThreadsProcessingItemInstance piInstance = this.piInstances.get(counter);
+		ThreadsEventRunnable runnable = new ThreadsEventRunnable(piInstance, event);
+		ThreadsEngine.getThreadWithIndex(piInstance.getThreadIndex()).submit(runnable);
+	}
+	
+	/*
+	 * Setup the replicas of this PI. 
+	 * This should be called after the topology is set up (all Processors and PIs are
+	 * setup and connected to the respective streams) and before events are sent.
+	 */
+	public void setupInstances() {
+		this.piInstances = new ArrayList<ThreadsProcessingItemInstance>(parallelismHint);
 		for (int i=0; i<this.parallelismHint; i++) {
 			Processor newProcessor = this.processor.newProcessor(this.processor);
 			newProcessor.onCreate(i + 1);
-			this.listWorkerPi.add(new ThreadsWorkerProcessingItem(newProcessor, this.offset + i));
+			this.piInstances.add(new ThreadsProcessingItemInstance(newProcessor, this.offset + i));
 		}
-	}
-	
-	public List<ThreadsWorkerProcessingItem> getWorkerProcessingItems() {
-		return this.listWorkerPi;
-	}
-	
-	public void processEvent(ContentEvent event, int counter) {
-		if (this.listWorkerPi == null || this.listWorkerPi.size() < this.parallelismHint) {
-			throw new IllegalStateException("ThreadsWorkerProcessingItem(s) need to be setup before process any event (ThreadsTopology.start()).");
-		}
-		
-		ThreadsWorkerProcessingItem workerPi = this.listWorkerPi.get(counter);
-		ThreadsEventRunnable runnable = new ThreadsEventRunnable(workerPi, event);
-		ThreadsEngine.getThreadWithIndex(workerPi.getThreadIndex()).submit(runnable);
 	}
 
 }

@@ -22,6 +22,7 @@ package com.yahoo.labs.samoa.topology.impl;
 
 import static org.junit.Assert.*;
 import mockit.Mocked;
+import mockit.NonStrictExpectations;
 import mockit.Tested;
 
 import org.junit.Before;
@@ -40,11 +41,11 @@ import com.yahoo.labs.samoa.topology.Topology;
  */
 public class ThreadsComponentFactoryTest {
 	@Tested private ThreadsComponentFactory factory;
-	@Mocked private Processor processor;
+	@Mocked private Processor processor, processorReplica;
 	@Mocked private EntranceProcessor entranceProcessor;
 	
 	private final int parallelism = 3;
-	private final String topoName = "testTopology";
+	private final String topoName = "TestTopology";
 	
 
 	@Before
@@ -54,6 +55,12 @@ public class ThreadsComponentFactoryTest {
 
 	@Test
 	public void testCreatePiNoParallelism() {
+		new NonStrictExpectations() {
+			{
+				processor.newProcessor(processor);
+				result=processorReplica;
+			}
+		};
 		ProcessingItem pi = factory.createPi(processor);
 		assertNotNull("ProcessingItem created is null.",pi);
 		assertEquals("ProcessingItem created is not a ThreadsProcessingItem.",ThreadsProcessingItem.class,pi.getClass());
@@ -62,6 +69,12 @@ public class ThreadsComponentFactoryTest {
 	
 	@Test
 	public void testCreatePiWithParallelism() {
+		new NonStrictExpectations() {
+			{
+				processor.newProcessor(processor);
+				result=processorReplica;
+			}
+		};
 		ProcessingItem pi = factory.createPi(processor,parallelism);
 		assertNotNull("ProcessingItem created is null.",pi);
 		assertEquals("ProcessingItem created is not a ThreadsProcessingItem.",ThreadsProcessingItem.class,pi.getClass());
@@ -70,7 +83,14 @@ public class ThreadsComponentFactoryTest {
 	
 	@Test
 	public void testCreateStream() {
+		new NonStrictExpectations() {
+			{
+				processor.newProcessor(processor);
+				result=processorReplica;
+			}
+		};
 		ProcessingItem pi = factory.createPi(processor);
+		
 		Stream stream = factory.createStream(pi);
 		assertNotNull("Stream created is null",stream);
 		assertEquals("Stream created is not a ThreadsStream.",ThreadsStream.class,stream.getClass());

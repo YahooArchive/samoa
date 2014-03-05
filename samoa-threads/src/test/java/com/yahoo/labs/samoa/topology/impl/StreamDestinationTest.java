@@ -35,45 +35,45 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.utils.EventAllocationType;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 /**
  * @author Anh Thu Vu
  *
  */
 @RunWith(Parameterized.class)
-public class DestinationPIWrapperTest {
+public class StreamDestinationTest {
 
-	@Tested private DestinationPIWrapper wrapper;
+	@Tested private StreamDestination destination;
 	
 	@Mocked private IProcessingItem pi;
 	private final int parallelism;
-	private final EventAllocationType type;
+	private final PartitioningScheme scheme;
 	
 	@Parameters
 	public static Collection<Object[]> generateParameters() {
 		return Arrays.asList(new Object[][] {
-			 { 3, EventAllocationType.SHUFFLE },
-			 { 2, EventAllocationType.GROUP_BY_KEY },
-			 { 5, EventAllocationType.BROADCAST }
+			 { 3, PartitioningScheme.SHUFFLE },
+			 { 2, PartitioningScheme.GROUP_BY_KEY },
+			 { 5, PartitioningScheme.BROADCAST }
 		});
 	}
 	
-	public DestinationPIWrapperTest(int parallelism, EventAllocationType type) {
+	public StreamDestinationTest(int parallelism, PartitioningScheme scheme) {
 		this.parallelism = parallelism;
-		this.type = type;
+		this.scheme = scheme;
 	}
 	
 	@Before
 	public void setUp() throws Exception {
-		wrapper = new DestinationPIWrapper(pi, parallelism, type);
+		destination = new StreamDestination(pi, parallelism, scheme);
 	}
 
 	@Test
 	public void testContructor() {
-		assertSame("The IProcessingItem is not set correctly.", pi, wrapper.getProcessingItem());
-		assertEquals("Parallelism value is not set correctly.", parallelism, wrapper.getParallelism(), 0);
-		assertEquals("EventAllocationType is not set correctly.", type, wrapper.getEventAllocationType());
+		assertSame("The IProcessingItem is not set correctly.", pi, destination.getProcessingItem());
+		assertEquals("Parallelism value is not set correctly.", parallelism, destination.getParallelism(), 0);
+		assertEquals("EventAllocationType is not set correctly.", scheme, destination.getPartitioningScheme());
 	}
 
 }

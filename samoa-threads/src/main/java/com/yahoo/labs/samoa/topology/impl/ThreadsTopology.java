@@ -33,14 +33,6 @@ public class ThreadsTopology extends Topology {
 	
 	public String topologyName;
     private ThreadsEntranceProcessingItem entrancePi;
-    
-    private void setupWorkers() {
-    	for (IProcessingItem pi:this.processingItems) {
-    		if (pi instanceof ThreadsProcessingItem) {
-    			((ThreadsProcessingItem) pi).setupWorkers();
-    		}
-    	}
-    }
 
     public void run() {
     	if (entrancePi == null) 
@@ -50,7 +42,7 @@ public class ThreadsTopology extends Topology {
     }
     
     public void start() {
-        this.setupWorkers();
+    	this.setupProcessingItemInstances();
     	this.run();
     }
     
@@ -67,5 +59,18 @@ public class ThreadsTopology extends Topology {
     public void addEntrancePi(EntranceProcessingItem epi) {
         this.entrancePi = (ThreadsEntranceProcessingItem) epi;
         this.addProcessingItem(epi);
+    }
+    
+    /* 
+     * Tell all the ThreadsProcessingItems to create & init their 
+     * replicas (ThreadsProcessingItemInstance)
+     */
+    private void setupProcessingItemInstances() {
+    	for (IProcessingItem pi:this.processingItems) {
+    		if (pi instanceof ThreadsProcessingItem) {
+    			ThreadsProcessingItem tpi = (ThreadsProcessingItem) pi;
+    			tpi.setupInstances();
+    		}
+    	}
     }
 }

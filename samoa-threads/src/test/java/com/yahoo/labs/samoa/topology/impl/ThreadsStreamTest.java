@@ -27,6 +27,7 @@ import java.util.Set;
 
 import mockit.Expectations;
 import mockit.Mocked;
+import mockit.NonStrictExpectations;
 import mockit.Tested;
 
 import org.junit.Before;
@@ -36,7 +37,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.utils.EventAllocationType;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 /**
  * @author Anh Thu Vu
@@ -49,36 +50,54 @@ public class ThreadsStreamTest {
 	
 	@Mocked private ThreadsProcessingItem sourcePi, destPi;
 	@Mocked private ContentEvent event;
+	@Mocked private StreamDestination destination;
 
+	private final String eventKey = "eventkey";
 	private final int parallelism;
-	private final EventAllocationType type;
+	private final PartitioningScheme scheme;
+	
 	
 	@Parameters
 	public static Collection<Object[]> generateParameters() {
 		return Arrays.asList(new Object[][] {
-			 { 2, EventAllocationType.SHUFFLE },
-			 { 3, EventAllocationType.GROUP_BY_KEY },
-			 { 4, EventAllocationType.BROADCAST }
+			 { 2, PartitioningScheme.SHUFFLE },
+			 { 3, PartitioningScheme.GROUP_BY_KEY },
+			 { 4, PartitioningScheme.BROADCAST }
 		});
 	}
 	
-	public ThreadsStreamTest(int parallelism, EventAllocationType type) {
+	public ThreadsStreamTest(int parallelism, PartitioningScheme scheme) {
 		this.parallelism = parallelism;
-		this.type = type;
+		this.scheme = scheme;
 	}
 	
 	@Before
 	public void setUp() throws Exception {
 		stream = new ThreadsStream(sourcePi);
-		stream.addDestination(destPi, parallelism, type);
+		stream.addDestination(destination);
+	}
+	
+	@Test
+	public void testAddDestination() {
+		assertTrue("Destination object was not added in stream's destinations set.",stream.getDestinations().contains(destination));
 	}
 
 	@Test
 	public void testPut() {
-		switch(type) {
+		new NonStrictExpectations() {
+			{
+				event.getKey(); result=eventKey;
+				destination.getProcessingItem(); result=destPi;
+				destination.getPartitioningScheme(); result=scheme;
+				destination.getParallelism(); result=parallelism;
+				
+			}
+		};
+		switch(this.scheme) {
 		case SHUFFLE: case GROUP_BY_KEY:
 			new Expectations() {
 				{
+					
 					// TODO: restrict the range of counter value
 					destPi.processEvent(event, anyInt); times=1;
 				}
@@ -96,20 +115,6 @@ public class ThreadsStreamTest {
 		stream.put(event);
 	}
 	
-	@Test
-	public void testAddDestination() {
-		Set<DestinationPIWrapper> destinations = stream.getDestinations();
-		boolean found = false;
-		for (DestinationPIWrapper destination:destinations) {
-			if (destination.getProcessingItem() == destPi &&
-					destination.getParallelism() == parallelism &&
-					destination.getEventAllocationType() == type) {
-				found = true;
-				break;
-			}
-		}
-		
-		assertTrue("Destination PI was not added in stream's destinations set.",found);
-	}
+	
 
 }
