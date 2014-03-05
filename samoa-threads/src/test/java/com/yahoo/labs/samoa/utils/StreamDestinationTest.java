@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.topology.impl;
+package com.yahoo.labs.samoa.utils;
 
 /*
  * #%L
@@ -36,6 +36,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.utils.PartitioningScheme;
+import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
  * @author Anh Thu Vu

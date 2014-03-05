@@ -23,7 +23,6 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 
 import mockit.Expectations;
 import mockit.Mocked;
@@ -38,6 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.utils.PartitioningScheme;
+import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
  * @author Anh Thu Vu
@@ -79,7 +79,14 @@ public class ThreadsStreamTest {
 	
 	@Test
 	public void testAddDestination() {
-		assertTrue("Destination object was not added in stream's destinations set.",stream.getDestinations().contains(destination));
+		boolean found = false;
+		for (StreamDestination sd:stream.getDestinations()) {
+			if (sd == destination) {
+				found = true;
+				break;
+			}
+		}
+		assertTrue("Destination object was not added in stream's destinations set.",found);
 	}
 
 	@Test

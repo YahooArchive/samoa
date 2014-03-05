@@ -20,8 +20,8 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
  * Stream for multithreaded engine.
@@ -39,12 +40,12 @@ import com.yahoo.labs.samoa.topology.Stream;
 public class ThreadsStream implements Stream {
 	private static final Logger logger = LoggerFactory.getLogger(ThreadsStream.class);
 	
-	private Set<StreamDestination> destinations;
+	private List<StreamDestination> destinations;
 	private int counter = 0;
 	private int maxCounter = 1;
 	
 	public ThreadsStream(IProcessingItem sourcePi) {
-		destinations = new HashSet<StreamDestination>();
+		destinations = new LinkedList<StreamDestination>();
 	}
 	
 	public void addDestination(StreamDestination destination) {
@@ -52,7 +53,7 @@ public class ThreadsStream implements Stream {
 		maxCounter *= destination.getParallelism();
 	}
 	
-	public Set<StreamDestination> getDestinations() {
+	public List<StreamDestination> getDestinations() {
 		return this.destinations;
 	}
 

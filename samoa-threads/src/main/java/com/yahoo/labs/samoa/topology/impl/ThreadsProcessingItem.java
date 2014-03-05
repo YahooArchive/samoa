@@ -28,6 +28,7 @@ import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.PartitioningScheme;
+import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
  * ProcessingItem for multithreaded engine.
