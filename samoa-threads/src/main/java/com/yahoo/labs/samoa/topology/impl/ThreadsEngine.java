@@ -70,7 +70,7 @@ public class ThreadsEngine {
 	 */
 	private static void submitTopology(Topology topology) {
 		ThreadsTopology tTopology = (ThreadsTopology) topology;
-		tTopology.start();
+		tTopology.run();
 	}
 	
 	public static void submitTopology(Topology topology, int numThreads) {

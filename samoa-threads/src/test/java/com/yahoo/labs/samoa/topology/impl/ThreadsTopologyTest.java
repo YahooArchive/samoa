@@ -27,6 +27,8 @@ import mockit.Tested;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.yahoo.labs.samoa.core.EntranceProcessor;
+
 /**
  * @author Anh Thu Vu
  *
@@ -36,11 +38,11 @@ public class ThreadsTopologyTest {
 	@Tested private ThreadsTopology topology;
 	
 	@Mocked private ThreadsEntranceProcessingItem entrancePi;
-	@Mocked private Thread unused;
+	@Mocked private EntranceProcessor entranceProcessor;
 	
 	@Before
 	public void setUp() throws Exception {
-		topology = new ThreadsTopology("testTopology");
+		topology = new ThreadsTopology("TestTopology");
 	}
 
 	@Test
@@ -54,8 +56,13 @@ public class ThreadsTopologyTest {
 	@Test
 	public void testRun() {
 		topology.addEntrancePi(entrancePi);
+		
 		new Expectations() {
 			{
+				entrancePi.getProcessor();
+				result=entranceProcessor;
+				entranceProcessor.onCreate(anyInt);
+				
 				entrancePi.startSendingEvents();
 			}
 		};

@@ -36,14 +36,11 @@ public class ThreadsTopology extends Topology {
 
     public void run() {
     	if (entrancePi == null) 
-    		throw new IllegalStateException("You need to set entrance PI before run the topology.");
+    		throw new IllegalStateException("You need to set entrance PI before running the topology.");
     		
-    	entrancePi.startSendingEvents();
-    }
-    
-    public void start() {
     	this.setupProcessingItemInstances();
-    	this.run();
+    	entrancePi.getProcessor().onCreate(0); // id=0 as it's not used in multithreading mode
+    	entrancePi.startSendingEvents();
     }
     
     public ThreadsTopology(String topoName) {

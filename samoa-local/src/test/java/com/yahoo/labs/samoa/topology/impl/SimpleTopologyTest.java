@@ -31,8 +31,6 @@ import org.junit.Test;
  * #L%
  */
 
-
-
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 

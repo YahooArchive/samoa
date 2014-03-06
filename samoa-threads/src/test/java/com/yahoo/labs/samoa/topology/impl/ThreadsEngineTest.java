@@ -120,7 +120,7 @@ public class ThreadsEngineTest {
 	public void testSubmitTopology() {
 		ThreadsEngine.submitTopology(topology, numThreads);
 		new Verifications() {{
-		    topology.start(); times=1;
+		    topology.run(); times=1;
 		}};
 		assertEquals("Number of threads is not set correctly.", numThreads,
 				ThreadsEngine.getNumberOfThreads(),0);
