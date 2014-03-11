@@ -24,32 +24,29 @@ import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.topology.Stream;
 
 /**
- * Topology Starter is a wrapper of PrequentialSourceProcessor so that
- * the Entrance PI could start the execution of the topology.
+ * Topology Starter is a wrapper of PrequentialSourceProcessor so that the Entrance PI could start the execution of the topology.
  * 
- * @author Arinto Murdopo
- *
  */
 public class PrequentialSourceTopologyStarter implements TopologyStarter {
 
-	private static final long serialVersionUID = -2323666993205665265L;
-	
-	private final PrequentialSourceProcessor psp;
-	private Stream inputStream;
-	private final int numInstanceSent;
-	
-	public PrequentialSourceTopologyStarter(PrequentialSourceProcessor psp, int numInstanceSent){
-		this.psp = psp;
-		this.numInstanceSent = numInstanceSent;
-	}
-	@Override
-	public void start() {
-		this.psp.sendInstances(inputStream, numInstanceSent);
-	}
-	
-	public void setInputStream(Stream inputStream)
-	{
-		this.inputStream = inputStream;
-	}
+    private static final long serialVersionUID = -2323666993205665265L;
+
+    private final PrequentialSourceProcessor psp;
+    private Stream inputStream;
+    private final int numInstanceSent;
+
+    public PrequentialSourceTopologyStarter(PrequentialSourceProcessor psp, int numInstanceSent) {
+        this.psp = psp;
+        this.numInstanceSent = numInstanceSent;
+    }
+
+    @Override
+    public void start() {
+        this.psp.sendInstances(inputStream, numInstanceSent);
+    }
+
+    public void setInputStream(Stream inputStream) {
+        this.inputStream = inputStream;
+    }
 
 }
