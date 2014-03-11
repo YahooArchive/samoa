@@ -315,7 +315,7 @@ final class ModelAggregatorProcessor implements Processor {
 		//Check the instance whether it is used for testing or training
                 //boolean testAndTrain = isTraining; //Train after testing
                 boolean testAndTrain = false;
-		double[] prediction;
+		double[] prediction = null;
 		if (isTesting) {
                         prediction = getVotesForInstance(inst, testAndTrain);
 			this.resultStream.put(newResultContentEvent(prediction, inst,
