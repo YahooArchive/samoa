@@ -42,12 +42,12 @@ public interface Task {
 	 */
 	public Topology getTopology();
 	
-	/**
-	 * Return the entrance processor to start SAMOA topology
-	 * The logic to start the topology should be implemented here
-	 * @return entrance processor to start the topology
-	 */
-	public TopologyStarter getTopologyStarter();
+    // /**
+    // * Return the entrance processor to start SAMOA topology
+    // * The logic to start the topology should be implemented here
+    // * @return entrance processor to start the topology
+    // */
+    // public TopologyStarter getTopologyStarter();
 	
 	/**
 	 * Sets the factory.

@@ -46,77 +46,63 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Clustering Evaluation task is a scheme in evaluating performance of
- * clusterers
- *
+ * Clustering Evaluation task is a scheme in evaluating performance of clusterers
+ * 
  * @author Arinto Murdopo, Antonio Severien
- *
+ * 
  */
 public class ClusteringEvaluation implements Task, Configurable {
 
     private static final long serialVersionUID = -8246537378371580550L;
-    
+
     private static Logger logger = LoggerFactory.getLogger(ClusteringEvaluation.class);
-    
-    public ClassOption learnerOption = new ClassOption("learner", 'l',
-            "Clusterer to train.", Learner.class, 
-             //SingleLearner.class.getName()
-            DistributedClusterer.class.getName()
-            );
-    
-    public ClassOption streamTrainOption = new ClassOption("streamTrain", 's',
-            "Stream to learn from.", InstanceStream.class,
+
+    public ClassOption learnerOption = new ClassOption("learner", 'l', "Clusterer to train.", Learner.class,
+    // SingleLearner.class.getName()
+            DistributedClusterer.class.getName());
+
+    public ClassOption streamTrainOption = new ClassOption("streamTrain", 's', "Stream to learn from.", InstanceStream.class,
             RandomRBFGeneratorEvents.class.getName());
-    
-    public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i',
-            "Maximum number of instances to test/train on  (-1 = no limit).",
-            100000, -1, Integer.MAX_VALUE);
-    
-    public IntOption measureCollectionTypeOption = new IntOption(
-            "measureCollectionType", 'm', "Type of measure collection", 0, 0,
+
+    public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i', "Maximum number of instances to test/train on  (-1 = no limit).", 100000, -1,
             Integer.MAX_VALUE);
-    
-    public IntOption timeLimitOption = new IntOption("timeLimit", 't',
-            "Maximum number of seconds to test/train for (-1 = no limit).", -1,
-            -1, Integer.MAX_VALUE);
-    
-    public IntOption sampleFrequencyOption = new IntOption("sampleFrequency",
-            'f',
-            "How many instances between samples of the learning performance.",
-            1000, 0, Integer.MAX_VALUE);
-    
-    public StringOption evaluationNameOption = new StringOption("evalutionName",
-            'n', "Identifier of the evaluation",
-            "Clustering__" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-    
-    public FileOption dumpFileOption = new FileOption("dumpFile", 'd',
-            "File to append intermediate csv results to", null, "csv", true);
-    
-    public FloatOption samplingThresholdOption = new FloatOption("samplingThreshold",
-            'a', "Ratio of instances sampled that will be used for evaluation.",
-            0.5, 0.0, 1.0);
-    
-    
+
+    public IntOption measureCollectionTypeOption = new IntOption("measureCollectionType", 'm', "Type of measure collection", 0, 0, Integer.MAX_VALUE);
+
+    public IntOption timeLimitOption = new IntOption("timeLimit", 't', "Maximum number of seconds to test/train for (-1 = no limit).", -1, -1,
+            Integer.MAX_VALUE);
+
+    public IntOption sampleFrequencyOption = new IntOption("sampleFrequency", 'f', "How many instances between samples of the learning performance.", 1000, 0,
+            Integer.MAX_VALUE);
+
+    public StringOption evaluationNameOption = new StringOption("evalutionName", 'n', "Identifier of the evaluation", "Clustering__"
+            + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+
+    public FileOption dumpFileOption = new FileOption("dumpFile", 'd', "File to append intermediate csv results to", null, "csv", true);
+
+    public FloatOption samplingThresholdOption = new FloatOption("samplingThreshold", 'a', "Ratio of instances sampled that will be used for evaluation.", 0.5,
+            0.0, 1.0);
+
     private ClusteringSourceProcessor source;
-    
+
     private ClusteringSourceTopologyStarter starter;
-    
-    //private EntranceProcessingItem sourcePi;
-    
+
+    // private EntranceProcessingItem sourcePi;
+
     private Stream sourcePiOutputStream;
-    
+
     private Stream sourcePiEvalStream;
-    
+
     private Learner learner;
-    
+
     private ClusteringEvaluatorProcessor evaluator;
-    
-    //private ProcessingItem evaluatorPi;
-    
+
+    // private ProcessingItem evaluatorPi;
+
     private Stream evaluatorPiInputStream;
-    
+
     private Topology topology;
-    
+
     private TopologyBuilder builder;
 
     public void getDescription(StringBuilder sb, int indent) {
@@ -126,8 +112,8 @@ public class ClusteringEvaluation implements Task, Configurable {
     @Override
     public void init() {
         // TODO remove the if statement
-        //theoretically, dynamic binding will work here!
-        //test later!
+        // theoretically, dynamic binding will work here!
+        // test later!
         // for now, the if statement is used by Storm
 
         if (builder == null) {
@@ -135,53 +121,48 @@ public class ClusteringEvaluation implements Task, Configurable {
             logger.debug("Sucessfully instantiating TopologyBuilder");
 
             builder.initTopology(evaluationNameOption.getValue());
-            logger.debug("Sucessfully initializing SAMOA topology with name {}",
-                    evaluationNameOption.getValue());
+            logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
         }
 
-        //instantiate PrequentialSourceProcessor and its output stream (sourcePiOutputStream)
+        // instantiate PrequentialSourceProcessor and its output stream (sourcePiOutputStream)
         source = new ClusteringSourceProcessor();
         InstanceStream streamTrain = (InstanceStream) this.streamTrainOption.getValue();
         source.setStreamSource(streamTrain);
 
-        //TODO: refactor component creation, use Factory.createTopoStarter(this)
-        //inside Factory, we will use the public options attribute
-        //TODO: integrate time limit into TopologyStarter and PrequentialSourceProcessor
+        // TODO: refactor component creation, use Factory.createTopoStarter(this)
+        // inside Factory, we will use the public options attribute
+        // TODO: integrate time limit into TopologyStarter and PrequentialSourceProcessor
 
-        starter = new ClusteringSourceTopologyStarter(source, instanceLimitOption.getValue(), this.samplingThresholdOption.getValue());
-        //sourcePi = builder.createEntrancePi(source, starter);
-        //sourcePiOutputStream = builder.createStream(sourcePi);
-        builder.addEntranceProcessor(source, starter);
+        // starter = new ClusteringSourceTopologyStarter(source, instanceLimitOption.getValue(), this.samplingThresholdOption.getValue());
+        // sourcePi = builder.createEntrancePi(source, starter);
+        // sourcePiOutputStream = builder.createStream(sourcePi);
+        builder.addEntranceProcessor(source); // FIXME put the starter code inside the platform code
         sourcePiOutputStream = builder.createStream(source);
-        starter.setInputStream(sourcePiOutputStream);
+        // starter.setInputStream(sourcePiOutputStream); // FIXME set stream in the EntrancePI
         logger.debug("Sucessfully instantiating ClusteringSourceProcessor");
 
         sourcePiEvalStream = builder.createStream(source);
         starter.setEvalStream(sourcePiEvalStream);
-        
-        //instantiate learner and connect it to sourcePiOutputStream
+
+        // instantiate learner and connect it to sourcePiOutputStream
         learner = (Learner) this.learnerOption.getValue();
         learner.init(builder, source.getDataset(), 1);
         this.builder.connectInputShuffleStream(sourcePiOutputStream, learner.getInputProcessor());
         logger.debug("Sucessfully instantiating Learner");
 
         evaluatorPiInputStream = learner.getResultStream();
-        evaluator =
-                new ClusteringEvaluatorProcessor.Builder(//(ClassificationPerformanceEvaluator) this.evaluatorOption.getValue())
-                //.samplingFrequency(
-                sampleFrequencyOption.getValue())
-                .dumpFile(dumpFileOption.getFile())
-                .decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon())
-                .build();
+        evaluator = new ClusteringEvaluatorProcessor.Builder(// (ClassificationPerformanceEvaluator) this.evaluatorOption.getValue())
+                // .samplingFrequency(
+                sampleFrequencyOption.getValue()).dumpFile(dumpFileOption.getFile()).decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon()).build();
 
-        //evaluatorPi = builder.createPi(evaluator);
-        //evaluatorPi.connectInputShuffleStream(evaluatorPiInputStream);
-        //evaluatorPi.connectInputAllStream(sourcePiEvalStream);
+        // evaluatorPi = builder.createPi(evaluator);
+        // evaluatorPi.connectInputShuffleStream(evaluatorPiInputStream);
+        // evaluatorPi.connectInputAllStream(sourcePiEvalStream);
         builder.addProcessor(evaluator);
         builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
-        builder.connectInputAllStream(sourcePiEvalStream, evaluator);       
+        builder.connectInputAllStream(sourcePiEvalStream, evaluator);
         logger.debug("Sucessfully instantiating EvaluatorProcessor");
-        
+
         topology = builder.build();
         logger.debug("Sucessfully building the topology");
     }
@@ -195,8 +176,7 @@ public class ClusteringEvaluation implements Task, Configurable {
         logger.debug("Sucessfully instantiating TopologyBuilder");
 
         builder.initTopology(evaluationNameOption.getValue());
-        logger.debug("Sucessfully initializing SAMOA topology with name {}",
-                evaluationNameOption.getValue());
+        logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
 
     }
 
@@ -204,9 +184,9 @@ public class ClusteringEvaluation implements Task, Configurable {
         return topology;
     }
 
-    @Override
-    public TopologyStarter getTopologyStarter() {
-        return this.starter;
-
-    }
+    // @Override
+    // public TopologyStarter getTopologyStarter() {
+    // return this.starter;
+    //
+    // }
 }

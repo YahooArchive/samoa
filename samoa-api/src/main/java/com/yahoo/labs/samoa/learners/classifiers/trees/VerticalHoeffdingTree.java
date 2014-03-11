@@ -109,6 +109,10 @@ public final class VerticalHoeffdingTree implements Learner, AdaptiveLearner, Co
 
     private LocalStatisticsProcessor locStatProc;
 
+    private FilterProcessor filterProc;
+    
+    private Stream filterStream;
+    
     private Stream computeStream;
     
     private int parallelism;
@@ -116,6 +120,15 @@ public final class VerticalHoeffdingTree implements Learner, AdaptiveLearner, Co
     @Override
     public void init(TopologyBuilder topologyBuilder, Instances dataset, int parallelism) {
         this.parallelism = parallelism;
+        
+        this.filterProc = new FilterProcessor.Builder(dataset)
+                .build();
+        topologyBuilder.addProcessor(filterProc, parallelism);
+        
+        this.filterStream = topologyBuilder.createStream(filterProc);
+        this.filterProc.setOutputStream(this.filterStream);
+         
+ 
         this.modelAggrProc = new ModelAggregatorProcessor.Builder(dataset)
                 .splitCriterion((SplitCriterion) this.splitCriterionOption.getValue())
                 .splitConfidence(splitConfidenceOption.getValue())
@@ -128,6 +141,8 @@ public final class VerticalHoeffdingTree implements Learner, AdaptiveLearner, Co
         
         topologyBuilder.addProcessor(modelAggrProc, parallelism);
 
+        topologyBuilder.connectInputShuffleStream(this.filterStream, modelAggrProc);
+     
         this.resultStream = topologyBuilder.createStream(modelAggrProc);
         this.modelAggrProc.setResultStream(resultStream);
 
@@ -156,7 +171,7 @@ public final class VerticalHoeffdingTree implements Learner, AdaptiveLearner, Co
 
     @Override
     public Processor getInputProcessor() {
-        return this.modelAggrProc;
+        return this.filterProc; 
     }
 
     @Override
