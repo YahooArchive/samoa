@@ -34,6 +34,7 @@ import com.yahoo.labs.samoa.moa.core.StringUtils;
 import com.yahoo.labs.samoa.moa.gui.AWTRenderer;
 import com.yahoo.labs.samoa.moa.learners.Learner;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
+import com.esotericsoftware.kryo.Kryo;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
 import com.yahoo.labs.samoa.instances.Instance;

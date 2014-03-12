@@ -32,6 +32,11 @@ import com.esotericsoftware.kryo.io.Output;
  *
  */
 final class ComputeContentEvent extends ControlContentEvent {
+    
+    static {
+        Kryo kryo = new Kryo();
+        kryo.register(ComputeContentEvent.class, new ComputeCEFullPrecSerializer());
+    }
 
 	private static final long serialVersionUID = 5590798490073395190L;
 	
