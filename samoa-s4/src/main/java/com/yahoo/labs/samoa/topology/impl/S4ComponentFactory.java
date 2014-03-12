@@ -64,7 +64,7 @@ public class S4ComponentFactory implements ComponentFactory {
     @Override
     public EntranceProcessingItem createEntrancePi(EntranceProcessor entranceProcessor) {
         // TODO Create source Entry processing item that connects to an external stream
-        S4EntranceProcessingItem entrancePi = new S4EntranceProcessingItem(app);
+        S4EntranceProcessingItem entrancePi = new S4EntranceProcessingItem(entranceProcessor, app);
         entrancePi.setParalellism(1); // FIXME should not be set to 1 statically
         return entrancePi;
     }
