@@ -33,11 +33,6 @@ import com.yahoo.labs.samoa.core.ContentEvent;
  */
 final class LocalResultContentEvent implements ContentEvent{
     
-    static {
-        Kryo kryo = new Kryo();
-        kryo.register(LocalResultContentEvent.class);
-    }
-
 	private static final long serialVersionUID = -4206620993777418571L;
 	
 	private final AttributeSplitSuggestion bestSuggestion;
