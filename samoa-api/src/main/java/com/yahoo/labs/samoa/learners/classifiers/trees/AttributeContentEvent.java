@@ -35,6 +35,11 @@ import com.yahoo.labs.samoa.core.ContentEvent;
  */
 final class AttributeContentEvent implements ContentEvent {
 
+    static {
+        Kryo kryo = new Kryo();
+        kryo.register(AttributeContentEvent.class, new AttributeCEFullPrecSerializer());
+    }
+    
 	private static final long serialVersionUID = 6652815649846676832L;
 
 	private final long learningNodeId;
