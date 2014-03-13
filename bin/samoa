@@ -52,6 +52,12 @@ OPTIONS=$3
 if [ $PLATFORM = 'S4' ]; then
 
 	echo "Deploying to $PLATFORM"
+        if [ -z $S4_HOME ];then
+            echo "S4_HOME is not set!"
+            echo "Please set S4_HOME to point to your S4 installation"
+            exit -1
+        fi
+
 	# Local functions
 	deployLocal() 
 	{
@@ -61,15 +67,15 @@ if [ $PLATFORM = 'S4' ]; then
 		sleep 10
 
 		echo "Defining cluster..."
-		(cd $S4_HOME ; . s4 newCluster -c=${CLUSTER_NAME} -nbTasks=1 -flp=${CLUSTER_PORT}  -zk=${ZK_SERVER}:${ZK_SERVER_PORT} & )
+		(cd $S4_HOME ; . s4 newCluster -c=${CLUSTER_NAME} -nbTasks=1 -flp=${CLUSTER_PORT} -zk=${ZK_SERVER}:${ZK_SERVER_PORT} & )
 		sleep 5
 
-		echo "Starting node on cluster "$CLUSTER_NAME"..."
+		echo "Starting node on cluster $CLUSTER_NAME..."
 		(cd $S4_HOME ; . s4 node -c=${CLUSTER_NAME} -zk=${ZK_SERVER}:${ZK_SERVER_PORT} & )
 		sleep 5
 	}
 
-	SAMOA_S4_PROPERTIES=samoa-s4.properties
+	SAMOA_S4_PROPERTIES="samoa-s4.properties"
 	PROPERTY_VALUE=""
 	readProperty() {
 	    property=$1
@@ -79,7 +85,7 @@ if [ $PLATFORM = 'S4' ]; then
 
 	curr_dir=`pwd`
 	if [ -f /tmp/httpPID ]; then
-		pid=`more /tmp/httpPID`
+		pid=`cat /tmp/httpPID`
 		kill -9 $pid
 		rm /tmp/httpPID
 	fi
@@ -94,43 +100,43 @@ if [ $PLATFORM = 'S4' ]; then
 	# Reading properties file
 	readProperty 'http.server.ip'
 	APP_SERVER_IP=$PROPERTY_VALUE
-	if [ $APP_SERVER_IP = '' ]; then
-		APP_SERVER_IP=`hostname`
+	if [ -z $APP_SERVER_IP ]; then
+		APP_SERVER_IP=$(hostname)
 	fi
 	
 	readProperty 'http.server.port'
 	APP_SERVER_PORT=$PROPERTY_VALUE
-	if [ $APP_SERVER_PORT = '' ]; then
+	if [ -z $APP_SERVER_PORT ]; then
 		APP_SERVER_PORT=8000
 	fi
 	
 	readProperty 'zookeeper.server'
 	ZK_SERVER=$PROPERTY_VALUE
-	if [ $ZK_SERVER = '' ]; then
-		ZK_SERVER=`hostname`
+	if [ -z $ZK_SERVER ]; then
+		ZK_SERVER=$(hostname)
 	fi
 	
 	readProperty 'zookeeper.port'
 	ZK_SERVER_PORT=$PROPERTY_VALUE
-	if [ $ZK_SERVER_PORT = '' ]; then
+	if [ -z $ZK_SERVER_PORT ]; then
 		ZK_SERVER_PORT=2181
 	fi
 	
 	readProperty 'cluster.name'
 	CLUSTER_NAME=$PROPERTY_VALUE
-	if [ $CLUSTER_NAME = '' ]; then
+	if [ -z $CLUSTER_NAME ]; then
 		CLUSTER_NAME="cluster"
 	fi
 	
 	readProperty 'cluster.port'
 	CLUSTER_PORT=$PROPERTY_VALUE
-	if [ $CLUSTER_NAME = '' ]; then
+	if [ -z $CLUSTER_NAME ]; then
 		CLUSTER_PORT=12000
 	fi
 
 	readProperty 'samoa.deploy.mode'
 	DEPLOY_MODE=$PROPERTY_VALUE
-	if [ $DEPLOY_MODE = '' ]; then
+	if [ -z $DEPLOY_MODE ]; then
 	  DEPLOY_MODE=local
 	elif [ $DEPLOY_MODE = 'local' ]; then
 	  deployLocal
@@ -154,7 +160,7 @@ elif [ $PLATFORM = 'STORM' ]; then
 	echo "Deploying to $PLATFORM"
 	if [ -z $STORM_HOME ];then
 	    echo "STORM_HOME is not set!"
-	    echo "Please set STORM_HOME into your Storm installation"
+	    echo "Please set STORM_HOME to point to your Storm installation"
 	    exit -1
 	fi
 
@@ -166,9 +172,9 @@ elif [ $PLATFORM = 'STORM' ]; then
 
 	STORM_EXEC="$STORM_HOME/bin/storm"
 
-	SAMOA_STORM_PROPERTIES=samoa-storm.properties
-	MODE_OPTION='samoa.storm.mode'
-	NUM_WORKER_OPTION='samoa.storm.numworker'
+	SAMOA_STORM_PROPERTIES="samoa-storm.properties"
+	MODE_OPTION="samoa.storm.mode"
+	NUM_WORKER_OPTION="samoa.storm.numworker"
 
 	VALUE=""
 	getvalue()
