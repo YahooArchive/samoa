@@ -25,7 +25,7 @@ import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
 import com.yahoo.labs.samoa.moa.cluster.SphereCluster;
 import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import java.util.ArrayList;
 
 

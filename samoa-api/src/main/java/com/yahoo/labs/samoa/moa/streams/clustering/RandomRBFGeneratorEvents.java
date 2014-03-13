@@ -34,7 +34,7 @@ import com.yahoo.labs.samoa.moa.core.AutoExpandVector;
 import com.yahoo.labs.samoa.moa.core.InstanceExample;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.core.ObjectRepository;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.github.javacliparser.FlagOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
