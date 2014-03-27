@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 import com.yahoo.labs.samoa.moa.core.AutoExpandVector;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.yahoo.labs.samoa.instances.Attribute;
 import com.yahoo.labs.samoa.instances.Instance;
 

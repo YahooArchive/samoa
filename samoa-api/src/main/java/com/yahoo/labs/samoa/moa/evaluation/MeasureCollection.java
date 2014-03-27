@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 
 public abstract class MeasureCollection extends AbstractMOAObject{
     private String[] names;

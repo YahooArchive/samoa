@@ -22,7 +22,7 @@ package com.yahoo.labs.samoa.evaluation;
 import com.yahoo.labs.samoa.core.*;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 
 /**
  * License

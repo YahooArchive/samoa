@@ -33,7 +33,7 @@ import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.clusterers.ClusteringContentEvent;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.moa.streams.clustering.ClusteringStream;

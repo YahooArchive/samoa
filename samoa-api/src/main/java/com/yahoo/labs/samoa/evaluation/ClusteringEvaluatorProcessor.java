@@ -31,7 +31,7 @@ import com.yahoo.labs.samoa.moa.core.Measurement;
 import com.yahoo.labs.samoa.moa.evaluation.LearningCurve;
 import com.yahoo.labs.samoa.moa.evaluation.LearningEvaluation;
 import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

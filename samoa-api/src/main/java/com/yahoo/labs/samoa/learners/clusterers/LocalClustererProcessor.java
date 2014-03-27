@@ -28,7 +28,7 @@ import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.DenseInstance;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.yahoo.labs.samoa.topology.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
