@@ -346,9 +346,40 @@ final class ModelAggregatorProcessor implements Processor {
         
         private void resetLearning() {
             this.treeRoot = null;
-            //Remove statistics
+            //Remove nodes
+            FoundNode[] learningNodes = findNodes();
+            for (FoundNode learningNode : learningNodes) {
+                Node node = learningNode.getNode();
+                if (node instanceof SplitNode) {
+                    SplitNode splitNode;
+                    splitNode = (SplitNode) node;
+                    for (int i = 0; i < splitNode.numChildren(); i++) {
+                        splitNode.setChild(i, null);
+                    }
+                }
+            }
         }
 	
+        protected FoundNode[] findNodes() {
+        List<FoundNode> foundList = new LinkedList<>();
+        findNodes(this.treeRoot, null, -1, foundList);
+        return foundList.toArray(new FoundNode[foundList.size()]);
+    }
+
+    protected void findNodes(Node node, SplitNode parent,
+            int parentBranch, List<FoundNode> found) {
+        if (node != null) {
+            found.add(new FoundNode(node, parent, parentBranch));
+            if (node instanceof SplitNode) {
+                SplitNode splitNode = (SplitNode) node;
+                for (int i = 0; i < splitNode.numChildren(); i++) {
+                    findNodes(splitNode.getChild(i), splitNode, i,
+                            found);
+                }
+            }
+        }
+    }
+
         
 	/**
 	 * Helper method to get the prediction result. 

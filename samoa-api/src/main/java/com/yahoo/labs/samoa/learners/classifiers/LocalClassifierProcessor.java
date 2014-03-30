@@ -128,9 +128,18 @@ final public class LocalClassifierProcessor implements Processor {
                 }
 	}
 
-	private boolean correctlyClassifies(Instance inst) {
+     /**
+     * Gets whether this classifier correctly classifies an instance. Uses
+     * getVotesForInstance to obtain the prediction and the instance to obtain
+     * its true class.
+     *
+     *
+     * @param inst the instance to be classified
+     * @return true if the instance is correctly classified
+     */    
+     private boolean correctlyClassifies(Instance inst) {
             return maxIndex(model.getVotesForInstance(inst)) == (int) inst.classValue();
-        }
+     }
         
 	/** The test. */
 	protected int test; //to delete
