@@ -20,6 +20,7 @@ package com.yahoo.labs.samoa.moa.classifiers.core;
  * #L%
  */
 
+import com.esotericsoftware.kryo.Kryo;
 import com.yahoo.labs.samoa.moa.classifiers.core.conditionaltests.InstanceConditionalTest;
 import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 
@@ -31,6 +32,11 @@ import com.yahoo.labs.samoa.moa.AbstractMOAObject;
  */
 public class AttributeSplitSuggestion extends AbstractMOAObject implements
         Comparable<AttributeSplitSuggestion> {
+    
+    static {
+        Kryo kryo = new Kryo();
+        kryo.register(AttributeSplitSuggestion.class);
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -39,6 +45,9 @@ public class AttributeSplitSuggestion extends AbstractMOAObject implements
     public double[][] resultingClassDistributions;
 
     public double merit;
+    
+    public AttributeSplitSuggestion() {
+    };
 
     public AttributeSplitSuggestion(InstanceConditionalTest splitTest,
             double[][] resultingClassDistributions, double merit) {

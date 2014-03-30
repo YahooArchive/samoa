@@ -43,8 +43,9 @@ public class S4EntranceProcessingItem extends ProcessingElement implements Entra
      * @param app
      *            : S4 application
      */
-    public S4EntranceProcessingItem(App app) {
+    public S4EntranceProcessingItem(EntranceProcessor entranceProcessor, App app) {
         super(app);
+        this.entranceProcessor = entranceProcessor;
         // this.app = (S4DoTask) app;
         // this.setSingleton(true);
     }
