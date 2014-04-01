@@ -24,8 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
@@ -38,7 +36,6 @@ import com.yahoo.labs.samoa.utils.StreamDestination;
  *
  */
 public class ThreadsStream implements Stream {
-	private static final Logger logger = LoggerFactory.getLogger(ThreadsStream.class);
 	
 	private List<StreamDestination> destinations;
 	private int counter = 0;
@@ -69,17 +66,7 @@ public class ThreadsStream implements Stream {
                 pi.processEvent(event, counter%destination.getParallelism());
                 break;
             case GROUP_BY_KEY:
-            	if(event.getKey() == null) {
-            		logger.info("Skipping event with null key:{}",event);
-            		break;
-            	}
-            	// HashCodeBuilder object does not have reset() method
-            	// So all objects that get appended will be included in the 
-            	// computation of the hashcode. 
-            	// To avoid initialize a HashCodeBuilder for each event,
-            	// here I use the static method with reflection on the event's key
-                int key = HashCodeBuilder.reflectionHashCode(event.getKey(), true) % destination.getParallelism();
-                pi.processEvent(event, key);
+                pi.processEvent(event, getPIIndexForKey(event.getKey(), destination.getParallelism()));
                 break;
             case BROADCAST:
                 for (int p = 0; p < destination.getParallelism(); p++) {
@@ -93,6 +80,22 @@ public class ThreadsStream implements Stream {
 	@Override
 	public String getStreamId() {
 		return null;
+	}
+	
+	private static int getPIIndexForKey(String key, int parallelism) {
+		// If key is null, return a default index: 0
+		if (key == null) return 0;
+		
+		// HashCodeBuilder object does not have reset() method
+    	// So all objects that get appended will be included in the 
+    	// computation of the hashcode. 
+    	// To avoid initialize a HashCodeBuilder for each event,
+    	// here I use the static method with reflection on the event's key
+		int index = HashCodeBuilder.reflectionHashCode(key, true) % parallelism;
+		if (index < 0) {
+			index += parallelism;
+		}
+		return index;
 	}
 
 }

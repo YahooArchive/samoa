@@ -50,7 +50,12 @@ public class ThreadsEventRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		workerPi.processEvent(event);
+		try {
+			workerPi.processEvent(event);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
