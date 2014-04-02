@@ -48,8 +48,7 @@ final public class LocalClassifierProcessor implements Processor {
 	 */
 	private static final long serialVersionUID = -1577910988699148691L;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LocalClassifierProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocalClassifierProcessor.class);
 	
 	private LocalClassifierAdapter model;
 	private Stream outputStream;

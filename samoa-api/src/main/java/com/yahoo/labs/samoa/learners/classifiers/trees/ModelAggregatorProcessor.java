@@ -112,7 +112,7 @@ final class ModelAggregatorProcessor implements Processor {
 		this.gracePeriod = builder.gracePeriod;
 		this.parallelismHint = builder.parallelismHint;
 		this.timeOut = builder.timeOut;
-                this.changeDetector = builder.changeDetector;
+        this.changeDetector = builder.changeDetector;
 
 		InstancesHeader ih = new InstancesHeader(dataset);
 		this.setModelContext(ih);
@@ -333,6 +333,7 @@ final class ModelAggregatorProcessor implements Processor {
                             this.changeDetector.input(correctlyClassifies ? 0 : 1);
                             if (this.changeDetector.getEstimation() > oldEstimation) {
                                 //Start a new classifier
+                                logger.info("Change detected, resetting the classifier");
                                 this.resetLearning();
                                 this.changeDetector.resetLearning();
                             }
