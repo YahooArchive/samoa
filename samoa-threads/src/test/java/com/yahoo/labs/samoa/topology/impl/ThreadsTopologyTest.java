@@ -47,7 +47,7 @@ public class ThreadsTopologyTest {
 
 	@Test
 	public void testAddEntrancePi() {
-		topology.addEntrancePi(entrancePi);
+		topology.addEntranceProcessingItem(entrancePi);
 		assertSame("Entrance PI was not set correctly.",entrancePi,topology.getEntranceProcessingItem());
 		// TODO: verify that entrance PI is in the set of ProcessingItems
 		// Need to access topology's set of PIs (getProcessingItems() method)
@@ -55,7 +55,7 @@ public class ThreadsTopologyTest {
 	
 	@Test
 	public void testRun() {
-		topology.addEntrancePi(entrancePi);
+		topology.addEntranceProcessingItem(entrancePi);
 		
 		new Expectations() {
 			{

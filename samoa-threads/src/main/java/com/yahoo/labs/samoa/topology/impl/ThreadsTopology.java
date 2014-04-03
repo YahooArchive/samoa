@@ -30,11 +30,11 @@ import com.yahoo.labs.samoa.topology.Topology;
  *
  */
 public class ThreadsTopology extends Topology {
-	
-	public String topologyName;
-    private ThreadsEntranceProcessingItem entrancePi;
-
+	/*
+	 * TODO: support multiple entrance PIs
+	 */
     public void run() {
+    	ThreadsEntranceProcessingItem entrancePi = (ThreadsEntranceProcessingItem) this.getEntranceProcessingItem();
     	if (entrancePi == null) 
     		throw new IllegalStateException("You need to set entrance PI before running the topology.");
     		
@@ -44,18 +44,19 @@ public class ThreadsTopology extends Topology {
     }
     
     public ThreadsTopology(String topoName) {
-    	super();
-    	this.topologyName = topoName;
+    	super(topoName);
     }
 
-    public EntranceProcessingItem getEntranceProcessingItem() {
-        return entrancePi;
+    protected EntranceProcessingItem getEntranceProcessingItem() {
+    	if (this.entranceProcessingItems == null || this.entranceProcessingItems.size() < 1)
+    		return null;
+    	
+    	return (EntranceProcessingItem) this.entranceProcessingItems.toArray()[0];
     }
 
     @Override
-    public void addEntrancePi(EntranceProcessingItem epi) {
-        this.entrancePi = (ThreadsEntranceProcessingItem) epi;
-        this.addProcessingItem(epi);
+    protected void addEntranceProcessingItem(EntranceProcessingItem epi) {
+        super.addEntranceProcessingItem(epi);
     }
     
     /* 

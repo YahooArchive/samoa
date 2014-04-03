@@ -110,6 +110,9 @@
         <slf4j-log4j12.version>1.7.2</slf4j-log4j12.version>
         <slf4j-simple.version>1.7.5</slf4j-simple.version>
         <storm.version>0.8.2</storm.version>
+        <samza.version>0.7.0</samza.version>
+ 	<kafka.version>0.8.1</kafka.version>
+        <hadoop.version>2.2.0</hadoop.version>
     </properties>
 
     <dependencies>
@@ -169,6 +172,7 @@
                         <root>samoa-local</root>
                         <root>samoa-storm</root>
                         <root>samoa-s4</root>
+                        <root>samoa-samza</root>
                         <root>bin</root>
                     </roots>
                     <excludes>
