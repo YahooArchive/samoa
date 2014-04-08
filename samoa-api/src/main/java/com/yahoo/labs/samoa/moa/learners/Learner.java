@@ -24,7 +24,6 @@ import com.yahoo.labs.samoa.moa.MOAObject;
 import com.yahoo.labs.samoa.moa.core.Example;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.core.Measurement;
-import com.yahoo.labs.samoa.moa.gui.AWTRenderable;
 import com.yahoo.labs.samoa.moa.options.OptionHandler;
 
 /**
@@ -33,7 +32,7 @@ import com.yahoo.labs.samoa.moa.options.OptionHandler;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public interface Learner<E extends Example> extends MOAObject, OptionHandler, AWTRenderable {
+public interface Learner<E extends Example> extends MOAObject, OptionHandler {
 
 
     /**

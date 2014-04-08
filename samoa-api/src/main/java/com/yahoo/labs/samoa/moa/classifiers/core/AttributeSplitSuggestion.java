@@ -33,11 +33,6 @@ import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 public class AttributeSplitSuggestion extends AbstractMOAObject implements
         Comparable<AttributeSplitSuggestion> {
     
-    static {
-        Kryo kryo = new Kryo();
-        kryo.register(AttributeSplitSuggestion.class);
-    }
-
     private static final long serialVersionUID = 1L;
 
     public InstanceConditionalTest splitTest;

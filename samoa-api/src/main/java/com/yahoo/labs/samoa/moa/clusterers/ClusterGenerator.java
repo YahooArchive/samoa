@@ -29,7 +29,7 @@ import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
 import com.yahoo.labs.samoa.moa.cluster.SphereCluster;
 import com.yahoo.labs.samoa.moa.core.Measurement;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.yahoo.labs.samoa.instances.Instance;
 
 public class ClusterGenerator extends AbstractClusterer{

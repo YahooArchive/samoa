@@ -1,5 +1,5 @@
 
-package com.yahoo.labs.samoa.moa.gui.visualization;
+package com.yahoo.labs.samoa.moa.core;
 
 /*
  * #%L

@@ -23,7 +23,7 @@ package com.yahoo.labs.samoa.evaluation.measures;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
 import com.yahoo.labs.samoa.moa.core.AutoExpandVector;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
