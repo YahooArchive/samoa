@@ -64,8 +64,6 @@ public class SamzaKryoSerdeFactory<T> implements SerdeFactory<T> {
 			Serializer serializer = null;
 			
 			for (String info:infoList) {
-				logger.info("Info:{}",info);
-				
 				String[] fields = info.split(SamzaConfigFactory.COLON);
 				
 				targetClass = null;

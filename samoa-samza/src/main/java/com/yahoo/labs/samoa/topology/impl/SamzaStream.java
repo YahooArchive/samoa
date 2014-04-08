@@ -54,11 +54,11 @@ public class SamzaStream implements Stream, Serializable  {
 	
 	// Constructor
 	public SamzaStream(IProcessingItem sourcePi) {
-		ISamzaProcessingItem samzaPi = (ISamzaProcessingItem) sourcePi;
+		// Get name/id for this stream
+		SamzaProcessingNode samzaPi = (SamzaProcessingNode) sourcePi;
 		int index = samzaPi.addOutputStream(this);
-		
 		streamName = samzaPi.getName()+"-"+Integer.toString(index);
-		
+		// init list of SamzaSystemStream
 		systemStreams = new ArrayList<SamzaSystemStream>();
 	}
 	

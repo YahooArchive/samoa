@@ -98,6 +98,7 @@ public class SamzaConfigFactory {
 	public static final String ZOOKEEPER_URI_KEY = "systems.kafka.consumer.zookeeper.connect";
 	public static final String BROKER_URI_KEY = "systems.kafka.producer.metadata.broker.list";
 	public static final String KAFKA_BATCHSIZE_KEY = "systems.kafka.producer.batch.num.messages";
+	public static final String KAFKA_PRODUCER_TYPE_KEY = "systems.kafka.producer.producer.type";
 	// SERDE
 	public static final String SERDE_REGISTRATION_KEY = "kryo.register";
 
@@ -123,7 +124,7 @@ public class SamzaConfigFactory {
 	}
 
 	/*
-	 * Builder methods
+	 * Setter methods
 	 */
 	public SamzaConfigFactory setYarnPackage(String packagePath) {
 		this.jarPath = packagePath;
@@ -355,13 +356,11 @@ public class SamzaConfigFactory {
 		// Kafka
 		map.put("systems.kafka.samza.factory",KafkaSystemFactory.class.getName());
 		map.put("systems.kafka.samza.msg.serde","kryo");
-
 		setKryoRegistration(map, this.kryoRegisterFile);
 
 		map.put(ZOOKEEPER_URI_KEY,this.zookeeper);
 		map.put(BROKER_URI_KEY,this.kafkaBrokerList);
-
-		map.put("systems.kafka.producer.producer.type",this.kafkaProducerType);
+		map.put(KAFKA_PRODUCER_TYPE_KEY,this.kafkaProducerType);
 		map.put(KAFKA_BATCHSIZE_KEY,Integer.toString(this.kafkaBatchSize));
 
 		map.put("systems.kafka.samza.offset.default","oldest");
@@ -443,7 +442,6 @@ public class SamzaConfigFactory {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

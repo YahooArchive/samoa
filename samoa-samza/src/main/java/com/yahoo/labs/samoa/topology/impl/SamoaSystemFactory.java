@@ -38,7 +38,6 @@ import com.yahoo.labs.samoa.topology.impl.SamzaEntranceProcessingItem.SamoaSyste
  * and feed them to EntranceProcessingItem task
  * 
  * @author Anh Thu Vu
- *
  */
 public class SamoaSystemFactory implements SystemFactory {
 	@Override

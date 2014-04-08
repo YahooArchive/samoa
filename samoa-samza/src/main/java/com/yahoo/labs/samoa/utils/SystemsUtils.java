@@ -325,7 +325,6 @@ public class SystemsUtils {
 		HDFSUtils.setHadoopConfigHome(hadoopHome);
 	}
 	
-	
 	/*
 	 * Others
 	 */

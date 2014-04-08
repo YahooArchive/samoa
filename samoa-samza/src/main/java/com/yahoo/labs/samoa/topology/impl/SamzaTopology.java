@@ -42,7 +42,7 @@ public class SamzaTopology extends Topology {
 	@Override
 	public void addProcessingItem(IProcessingItem procItem, int parallelism) {
 		super.addProcessingItem(procItem, parallelism);
-		ISamzaProcessingItem samzaPi = (ISamzaProcessingItem) procItem;
+		SamzaProcessingNode samzaPi = (SamzaProcessingNode) procItem;
 		samzaPi.setName(this.getTopologyName()+"-"+Integer.toString(procItemCounter));
 		procItemCounter++;
 	}

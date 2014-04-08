@@ -106,7 +106,7 @@ public class SamzaEngine {
 	}
 	
 	/*
-	 * Builder methods
+	 * Setter methods
 	 */
 	public static SamzaEngine getEngine() {
 		return engine;

@@ -50,7 +50,7 @@ import org.apache.samza.task.TaskCoordinator;
  * 
  * @author Anh Thu Vu
  */
-public class SamzaProcessingItem implements ISamzaProcessingItem, ProcessingItem, Serializable,
+public class SamzaProcessingItem implements SamzaProcessingNode, ProcessingItem, Serializable,
 											StreamTask, InitableTask {
 	
 	/**
