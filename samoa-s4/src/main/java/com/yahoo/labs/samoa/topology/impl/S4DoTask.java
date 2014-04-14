@@ -24,6 +24,8 @@ package com.yahoo.labs.samoa.topology.impl;
  * License
  */
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -132,7 +134,11 @@ final public class S4DoTask extends App {
         // params = params.replace(":", " ");
         List<String> parameters = new ArrayList<String>();
         // parameters.add(evalTask);
-        parameters.addAll(Arrays.asList(evalTask.split(":")));
+        try {
+            parameters.addAll(Arrays.asList(URLDecoder.decode(evalTask, "UTF-8").split(" ")));
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
         String[] args = parameters.toArray(new String[0]);
         Option[] extraOptions = new Option[] {};
         // build a single string by concatenating cli options
