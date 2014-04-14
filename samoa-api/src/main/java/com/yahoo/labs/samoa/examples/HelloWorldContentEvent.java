@@ -22,39 +22,42 @@ package com.yahoo.labs.samoa.examples;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 
+/**
+ * Example {@link ContentEvent} that contains a single integer.
+ */
 public class HelloWorldContentEvent implements ContentEvent {
 
+    private static final long serialVersionUID = -2406968925730298156L;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2406968925730298156L;
+    private final boolean isLastEvent;
+    private final int helloWorldData;
 
-	private final boolean isLastEvent;
-	private final int helloWorldData;
-	
-	public HelloWorldContentEvent(int helloWorldData, boolean isLastEvent){
-		this.isLastEvent = isLastEvent;
-		this.helloWorldData = helloWorldData;
-	}
-	
-	@Override
-	public String getKey() {
-		return null;
-	}
+    public HelloWorldContentEvent(int helloWorldData, boolean isLastEvent) {
+        this.isLastEvent = isLastEvent;
+        this.helloWorldData = helloWorldData;
+    }
 
-	@Override
-	public void setKey(String str) {
-		//do nothing, it's key-less content event
-	}
+    @Override
+    public String getKey() {
+        return null;
+    }
 
-	@Override
-	public boolean isLastEvent() {
-		return isLastEvent;
-	}
-	
-	public int getHelloWorldData(){
-		return helloWorldData;
-	}
+    @Override
+    public void setKey(String str) {
+        // do nothing, it's key-less content event
+    }
+
+    @Override
+    public boolean isLastEvent() {
+        return isLastEvent;
+    }
+
+    public int getHelloWorldData() {
+        return helloWorldData;
+    }
+
+    @Override
+    public String toString() {
+        return "HelloWorldContentEvent [helloWorldData=" + helloWorldData + "]";
+    }
 }
-

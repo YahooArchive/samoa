@@ -25,18 +25,14 @@ import java.util.Random;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.topology.Stream;
 
+/**
+ * Example {@link EntranceProcessor} that generates a stream of random integers.
+ */
 public class HelloWorldSourceProcessor implements EntranceProcessor {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6212296305865604747L;
-
     private Random rnd;
-//    private Stream helloWorldStream;
-
     private final long maxInst;
     private long count;
 
@@ -61,21 +57,6 @@ public class HelloWorldSourceProcessor implements EntranceProcessor {
         return new HelloWorldSourceProcessor(hwsp.maxInst);
     }
 
-//    public void setHelloWorldStream(Stream hwStream) {
-//        this.helloWorldStream = hwStream;
-//    }
-
-    // public void sendInstance() {
-    // int count = 0;
-    //
-    // while (count < maxInst) {
-    // this.helloWorldStream.put(new HelloWorldContentEvent(rnd.nextInt(), false));
-    // count++;
-    // }
-    //
-    // this.helloWorldStream.put(new HelloWorldContentEvent(-1, true));
-    // }
-
     @Override
     public boolean hasNext() {
         return count < maxInst;
@@ -86,23 +67,4 @@ public class HelloWorldSourceProcessor implements EntranceProcessor {
         count++;
         return new HelloWorldContentEvent(rnd.nextInt(), false);
     }
-
-    // public static class HelloWorldTopologyStarter implements TopologyStarter {
-    //
-    // /**
-    // *
-    // */
-    // private static final long serialVersionUID = 5445314667316145715L;
-    //
-    // private final HelloWorldSourceProcessor hwsp;
-    //
-    // public HelloWorldTopologyStarter(HelloWorldSourceProcessor hwsp) {
-    // this.hwsp = hwsp;
-    // }
-    //
-    // @Override
-    // public void start() {
-    // this.hwsp.sendInstance();
-    // }
-    // }
 }
