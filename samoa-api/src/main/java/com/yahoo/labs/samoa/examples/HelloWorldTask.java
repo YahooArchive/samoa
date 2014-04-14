@@ -64,23 +64,12 @@ public class HelloWorldTask implements Task, Configurable {
 
     @Override
     public void init() {
-
-        // setup the Builder
-        if (builder == null) {
-            builder = new TopologyBuilder();
-            logger.debug("Sucessfully instantiating TopologyBuilder");
-            builder.initTopology(evaluationNameOption.getValue());
-            logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
-        }
-
         // create source EntranceProcesor
         sourceProcessor = new HelloWorldSourceProcessor(instanceLimitOption.getValue());
-        // starter = new HelloWorldTopologyStarter(sourceProcessor);
         builder.addEntranceProcessor(sourceProcessor);
 
         // create Stream
         Stream stream = builder.createStream(sourceProcessor);
-        // sourceProcessor.setHelloWorldStream(stream);
 
         // create destination Processor
         destProcessor = new HelloWorldDestinationProcessor();
@@ -89,7 +78,7 @@ public class HelloWorldTask implements Task, Configurable {
 
         // build the topology
         helloWorldTopology = builder.build();
-        logger.debug("Sucessfully building the topology");
+        logger.debug("Successfully built the topology");
     }
 
     @Override
