@@ -28,7 +28,6 @@ import com.yahoo.labs.samoa.core.ContentEvent;
 public class HelloWorldContentEvent implements ContentEvent {
 
     private static final long serialVersionUID = -2406968925730298156L;
-
     private final boolean isLastEvent;
     private final int helloWorldData;
 
