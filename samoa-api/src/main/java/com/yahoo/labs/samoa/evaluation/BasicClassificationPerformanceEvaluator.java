@@ -20,8 +20,6 @@ package com.yahoo.labs.samoa.evaluation;
  * #L%
  */
 
-import java.util.LinkedList;
-
 import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 import com.yahoo.labs.samoa.moa.core.Measurement;
 import com.yahoo.labs.samoa.instances.Instance;
@@ -71,28 +69,6 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
         this.weightCorrectNoChangeClassifier = 0.0;
         this.lastSeenClass = 0;
     }
-    
-    private double[] increaseLength(double[] array, int newLength) {
-    	if (array.length < newLength) {
-    		double[] newArray = new double[newLength];
-    		for (int i=0; i < newLength; i++) {
-    			if (i<array.length)
-    				newArray[i] = array[i];
-    			else
-    				newArray[i] = 0.0;
-    		}
-    		return newArray;
-    	}
-    	return array;
-    }
-    
-    private void updateNumClasses(int numClasses) {
-    	if (this.numClasses < numClasses) {
-    		this.numClasses = numClasses;
-    		this.rowKappa = increaseLength(this.rowKappa, numClasses);
-    		this.columnKappa = increaseLength(this.columnKappa, numClasses);
-    	}
-    }
 
     @Override
     public void addResult(Instance inst, double[] classVotes) {
@@ -104,8 +80,6 @@ public class BasicClassificationPerformanceEvaluator extends AbstractMOAObject i
         if (weight > 0.0) {
             if (this.weightObserved == 0) {
                 reset(classVotes.length); 
-            } else if (classVotes.length != numClasses) {
-            	updateNumClasses(classVotes.length);
             }
             this.weightObserved += weight;
             int predictedClass = Utils.maxIndex(classVotes);
