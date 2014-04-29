@@ -24,7 +24,7 @@ package com.yahoo.labs.samoa.moa.evaluation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.gui.visualization.DataPoint;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 
 
 public class MembershipMatrix {

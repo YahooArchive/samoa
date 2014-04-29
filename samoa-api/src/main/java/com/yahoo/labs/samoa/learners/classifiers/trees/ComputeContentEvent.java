@@ -31,8 +31,8 @@ import com.esotericsoftware.kryo.io.Output;
  * @author Arinto Murdopo
  *
  */
-final class ComputeContentEvent extends ControlContentEvent {
-
+public final class ComputeContentEvent extends ControlContentEvent {
+    
 	private static final long serialVersionUID = 5590798490073395190L;
 	
 	private final double[] preSplitDist;

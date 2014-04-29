@@ -1,10 +1,10 @@
-package com.yahoo.labs.samoa.moa.gui;
+package com.yahoo.labs.samoa.topology.impl;
 
 /*
  * #%L
  * SAMOA
  * %%
- *    Copyright (C) 2007 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013 - 2014 Yahoo! Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ package com.yahoo.labs.samoa.moa.gui;
  * #L%
  */
 
-import java.awt.Graphics;
+import org.apache.s4.base.SerializerDeserializer;
 
-/**
- * Interface representing a component to edit an option. 
- *
- * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
- * @version $Revision: 7 $ 
- */
-public interface AWTRenderer {
+import com.google.inject.AbstractModule;
 
-    public void renderAWTBox(Graphics g, int minPixelX, int minPixelY,
-            int maxPixelX, int maxPixelY);
+public class SamoaSerializerModule extends AbstractModule {
+
+	@Override
+	protected void configure() {
+		bind(SerializerDeserializer.class).to(SamoaSerializer.class);
+		
+	}
+
 }

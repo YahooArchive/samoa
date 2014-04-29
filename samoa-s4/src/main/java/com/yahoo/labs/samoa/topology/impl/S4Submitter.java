@@ -80,7 +80,7 @@ public class S4Submitter implements ISubmitter {
 				"-appClass=" + S4DoTask.class.getName(),
 				"-appName=" + "samoaApp",
 				"-p=evalTask=" + task.getClass().getSimpleName(),
-				"-zk=localhost:2181", "-s4r=" + appURIString };
+				"-zk=localhost:2181", "-s4r=" + appURIString , "-emc=" + SamoaSerializerModule.class.getName()};
 		// "-emc=" + S4MOAModule.class.getName(),
 		// "@" +
 		// Resources.getResource("s4moa.properties").getFile(),

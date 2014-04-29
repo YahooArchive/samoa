@@ -33,7 +33,7 @@ import com.yahoo.labs.samoa.core.ContentEvent;
  * @author Arinto Murdopo
  *
  */
-final class AttributeContentEvent implements ContentEvent {
+public final class AttributeContentEvent implements ContentEvent {
 
 	private static final long serialVersionUID = 6652815649846676832L;
 

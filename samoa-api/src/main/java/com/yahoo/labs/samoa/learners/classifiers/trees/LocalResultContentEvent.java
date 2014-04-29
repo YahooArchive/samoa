@@ -20,6 +20,7 @@ package com.yahoo.labs.samoa.learners.classifiers.trees;
  * #L%
  */
 
+import com.esotericsoftware.kryo.Kryo;
 import com.yahoo.labs.samoa.moa.classifiers.core.AttributeSplitSuggestion;
 import com.yahoo.labs.samoa.core.ContentEvent;
 
@@ -31,7 +32,7 @@ import com.yahoo.labs.samoa.core.ContentEvent;
  *
  */
 final class LocalResultContentEvent implements ContentEvent{
-
+    
 	private static final long serialVersionUID = -4206620993777418571L;
 	
 	private final AttributeSplitSuggestion bestSuggestion;

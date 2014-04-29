@@ -23,8 +23,8 @@ package com.yahoo.labs.samoa.topology.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.topology.ComponentFactory;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
@@ -34,63 +34,58 @@ import com.yahoo.labs.samoa.topology.Topology;
 
 /**
  * Component factory implementation for samoa-storm
- * @author Arinto Murdopo
- *
  */
 public final class StormComponentFactory implements ComponentFactory {
-	
-	private final Map<String, Integer> processorList;
-	
-	public StormComponentFactory(){
-		processorList = new HashMap<String, Integer>();
-	}
-	
-	@Override
-	public ProcessingItem createPi(Processor processor) {
-		return new StormProcessingItem(processor, 
-				this.getComponentName(processor.getClass()), 1);
-	}
 
-	@Override
-	public EntranceProcessingItem createEntrancePi(Processor processor, TopologyStarter starter) {
-		return new StormEntranceProcessingItem(processor, starter, 
-				this.getComponentName(processor.getClass()));
-	}
+    private final Map<String, Integer> processorList;
 
-	@Override
-	public Stream createStream(IProcessingItem sourcePi) {
-		StormTopologyNode stormCompatiblePi = (StormTopologyNode) sourcePi;
-		return stormCompatiblePi.createStream();
-	}
-	
-	@Override
-	public Topology createTopology(String topoName) {
-		StormTopology topology = new StormTopology(topoName);
-		return topology;
-	}
-	
-	private String getComponentName(Class<? extends Processor> clazz){
-		StringBuilder componentName = new StringBuilder(clazz.getCanonicalName());
-		String key = componentName.toString();		
-		Integer index = 0;
-		
-		if(!processorList.containsKey(key)){
-			index = Integer.valueOf(1);
-		}else{
-			index = processorList.get(key) + 1;
-		}
-		
-		processorList.put(key, index);
-		
-		componentName.append('_');
-		componentName.append(index);
-		
-		return componentName.toString();
-	}
+    public StormComponentFactory() {
+        processorList = new HashMap<String, Integer>();
+    }
 
-	@Override
-	public ProcessingItem createPi(Processor processor, int parallelism) {
-		return new StormProcessingItem(processor, 
-				this.getComponentName(processor.getClass()), parallelism);
-	}
+    @Override
+    public ProcessingItem createPi(Processor processor) {
+        return new StormProcessingItem(processor, this.getComponentName(processor.getClass()), 1);
+    }
+
+    @Override
+    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
+        return new StormEntranceProcessingItem(processor, this.getComponentName(processor.getClass()));
+    }
+
+    @Override
+    public Stream createStream(IProcessingItem sourcePi) {
+        StormTopologyNode stormCompatiblePi = (StormTopologyNode) sourcePi;
+        return stormCompatiblePi.createStream();
+    }
+
+    @Override
+    public Topology createTopology(String topoName) {
+        StormTopology topology = new StormTopology(topoName);
+        return topology;
+    }
+
+    private String getComponentName(Class<? extends Processor> clazz) {
+        StringBuilder componentName = new StringBuilder(clazz.getCanonicalName());
+        String key = componentName.toString();
+        Integer index = 0;
+
+        if (!processorList.containsKey(key)) {
+            index = Integer.valueOf(1);
+        } else {
+            index = processorList.get(key) + 1;
+        }
+
+        processorList.put(key, index);
+
+        componentName.append('_');
+        componentName.append(index);
+
+        return componentName.toString();
+    }
+
+    @Override
+    public ProcessingItem createPi(Processor processor, int parallelism) {
+        return new StormProcessingItem(processor, this.getComponentName(processor.getClass()), parallelism);
+    }
 }

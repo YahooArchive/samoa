@@ -31,9 +31,9 @@ import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.core.Measurement;
 import com.yahoo.labs.samoa.moa.core.ObjectRepository;
 import com.yahoo.labs.samoa.moa.core.StringUtils;
-import com.yahoo.labs.samoa.moa.gui.AWTRenderer;
 import com.yahoo.labs.samoa.moa.learners.Learner;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
+import com.esotericsoftware.kryo.Kryo;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
 import com.yahoo.labs.samoa.instances.Instance;
@@ -327,17 +327,6 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
         return true; // all checks clear
     }
 
-    /**
-     * Returns the AWT Renderer
-     *
-     * @return the AWT Renderer
-     */
-    @Override
-    public AWTRenderer getAWTRenderer() {
-        // TODO should return a default renderer here
-        // - or should null be interpreted as the default?
-        return null;
-    }
 
 
     /**
