@@ -204,23 +204,6 @@ elif [ $PLATFORM = 'STORM' ]; then
 elif [ $PLATFORM = 'LOCAL' ]; then
 
 	echo "Deploying to $PLATFORM"
-	
-	SAMOA_LOCAL_PROPERTIES=samoa-local.properties
-	THREADS_OPTION='samoa.local.threads'
-	QUEUE_LIMIT_OPTION='samoa.local.queuelimit'
-
-	VALUE=""
-	getvalue()
-        {
-	    VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_LOCAL_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
-        }
-
-	getvalue "$THREADS_OPTION"
-	NUM_THREADS="$VALUE"
-
-	getvalue "$QUEUE_LIMIT_OPTION"
-	QUEUE_LIMIT="$VALUE"
-	
 	COMPLETE_ARG=""
 	COUNTER=0
 	for var in "$@"
