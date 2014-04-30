@@ -60,6 +60,9 @@ public interface ClassificationPerformanceEvaluator extends MOAObject {
 	 * 
 	 */
 	public void reset();
+	
+	public void addClassificationAttempt(int trueClass, double[] classVotes,
+			double weight);
 
 	/**
 	 * Adds a learning result to this evaluator.
