@@ -55,27 +55,6 @@ public class LocalDoTask {
     public static void main(String[] args) {
 
         ArrayList<String> tmpArgs = new ArrayList<String>(Arrays.asList(args));
-        
-        // Check if number of threads is specified
-        int pos = tmpArgs.size() - 2;
-        int numThreads = 0;
-        int queueLimit = 500;
-        try {
-        	numThreads = Integer.parseInt(tmpArgs.get(pos));
-        	queueLimit = Integer.parseInt(tmpArgs.get(pos+1));
-        	tmpArgs.remove(pos+1);
-        	tmpArgs.remove(pos);
-        }
-        catch (NumberFormatException e) {
-        	// probably doesnt have queueLimit
-        	try {
-        		pos += 1;
-        		numThreads = Integer.parseInt(tmpArgs.get(pos));
-        		tmpArgs.remove(pos);
-        	} catch (NumberFormatException e1) {
-        		// do nothing
-        	}
-        }
 
         args = tmpArgs.toArray(new String[0]);
 
@@ -103,23 +82,8 @@ public class LocalDoTask {
             System.out.println("Fail to initialize the task" + e);
             return;
         }
-        
-        // depend on the user-specified numThreads
-        // we either call Simple-package or Parallel-package
-        // This is because I need to compare the 2 packages
-        if (numThreads >= 1) {
-        	logger.info("Will be running with multithreading");
-        	task.setFactory(new ParallelComponentFactory());
-            task.init();
-            ParallelEngine.setNumberOfThreadsAndQueueLimit(numThreads, queueLimit);
-            ParallelEngine.submitTopology(task.getTopology());
-        }
-        else {
-        	logger.info("Will be running with the Simple-package");
-        	task.setFactory(new SimpleComponentFactory());
-            task.init();
-            SimpleEngine.submitTopology(task.getTopology());
-        }
-        
+        task.setFactory(new SimpleComponentFactory());
+        task.init();
+        SimpleEngine.submitTopology(task.getTopology());
     }
 }
