@@ -145,14 +145,13 @@ if [ $PLATFORM = 'S4' ]; then
 
 	APP_NAME="SamoaS4App"
 	APP_CLASS="com.yahoo.labs.samoa.topology.impl.S4DoTask"
-	NAMED_PARAMETERS=`echo $OPTIONS | sed 's/ /:/g'`
-	
+	NAMED_PARAMETERS=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$OPTIONS")
+
 	echo "Deploying SAMOA..."
-	(cd $S4_HOME ; . s4 deploy -s4r=http://${APP_SERVER_IP}:${APP_SERVER_PORT}/${JAR_FILE} -c=${CLUSTER_NAME} -p=evalTask=${NAMED_PARAMETERS}  -appClass=${APP_CLASS} -appName=${APP_NAME} -zk=${ZK_SERVER}:${ZK_SERVER_PORT})
+	(cd $S4_HOME ; . s4 deploy -s4r="http://${APP_SERVER_IP}:${APP_SERVER_PORT}/${JAR_FILE}" -c="${CLUSTER_NAME}" -p=evalTask="${NAMED_PARAMETERS}" -appClass="${APP_CLASS}" -appName="${APP_NAME}" -zk="${ZK_SERVER}:${ZK_SERVER_PORT}")	
 
-    # should wait for app to be deployed
-    sleep 5
-
+	# wait for app to be deployed
+	sleep 5
 	# END Apache S4 deployment
 	
 elif [ $PLATFORM = 'STORM' ]; then
