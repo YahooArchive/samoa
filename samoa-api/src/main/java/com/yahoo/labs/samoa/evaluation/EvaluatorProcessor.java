@@ -91,7 +91,7 @@ public class EvaluatorProcessor implements Processor {
 			return true;
 		}
 		
-		evaluator.addClassificationAttempt(result.getClassId(), result.getClassVotes(), result.getInstance().weight());		
+		evaluator.addResult(result.getInstance(), result.getClassVotes());		
 		totalCount += 1;
 		
 		if(totalCount == 1){
