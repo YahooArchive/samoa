@@ -62,9 +62,9 @@ public interface ProcessingItem extends IProcessingItem {
 
 
 	/**
-	 * Gets processing item paralellism level.
+	 * Gets processing item parallelism level.
 	 * 
 	 * @return int
 	 */
-	public int getParalellism();
+	public int getParallelism();
 }

@@ -1,4 +1,4 @@
-package com.yahoo.labs.samoa.topology.impl;
+package com.yahoo.labs.samoa.utils;
 
 /*
  * #%L
@@ -20,14 +20,13 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.topology.LocalEntranceProcessingItem;
-
-class SimpleEntranceProcessingItem extends LocalEntranceProcessingItem {
-    public SimpleEntranceProcessingItem(EntranceProcessor processor) {
-        super(processor);
-    }
-    
-    // The default waiting time when there is no available events is 100ms
-    // Override waitForNewEvents() to change it
+/**
+ * Represents the 3 schemes to partition the streams
+ * @author Anh Thu Vu
+ *
+ */
+public enum PartitioningScheme {
+	SHUFFLE, GROUP_BY_KEY, BROADCAST
 }
+// TODO: use this enum in S4
+// Storm doesn't seem to need this

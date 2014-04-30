@@ -20,79 +20,68 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
 
-/**
- * Topology abstract class.
- * 
- */
-public abstract class Topology {
+public interface Topology {
 
-    protected Set<Stream> streams;
-    protected Set<IProcessingItem> processingItems;
-    private String task; // TODO: check if task is needed here
-
-    protected Topology() {
-        streams = new HashSet<Stream>();
-        processingItems = new HashSet<IProcessingItem>();
-    }
-
-    /**
-     * Add processing item to topology.
+	/*
+	 * Name
+	 */
+	/**
+     * Get the topology's name
      * 
-     * @param procItem
-     *            Processing item.
+     * @return the name of the topology
      */
-    protected void addProcessingItem(IProcessingItem procItem) {
-        addProcessingItem(procItem, 1);
-    }
+	public String getTopologyName();
 
-    /**
-     * Add processing item to topology.
-     * 
-     * @param procItem
-     *            Processing item.
-     * @param parallelismHint
-     *            Processing item parallelism level.
-     */
-    protected void addProcessingItem(IProcessingItem procItem, int parallelismHint) {
-        this.processingItems.add(procItem);
-    }
+	/**
+	 * Set the topology's name
+	 * 
+	 * @param topologyName
+	 * 			the name of the topology
+	 */
+	public void setTopologyName(String topologyName) ;
 
-    /**
-     * Add stream to topology.
-     * 
-     * @param stream
-     */
-    protected void addStream(Stream stream) {
-        this.streams.add(stream);
-    }
-
-    /**
-     * Sets evaluation task.
-     * 
-     * @param task
-     */
-    public void setEvaluationTask(String task) {
-        this.task = task;
-    }
-
-    /**
-     * Gets evaluation task.
-     * 
-     * @return
-     */
-    public String getEvaluationTask() {
-        return task;
-    }
-
-    /**
-     * Adds an EntrancePI to the topology.
-     * 
-     * @param epi
-     */
-    public void addEntrancePi(EntranceProcessingItem epi) {
-        this.addProcessingItem(epi);
-    }
+	/*
+	 * Entrance Processing Items
+	 */
+	/**
+	 * Add an EntranceProcessingItem to this topologyç
+	 * 
+	 * @param epi
+	 * 			the EntranceProcessingItem to be added
+	 */
+	void addEntranceProcessingItem(EntranceProcessingItem epi);
+	
+	
+	/*
+	 * Processing Items
+	 */
+	/**
+	 * Add a ProcessingItem to this topology
+	 * with default parallelism level (i.e. 1)
+	 * 
+	 * @param procItem
+	 * 			the ProcessingItem to be added
+	 */
+	void addProcessingItem(IProcessingItem procItem);
+	
+	/**
+	 * Add a ProcessingItem to this topology 
+	 * with an associated parallelism level
+	 * 
+	 * @param procItem
+	 * 			the ProcessingItem to be added
+	 * @param parallelismHint
+	 * 			the parallelism level 
+	 */
+	void addProcessingItem(IProcessingItem procItem, int parallelismHint);
+	
+	/*
+	 * Streams
+	 */
+	/**
+	 * 
+	 * @param stream
+	 */
+	void addStream(Stream stream);
 }

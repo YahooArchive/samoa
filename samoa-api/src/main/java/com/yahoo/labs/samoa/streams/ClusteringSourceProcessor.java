@@ -87,6 +87,11 @@ public final class ClusteringSourceProcessor implements EntranceProcessor {
         // return streamSource.hasMoreInstances() && numInstanceSent < numberInstances;
         return true; // FIXME
     }
+    
+    @Override
+    public boolean isFinished() {
+    	return false; // FIXME
+    }
 
     /**
      * Method to send instances via input stream

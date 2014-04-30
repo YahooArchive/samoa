@@ -34,7 +34,7 @@ public class S4EntranceProcessingItem extends ProcessingElement implements Entra
 
     private EntranceProcessor entranceProcessor;
     // private S4DoTask app;
-    private int paralellism;
+    private int parallelism;
     protected Stream outputStream;
 
     /**
@@ -50,12 +50,12 @@ public class S4EntranceProcessingItem extends ProcessingElement implements Entra
         // this.setSingleton(true);
     }
 
-    public void setParalellism(int paralellism) {
-        this.paralellism = paralellism;
+    public void setParallelism(int parallelism) {
+        this.parallelism = parallelism;
     }
 
-    public int getParalellism() {
-        return this.paralellism;
+    public int getParallelism() {
+        return this.parallelism;
     }
 
     @Override

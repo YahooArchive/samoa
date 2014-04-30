@@ -20,6 +20,11 @@ package com.yahoo.labs.samoa.streams;
  * #L%
  */
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +57,16 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
     private int numInstanceSent = 0;
 
     protected InstanceStream sourceStream;
+    
+    /*
+	 * ScheduledExecutorService to schedule sending events after each delay interval.
+	 * It is expected to have only one event in the queue at a time, so we need only 
+	 * one thread in the pool.
+	 */
+	private transient ScheduledExecutorService timer;
+	private transient ScheduledFuture<?> schedule = null;
+	private int readyEventIndex = 1; // No waiting for the first event
+	private int delay = 0;
 
     @Override
     public boolean process(ContentEvent event) {
@@ -59,29 +74,50 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
         // of source processor does not need this method
         return false;
     }
+    
+    @Override
+    public boolean isFinished() {
+    	return (!streamSource.hasMoreInstances() || (numberInstances >= 0 && numInstanceSent >= numberInstances));
+    }
 
     @Override
     public boolean hasNext() {
-        return streamSource.hasMoreInstances() && numInstanceSent < numberInstances;
+    	if (isFinished()) return false;
+    	return (delay <= 0 || numInstanceSent < readyEventIndex);
     }
 
     @Override
     public ContentEvent nextEvent() {
         InstanceContentEvent contentEvent = null;
-        if (hasNext()) {
+        if (isFinished()) {
+        	contentEvent = new InstanceContentEvent(-1, firstInstance, false, true);
+            contentEvent.setLast(true);
+        }
+        else if (hasNext()) {
             numInstanceSent++;
             contentEvent = new InstanceContentEvent(numInstanceSent, nextInstance(), true, true);
-        } else {
-            contentEvent = new InstanceContentEvent(-1, firstInstance, false, true);
-            contentEvent.setLast(true);
+            
+            // first call to this method will trigger the timer
+            if (schedule == null && delay > 0) {
+            	schedule = timer.scheduleWithFixedDelay(new DelayTimeoutHandler(this), delay, delay, TimeUnit.MILLISECONDS);
+            }
         }
         return contentEvent;
     }
+    
+	private void increaseReadyEventIndex() {
+		readyEventIndex++;
+		// if we exceed the max, cancel the timer
+		if (schedule != null && isFinished()) {
+			schedule.cancel(false);
+		}
+	}
 
     @Override
     public void onCreate(int id) {
         this.id = id;
         initStreamSource(sourceStream);
+        timer = Executors.newScheduledThreadPool(1);
         logger.debug("Creating PrequentialSourceProcessor with id {}", this.id);
     }
 
@@ -155,5 +191,30 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
 
     public void setMaxNumInstances(int value) {
         numberInstances = value;
+    }
+    
+    public int getMaxNumInstances() {
+    	return this.numberInstances;
+    }
+    
+	public void setSourceDelay(int delay) {
+		this.delay = delay;
+	}
+
+	public int getSourceDelay() {
+		return this.delay;
+	}
+	
+	private class DelayTimeoutHandler implements Runnable {
+    	
+    	private PrequentialSourceProcessor processor;
+    	
+    	public DelayTimeoutHandler(PrequentialSourceProcessor processor) {
+    		this.processor = processor;
+    	}
+    	
+    	public void run() {
+    		processor.increaseReadyEventIndex();
+    	}
     }
 }

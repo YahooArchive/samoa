@@ -58,6 +58,11 @@ public class HelloWorldSourceProcessor implements EntranceProcessor {
     }
 
     @Override
+    public boolean isFinished() {
+    	return count >= maxInst;
+    }
+    
+    @Override
     public boolean hasNext() {
         return count < maxInst;
     }
