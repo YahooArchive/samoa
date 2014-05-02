@@ -38,6 +38,11 @@ public interface EntranceProcessor extends Serializable, Configurable, Processor
     public void onCreate(int id);
     
     /**
+     * Checks whether the source stream is finished/exhausted.
+     */
+    public boolean isFinished();
+    
+    /**
      * Checks whether a new event is ready to be processed.
      * 
      * @return true if the EntranceProcessor is ready to provide the next event, false otherwise.

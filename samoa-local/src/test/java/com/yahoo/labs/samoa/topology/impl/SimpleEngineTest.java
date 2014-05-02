@@ -20,14 +20,38 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.topology.LocalEntranceProcessingItem;
+import mockit.Mocked;
+import mockit.NonStrictExpectations;
+import mockit.Tested;
+import mockit.Verifications;
 
-class SimpleEntranceProcessingItem extends LocalEntranceProcessingItem {
-    public SimpleEntranceProcessingItem(EntranceProcessor processor) {
-        super(processor);
-    }
-    
-    // The default waiting time when there is no available events is 100ms
-    // Override waitForNewEvents() to change it
+import org.junit.Test;
+
+/**
+ * @author Anh Thu Vu
+ *
+ */
+public class SimpleEngineTest {
+
+	@Tested private SimpleEngine unused;
+	@Mocked private SimpleTopology topology;
+	@Mocked private Runtime mockedRuntime;
+	
+	@Test
+	public void testSubmitTopology() {
+		new NonStrictExpectations() {
+			{
+				Runtime.getRuntime();
+				result=mockedRuntime;
+				mockedRuntime.exit(0);
+			}
+		};
+		SimpleEngine.submitTopology(topology);
+		new Verifications() {
+			{
+				topology.run();
+			}
+		};
+	}
+
 }

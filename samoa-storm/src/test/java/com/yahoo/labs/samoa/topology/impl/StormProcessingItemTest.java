@@ -70,7 +70,7 @@ public class StormProcessingItemTest {
             {
                 assertEquals(pi.getProcessor(), processor);
                 // TODO add methods to explore a topology and verify them
-                assertEquals(pi.getParalellism(), PARRALLELISM_HINT_2);
+                assertEquals(pi.getParallelism(), PARRALLELISM_HINT_2);
                 assertEquals(pi.getId(), ID);
             }
         };

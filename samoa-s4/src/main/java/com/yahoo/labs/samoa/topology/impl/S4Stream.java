@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.AbstractStream;
 
 /**
  * S4 Platform specific stream.
@@ -37,7 +37,7 @@ import com.yahoo.labs.samoa.topology.Stream;
  * @author severien
  *
  */
-public class S4Stream implements Stream {
+public class S4Stream extends AbstractStream {
 
 	public static final int SHUFFLE = 0;
 	public static final int GROUP_BY_KEY = 1;
@@ -48,7 +48,6 @@ public class S4Stream implements Stream {
 
 	private S4DoTask app;
 	private int processingItemParalellism;
-	private String streamID;
 	private int shuffleCounter;
 
 	private static final String NAME = "STREAM-";
@@ -63,7 +62,7 @@ public class S4Stream implements Stream {
 		this.processingItemParalellism = 1;
 		this.shuffleCounter = 0;
 		this.streams = new ArrayList<StreamType>();
-		this.streamID = NAME+OBJ_COUNTER;
+		this.setStreamId(NAME+OBJ_COUNTER);
 		OBJ_COUNTER++;
 	}
 	
@@ -73,7 +72,7 @@ public class S4Stream implements Stream {
 		this.processingItemParalellism = 1;
 		this.shuffleCounter = 0;
 		this.streams = new ArrayList<StreamType>();
-		this.streamID = NAME+OBJ_COUNTER;
+		this.setStreamId(NAME+OBJ_COUNTER);
 		OBJ_COUNTER++;
 		
 	}
@@ -82,12 +81,12 @@ public class S4Stream implements Stream {
 	 * 
 	 * @return
 	 */
-	public int getParalellism() {
+	public int getParallelism() {
 		return processingItemParalellism;
 	}
 
-	public void setParalellism(int paralellism) {
-		this.processingItemParalellism = paralellism;
+	public void setParallelism(int parallelism) {
+		this.processingItemParalellism = parallelism;
 	}
 
 	public void addStream(String streamID, KeyFinder<S4Event> finder,
@@ -112,14 +111,14 @@ public class S4Stream implements Stream {
 			case SHUFFLE:
 				S4Event s4event = new S4Event(event);
 				s4event.setStreamId(streams.get(i).getStream().getName());
-				if(getParalellism() == 1) {
+				if(getParallelism() == 1) {
 					s4event.setKey("0");
 				}else {
 					s4event.setKey(Integer.toString(shuffleCounter));
 				}
 				streams.get(i).getStream().put(s4event);
 				shuffleCounter++;
-				 if (shuffleCounter >= (getParalellism())) {
+				 if (shuffleCounter >= (getParallelism())) {
 					shuffleCounter = 0;
 				}
 				
@@ -130,13 +129,13 @@ public class S4Stream implements Stream {
 				s4event1.setStreamId(streams.get(i).getStream().getName());
 				HashCodeBuilder hb = new HashCodeBuilder();
 				hb.append(event.getKey());
-				String key = Integer.toString(hb.build() % getParalellism());
+				String key = Integer.toString(hb.build() % getParallelism());
 				s4event1.setKey(key);
 				streams.get(i).getStream().put(s4event1);
 				break;
 				
 			case BROADCAST:
-				for (int p = 0; p < this.getParalellism(); p++) {
+				for (int p = 0; p < this.getParallelism(); p++) {
 					S4Event s4event2 = new S4Event(event);
 					s4event2.setStreamId(streams.get(i).getStream().getName());
 					s4event2.setKey(Integer.toString(p));
@@ -151,11 +150,6 @@ public class S4Stream implements Stream {
 			
 		}
 
-	}
-
-	@Override
-	public String getStreamId() {
-		return this.streamID;
 	}
 
 	/**

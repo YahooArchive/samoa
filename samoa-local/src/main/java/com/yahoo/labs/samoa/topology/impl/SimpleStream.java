@@ -30,66 +30,56 @@ import java.util.List;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.topology.AbstractStream;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
  * 
  * @author abifet
  */
-class SimpleStream implements Stream {
-
-    public static final int SHUFFLE = 0;
-    public static final int GROUP_BY_KEY = 1;
-    public static final int BROADCAST = 2;
-    private List<IProcessingItem> listProcessingItem;
-    private List<Integer> listTypeStream;
-    private int processingItemParalellism;
-    private int shuffleCounter;
-
-    public int getParalellism() {
-        return processingItemParalellism;
-    }
-
-    public void setParalellism(int paralellism) {
-        this.processingItemParalellism = paralellism;
-    }
+class SimpleStream extends AbstractStream {
+    private List<StreamDestination> destinations;
+    private int maxCounter;
+    private int eventCounter;
 
     SimpleStream(IProcessingItem sourcePi) {
-        this.listProcessingItem = new LinkedList<IProcessingItem>();
-        this.listTypeStream = new LinkedList<Integer>();
+    	super(sourcePi);
+    	this.destinations = new LinkedList<StreamDestination>();
+    	this.eventCounter = 0;
+    	this.maxCounter = 1;
     }
 
-    public void put(ContentEvent event) {
-        int type;
-        SimpleProcessingItem pi;
-        for (int i = 0; i < this.listProcessingItem.size(); i++) {
-            type = this.listTypeStream.get(i);
-            // System.out.println("PUT Event"+type);
-            pi = (SimpleProcessingItem) this.listProcessingItem.get(i);
-            switch (type) {
-            case SHUFFLE:
-                shuffleCounter++;
-                if (shuffleCounter >= (getParalellism())) {
-                    shuffleCounter = 0;
-                }
-                // pi = ((SimpleProcessingItem) this.listProcessingItem.get(i)).getProcessingItem(shuffleCounter);
-                // pi.getProcessor().process(event);
+    private int getNextCounter() {
+    	if (maxCounter > 0 && eventCounter >= maxCounter) eventCounter = 0;
+    	this.eventCounter++;
+    	return this.eventCounter;
+    }
 
-                pi.processEvent(event, shuffleCounter);
+    @Override
+    public void put(ContentEvent event) {
+    	this.put(event, this.getNextCounter());
+    }
+    
+    private void put(ContentEvent event, int counter) {
+    	SimpleProcessingItem pi;
+        int parallelism;
+        for (StreamDestination destination:destinations) {
+            pi = (SimpleProcessingItem) destination.getProcessingItem();
+            parallelism = destination.getParallelism();
+            switch (destination.getPartitioningScheme()) {
+            case SHUFFLE:
+                pi.processEvent(event, counter % parallelism);
                 break;
             case GROUP_BY_KEY:
                 HashCodeBuilder hb = new HashCodeBuilder();
                 hb.append(event.getKey());
-                int key = hb.build() % getParalellism();
-                // pi = ((SimpleProcessingItem) this.listProcessingItem.get(i)).getProcessingItem(key);
-                // pi.getProcessor().process(event);
+                int key = hb.build() % parallelism;
                 pi.processEvent(event, key);
                 break;
             case BROADCAST:
-                for (int p = 0; p < this.getParalellism(); p++) {
-                    // pi = ((SimpleProcessingItem) this.listProcessingItem.get(i)).getProcessingItem(p);
-                    // pi.getProcessor().process(event);
+                for (int p = 0; p < parallelism; p++) {
                     pi.processEvent(event, p);
                 }
                 break;
@@ -97,19 +87,9 @@ class SimpleStream implements Stream {
         }
     }
 
-    public String getStreamId() {
-        return null;
-    }
-
-    public void add(IProcessingItem destinationPi, int type, int paralellism) {
-
-        this.listTypeStream.add(type);
-        this.setParalellism(paralellism);
-        // System.out.println("STREAM Added "+destinationPi.toString()+" type "+ type+"paral "+paralellism);
-        this.listProcessingItem.add(destinationPi);
-        /*
-         * IProcessingItem[] arrayPi = new IProcessingItem[paralellism]; for (int j = 0; j < paralellism; j++) { arrayPi[j] = ((SimpleProcessingItem)
-         * destinationPi).copy(); arrayPi[j].getProcessor().onCreate(0); } this.listProcessingItem.add(arrayPi);
-         */
+    public void addDestination(StreamDestination destination) {
+        this.destinations.add(destination);
+        if (maxCounter <= 0) maxCounter = 1;
+        maxCounter *= destination.getParallelism();
     }
 }
