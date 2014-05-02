@@ -10,7 +10,7 @@ install:
 - echo "<settings><servers><server><id>sonatype-nexus-snapshots</id><username>${SOSS_USERNAME}</username><password>${SOSS_PASSWORD}</password></server></servers></settings>" > ${HOME}/.m2/settings.xml
 #- cat ${HOME}/.m2/settings.xml
 
-script: if [[ $TRAVIS_SECURE_ENV_VARS -eq "true" ]]; then CMD=deploy; else CMD=install; fi; echo $CMD; mvn -B -Plocal,storm,s4 $CMD
+script: if [[ "$TRAVIS_SECURE_ENV_VARS" == "true" ]]; then CMD=deploy; else CMD=install; fi; echo $CMD; mvn -B -Plocal,storm,s4 $CMD
 
 notifications:
   email:
