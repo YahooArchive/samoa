@@ -20,7 +20,6 @@ package com.yahoo.labs.samoa.tasks;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.TopologyStarter;
 import com.yahoo.labs.samoa.topology.ComponentFactory;
 import com.yahoo.labs.samoa.topology.Topology;
 
