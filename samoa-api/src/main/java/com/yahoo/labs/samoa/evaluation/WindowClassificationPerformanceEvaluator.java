@@ -129,8 +129,8 @@ public class WindowClassificationPerformanceEvaluator extends AbstractMOAObject 
 
     @Override
     public void addResult(Instance inst, double[] classVotes) {
-        int trueClass = (int) inst.classValue();
         double weight = inst.weight();
+        int trueClass = (int) inst.classValue();
         if (weight > 0.0) {
             if (TotalweightObserved == 0) {
                 reset(inst.numClasses()); 
