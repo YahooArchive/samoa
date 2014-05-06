@@ -34,6 +34,7 @@ import com.github.javacliparser.ClassOption;
 import com.yahoo.labs.samoa.tasks.Task;
 import com.yahoo.labs.samoa.topology.impl.SamzaComponentFactory;
 import com.yahoo.labs.samoa.topology.impl.SamzaEngine;
+import com.yahoo.labs.samoa.topology.impl.SamzaTopology;
 import com.yahoo.labs.samoa.utils.SystemsUtils;
 
 /**
@@ -134,7 +135,7 @@ public class SamzaDoTask {
 		.setKryoRegisterFile(kryoRegisterFile);
 		
 		// Submit topology
-		SamzaEngine.submitTopology(task.getTopology());
+		SamzaEngine.submitTopology((SamzaTopology)task.getTopology());
 		
 	}
 	

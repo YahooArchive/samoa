@@ -28,6 +28,7 @@ import java.util.Set;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.topology.AbstractProcessingItem;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.impl.SamzaStream.SamzaSystemStream;
@@ -50,20 +51,20 @@ import org.apache.samza.task.TaskCoordinator;
  * 
  * @author Anh Thu Vu
  */
-public class SamzaProcessingItem implements SamzaProcessingNode, ProcessingItem, Serializable,
-											StreamTask, InitableTask {
+public class SamzaProcessingItem extends AbstractProcessingItem 
+                                 implements SamzaProcessingNode, Serializable, StreamTask, InitableTask {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Processor processor;
-	private int parallelismHint;
 	private Set<SamzaSystemStream> inputStreams; // input streams: system.stream
 	private List<SamzaStream> outputStreams;
-	private String name; // PI name = Job name
 	
+	/*
+	 * Constructors
+	 */
 	// Need this so Samza can initialize a StreamTask
 	public SamzaProcessingItem() {}
 	
@@ -71,60 +72,30 @@ public class SamzaProcessingItem implements SamzaProcessingNode, ProcessingItem,
 	 * Implement com.yahoo.labs.samoa.topology.ProcessingItem
 	 */
 	public SamzaProcessingItem(Processor processor, int parallelismHint) {
-		this.processor = processor;
-		this.parallelismHint = parallelismHint;
+		super(processor, parallelismHint);
 		this.inputStreams = new HashSet<SamzaSystemStream>();
 		this.outputStreams = new LinkedList<SamzaStream>();
-		this.name = null;
 	}
 	
-	@Override
-	public Processor getProcessor() {
-		return processor;
-	}
-	
-	private ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
-		SamzaSystemStream stream = ((SamzaStream) inputStream).addDestination(new StreamDestination(this, parallelismHint,scheme));
-		this.inputStreams.add(stream);
-		return this;
-	}
-	
-	@Override
-	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
-		return this.addInputStream(inputStream, PartitioningScheme.SHUFFLE);
-	}
-	
-	@Override
-	public ProcessingItem connectInputKeyStream(Stream inputStream) {
-		return this.addInputStream(inputStream, PartitioningScheme.GROUP_BY_KEY);
-	}
-	
-	@Override
-	public ProcessingItem connectInputAllStream(Stream inputStream) {
-		return this.addInputStream(inputStream, PartitioningScheme.BROADCAST);
-	}
-	
+	/*
+	 * Simple setters, getters
+	 */
 	public Set<SamzaSystemStream> getInputStreams() {
 		return this.inputStreams;
 	}
 	
-	@Override
-	public int getParalellism() {
-		return this.parallelismHint;
-	}
-	
-	@Override
-	public String getName() {
-		return this.name;
-	}
-	
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	/*
-	 * Implement com.yahoo.samoa.topology.impl.ISamzaProcessingItem
+	 * Extends AbstractProcessingItem
+	 */
+	@Override
+	protected ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
+		SamzaSystemStream stream = ((SamzaStream) inputStream).addDestination(new StreamDestination(this,this.getParallelism(),scheme));
+		this.inputStreams.add(stream);
+		return this;
+	}
+
+	/*
+	 * Implement com.yahoo.samoa.topology.impl.SamzaProcessingNode
 	 */
 	@Override
 	public int addOutputStream(SamzaStream stream) {
@@ -148,13 +119,13 @@ public class SamzaProcessingItem implements SamzaProcessingNode, ProcessingItem,
 		
 		String filename = config.get(SamzaConfigFactory.FILE_KEY);
 		String filesystem = config.get(SamzaConfigFactory.FILESYSTEM_KEY);
-		this.name = config.get(SamzaConfigFactory.JOB_NAME_KEY);
-		SerializationProxy wrapper = (SerializationProxy) SystemsUtils.deserializeObjectFromFileAndKey(filesystem, filename, name);
-		this.processor = wrapper.processor;
+		this.setName(config.get(SamzaConfigFactory.JOB_NAME_KEY));
+		SerializationProxy wrapper = (SerializationProxy) SystemsUtils.deserializeObjectFromFileAndKey(filesystem, filename, this.getName());
+		this.setProcessor(wrapper.processor);
 		this.outputStreams = wrapper.outputStreams;
 		
 		// Init Processor and Streams
-		this.processor.onCreate(0);
+		this.getProcessor().onCreate(0);
 		for (SamzaStream stream:this.outputStreams) {
 			stream.onCreate();
 		}
@@ -166,7 +137,7 @@ public class SamzaProcessingItem implements SamzaProcessingNode, ProcessingItem,
 		for (SamzaStream stream:this.outputStreams) {
 			stream.setCollector(collector);
 		}
-		this.processor.process((ContentEvent) envelope.getMessage());
+		this.getProcessor().process((ContentEvent) envelope.getMessage());
 	}
 	
 	/*

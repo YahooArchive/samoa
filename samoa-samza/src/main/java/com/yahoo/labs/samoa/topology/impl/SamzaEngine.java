@@ -64,8 +64,7 @@ public class SamzaEngine {
 	private int containerMem;
 	private int piPerContainerRatio;
 	
-	private void _submitTopology(Topology topo) {
-		SamzaTopology topology = (SamzaTopology) topo;
+	private void _submitTopology(SamzaTopology topology) {
 		
 		// Setup SamzaConfigFactory
 		SamzaConfigFactory configFactory = new SamzaConfigFactory();
@@ -174,7 +173,7 @@ public class SamzaEngine {
 	 * @param topo
 	 *            the submitted topology
 	 */
-	public static void submitTopology(Topology topo) {
+	public static void submitTopology(SamzaTopology topo) {
 		// Setup SystemsUtils
 		engine._setupSystemsUtils();
 		

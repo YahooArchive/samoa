@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.learners.InstanceContentEvent;
-import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
+import com.yahoo.labs.samoa.topology.AbstractEntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.SamzaConfigFactory;
 import com.yahoo.labs.samoa.utils.SystemsUtils;
@@ -51,50 +51,27 @@ import com.yahoo.labs.samoa.utils.SystemsUtils;
  * @author Anh Thu Vu
  *
  */
-public class SamzaEntranceProcessingItem implements EntranceProcessingItem, SamzaProcessingNode,
-													Serializable, StreamTask, InitableTask {
+public class SamzaEntranceProcessingItem extends AbstractEntranceProcessingItem
+                                         implements SamzaProcessingNode, Serializable, StreamTask, InitableTask {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7157734520046135039L;
 	
-	private EntranceProcessor processor;
-	private String name;
-	private SamzaStream outputStream;
-	
+	/*
+	 * Constructors
+	 */
 	public SamzaEntranceProcessingItem(EntranceProcessor processor) {
-		this.processor = processor;
+		super(processor);
 	}
 	
 	// Need this so Samza can initialize a StreamTask
 	public SamzaEntranceProcessingItem() {} 
 	
-	@Override
-	public EntranceProcessor getProcessor() {
-		return this.processor;
-	}
-	
-	@Override
-	public EntranceProcessingItem setOutputStream(Stream stream) {
-		this.outputStream = (SamzaStream) stream;
-		return this;
-	}
-	
-	public SamzaStream getOutputStream() {
-		return this.outputStream;
-	}
-
-	@Override
-	public String getName() {
-		return this.name;
-	}
-	
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+	/*
+	 * Simple setters, getters
+	 */
 	@Override
 	public int addOutputStream(SamzaStream stream) {
 		this.setOutputStream(stream);
@@ -119,9 +96,9 @@ public class SamzaEntranceProcessingItem implements EntranceProcessingItem, Samz
 		private String name;
 		
 		public SerializationProxy(SamzaEntranceProcessingItem epi) {
-			this.processor = epi.processor;
-			this.outputStream = epi.outputStream;
-			this.name = epi.name;
+			this.processor = epi.getProcessor();
+			this.outputStream = (SamzaStream)epi.getOutputStream();
+			this.name = epi.getName();
 		}
 	}
 	
@@ -138,17 +115,17 @@ public class SamzaEntranceProcessingItem implements EntranceProcessingItem, Samz
 		String filename = config.get(SamzaConfigFactory.FILE_KEY);
 		String filesystem = config.get(SamzaConfigFactory.FILESYSTEM_KEY);
 		
-		this.name = config.get(SamzaConfigFactory.JOB_NAME_KEY);
-		SerializationProxy wrapper = (SerializationProxy) SystemsUtils.deserializeObjectFromFileAndKey(filesystem, filename, name);
-		this.outputStream = wrapper.outputStream;
-		this.outputStream.onCreate();
+		this.setName(config.get(SamzaConfigFactory.JOB_NAME_KEY));
+		SerializationProxy wrapper = (SerializationProxy) SystemsUtils.deserializeObjectFromFileAndKey(filesystem, filename, this.getName());
+		this.setOutputStream(wrapper.outputStream);
+		((SamzaStream)this.getOutputStream()).onCreate();
 	}
 
 	@Override
 	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-		this.outputStream.setCollector(collector);
+		((SamzaStream)this.getOutputStream()).setCollector(collector);
 		InstanceContentEvent event = (InstanceContentEvent) envelope.getMessage();
-		this.outputStream.put(event);
+		this.getOutputStream().put(event);
 	}
 	
 	/*
@@ -223,7 +200,7 @@ public class SamzaEntranceProcessingItem implements EntranceProcessingItem, Samz
 			int messageCnt = 0;
 			while(!this.entranceProcessor.isFinished()) {
 				messageCnt = this.getNumMessagesInQueue(systemStreamPartition);
-				if (this.entranceProcessor.hasNext() && messageCnt < 10000) {
+				if (this.entranceProcessor.hasNext() && messageCnt < 10000) { // soft limit on the size of the queue
 					this.put(systemStreamPartition, new IncomingMessageEnvelope(systemStreamPartition,null, null,this.entranceProcessor.nextEvent()));
 				} else {
 					try {

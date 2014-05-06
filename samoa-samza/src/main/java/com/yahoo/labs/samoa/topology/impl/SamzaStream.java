@@ -30,7 +30,7 @@ import org.apache.samza.task.MessageCollector;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.AbstractStream;
 import com.yahoo.labs.samoa.utils.PartitioningScheme;
 import com.yahoo.labs.samoa.utils.StreamDestination;
 
@@ -39,7 +39,7 @@ import com.yahoo.labs.samoa.utils.StreamDestination;
  * 
  * @author Anh Thu Vu
  */
-public class SamzaStream implements Stream, Serializable  {
+public class SamzaStream extends AbstractStream implements Serializable  {
 
 	/**
 	 * 
@@ -48,16 +48,18 @@ public class SamzaStream implements Stream, Serializable  {
 
 	private static final String SYSTEM_NAME = "kafka";
 	
-	private String streamName;
 	private List<SamzaSystemStream> systemStreams;
 	private MessageCollector collector;
 	
-	// Constructor
+	/*
+	 * Constructor
+	 */
 	public SamzaStream(IProcessingItem sourcePi) {
+		super(sourcePi);
 		// Get name/id for this stream
 		SamzaProcessingNode samzaPi = (SamzaProcessingNode) sourcePi;
 		int index = samzaPi.addOutputStream(this);
-		streamName = samzaPi.getName()+"-"+Integer.toString(index);
+		this.setStreamId(samzaPi.getName()+"-"+Integer.toString(index));
 		// init list of SamzaSystemStream
 		systemStreams = new ArrayList<SamzaSystemStream>();
 	}
@@ -112,11 +114,6 @@ public class SamzaStream implements Stream, Serializable  {
 		for (SamzaSystemStream stream:systemStreams) {
 			stream.send(collector,event);
 		}
-	}
-
-	@Override
-	public String getStreamId() {
-		return this.streamName;
 	}
 	
 	public List<SamzaSystemStream> getSystemStreams() {
