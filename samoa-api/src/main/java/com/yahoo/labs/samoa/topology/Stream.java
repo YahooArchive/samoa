@@ -51,4 +51,12 @@ public interface Stream {
 	 * @return id
 	 */
 	public String getStreamId();
+	
+	/**
+	 * Set batch size
+	 *
+	 * @param batchSize
+	 *                  the suggested size for batching messages on this stream
+	 */
+	public void setBatchSize(int batchsize);
 }

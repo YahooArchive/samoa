@@ -42,6 +42,7 @@ import org.apache.samza.system.kafka.KafkaSystemFactory;
 import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
+import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.impl.SamoaSystemFactory;
 import com.yahoo.labs.samoa.topology.impl.SamzaEntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.impl.SamzaProcessingItem;
@@ -95,10 +96,10 @@ public class SamzaConfigFactory {
 	public static final String ENTRANCE_OUTPUT_KEY = "task.entrance.outputs";
 	public static final String YARN_CONF_HOME_KEY = "yarn.config.home";
 	// KAFKA
-	public static final String ZOOKEEPER_URI_KEY = "systems.kafka.consumer.zookeeper.connect";
-	public static final String BROKER_URI_KEY = "systems.kafka.producer.metadata.broker.list";
-	public static final String KAFKA_BATCHSIZE_KEY = "systems.kafka.producer.batch.num.messages";
-	public static final String KAFKA_PRODUCER_TYPE_KEY = "systems.kafka.producer.producer.type";
+	public static final String ZOOKEEPER_URI_KEY = "consumer.zookeeper.connect";
+	public static final String BROKER_URI_KEY = "producer.metadata.broker.list";
+	public static final String KAFKA_BATCHSIZE_KEY = "producer.batch.num.messages";
+	public static final String KAFKA_PRODUCER_TYPE_KEY = "producer.producer.type";
 	// SERDE
 	public static final String SERDE_REGISTRATION_KEY = "kryo.register";
 
@@ -191,6 +192,35 @@ public class SamzaConfigFactory {
 		setFileName(map, filename);
 		setFileSystem(map, filesystem);
 		
+		// Output streams: set kafka systems
+		List<String> nameList = new ArrayList<String>();
+		for (SamzaStream stream:pi.getOutputStreams()) {
+			boolean found = false;
+			for (String name:nameList) {
+				if (stream.getSystemName().equals(name)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				nameList.add(stream.getSystemName());
+				setKafkaSystem(map, stream.getSystemName(), this.zookeeper, this.kafkaBrokerList, stream.getBatchSize());
+			}
+		}
+		for (SamzaSystemStream stream:pi.getInputStreams()) {
+			boolean found = false;
+			for (String name:nameList) {
+				if (stream.getSystem().equals(name)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				nameList.add(stream.getSystem());
+				setKafkaSystem(map, stream.getSystem(), this.zookeeper, this.kafkaBrokerList, 1);
+			}
+		}
+		
 		// Number of containers
 		setNumberOfContainers(map, pi.getParallelism(), this.piPerContainerRatio);
 
@@ -211,6 +241,8 @@ public class SamzaConfigFactory {
 		setTaskInputs(map, SYSTEM_NAME+"."+epi.getName());
 
 		// Output from entrance task
+		// Since entrancePI should have only 1 output stream
+		// there is no need for checking the batch size, setting different system names
 		SamzaStream outputStream = (SamzaStream)epi.getOutputStream();
 		StringBuilder allStreams = new StringBuilder();
 		boolean first = true;
@@ -245,6 +277,9 @@ public class SamzaConfigFactory {
 
 		// Set samoa system factory
 		setValue(map, "systems."+SYSTEM_NAME+".samza.factory", SamoaSystemFactory.class.getName());
+		
+		// Set Kafka system
+		setKafkaSystem(map, outputStream.getSystemName(), this.zookeeper, this.kafkaBrokerList, outputStream.getBatchSize());
 
 		// Processor file
 		setFileName(map, filename);
@@ -286,6 +321,10 @@ public class SamzaConfigFactory {
 		Map<String,Object> piMap = new HashMap<String,Object>();
 		Set<EntranceProcessingItem> entranceProcessingItems = topology.getEntranceProcessingItems();
 		Set<IProcessingItem> processingItems = topology.getNonEntranceProcessingItems();
+		
+		//
+		this.setSystemNameForStreams(topology.getStreams());
+		
 		for(EntranceProcessingItem epi:entranceProcessingItems) {
 			SamzaEntranceProcessingItem sepi = (SamzaEntranceProcessingItem) epi;
 			piMap.put(sepi.getName(), sepi);
@@ -325,6 +364,30 @@ public class SamzaConfigFactory {
 		}
 		return configs;
 	}
+	
+	/*
+	 *
+	 */
+	public void setSystemNameForStreams(Set<Stream> streams) {
+		Map<Integer, String> batchSizeMap = new HashMap<Integer, String>();
+		int counter = 0;
+		for (Stream stream:streams) {
+			SamzaStream samzaStream = (SamzaStream) stream;
+			String systemName = batchSizeMap.get(samzaStream.getBatchSize());
+			if (systemName == null) {
+				counter++;
+				// Add new system
+				systemName = "kafka"+Integer.toString(counter);
+				batchSizeMap.put(samzaStream.getBatchSize(), systemName);
+				samzaStream.setSystemName(systemName);
+			}
+			else {
+				// Set systemName for the stream
+				samzaStream.setSystemName(systemName);
+			}
+		}
+
+}
 
 	/*
 	 * Generate a map with common properties for PIs and EPI
@@ -353,17 +416,8 @@ public class SamzaConfigFactory {
 		// register serializer
 		map.put("serializers.registry.kryo.class",SamzaKryoSerdeFactory.class.getName());
 
-		// Kafka
-		map.put("systems.kafka.samza.factory",KafkaSystemFactory.class.getName());
-		map.put("systems.kafka.samza.msg.serde","kryo");
+		// Serde registration
 		setKryoRegistration(map, this.kryoRegisterFile);
-
-		map.put(ZOOKEEPER_URI_KEY,this.zookeeper);
-		map.put(BROKER_URI_KEY,this.kafkaBrokerList);
-		map.put(KAFKA_PRODUCER_TYPE_KEY,this.kafkaProducerType);
-		map.put(KAFKA_BATCHSIZE_KEY,Integer.toString(this.kafkaBatchSize));
-
-		map.put("systems.kafka.samza.offset.default","oldest");
 
 		return map;
 	}
@@ -402,6 +456,24 @@ public class SamzaConfigFactory {
 		int res = parallelism / piPerContainer;
 		if (parallelism % piPerContainer != 0) res++;
 		map.put(CONTAINER_COUNT_KEY, Integer.toString(res));
+	}
+	
+	private static void setKafkaSystem(Map<String,String> map, String systemName, String zk, String brokers, int batchSize) {
+		map.put("systems."+systemName+".samza.factory",KafkaSystemFactory.class.getName());
+		map.put("systems."+systemName+".samza.msg.serde","kryo");
+
+		map.put("systems."+systemName+"."+ZOOKEEPER_URI_KEY,zk);
+		map.put("systems."+systemName+"."+BROKER_URI_KEY,brokers);
+		map.put("systems."+systemName+"."+KAFKA_BATCHSIZE_KEY,Integer.toString(batchSize));
+
+		map.put("systems."+systemName+".samza.offset.default","oldest");
+
+		if (batchSize > 1) {
+			map.put("systems."+systemName+"."+KAFKA_PRODUCER_TYPE_KEY,"async");
+		}
+		else {
+			map.put("systems."+systemName+"."+KAFKA_PRODUCER_TYPE_KEY,"sync");
+		}
 	}
 	
 	// Set custom properties
