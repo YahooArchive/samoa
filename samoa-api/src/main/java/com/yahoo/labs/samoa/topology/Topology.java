@@ -20,9 +20,7 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
-
 public interface Topology {
-
 	/*
 	 * Name
 	 */
@@ -45,7 +43,7 @@ public interface Topology {
 	 * Entrance Processing Items
 	 */
 	/**
-	 * Add an EntranceProcessingItem to this topologyç
+	 * Add an EntranceProcessingItem to this topology
 	 * 
 	 * @param epi
 	 * 			the EntranceProcessingItem to be added
