@@ -21,71 +21,20 @@ package com.yahoo.labs.samoa.topology.impl;
  */
 
 import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.LocalEntranceProcessingItem;
 
 /**
  * EntranceProcessingItem for multithreaded engine.
  * @author Anh Thu Vu
  *
  */
-public class ThreadsEntranceProcessingItem implements EntranceProcessingItem {
-	
-	private EntranceProcessor processor;
-	private Stream outputStream;
+public class ThreadsEntranceProcessingItem extends LocalEntranceProcessingItem {
 	
 	public ThreadsEntranceProcessingItem(EntranceProcessor processor) {
-		this.processor = processor;
-	}
-
-	@Override
-	public EntranceProcessor getProcessor() {
-		return processor;
-	}
-
-	@Override
-	public EntranceProcessingItem setOutputStream(Stream stream) {
-		if (this.outputStream != null) {
-			if (this.outputStream == stream) return this;
-			else 
-				throw new IllegalStateException("Output stream for an EntrancePI should be initialized only once");
-		}
-        this.outputStream = stream;
-        return this;
-	}
-	
-	/* 
-	 * Useful for verification.
-	 * Not used right now except for junit test.
-	 */
-	public Stream getOutputStream() {
-		return this.outputStream;
-	}
-	
-	public boolean injectNextEvent() {
-		if (processor.hasNext()) {
-			this.outputStream.put(processor.nextEvent());
-			return true;
-		}
-		return false;
-	}
-	
-	public void startSendingEvents() {
-		if (outputStream == null) 
-			throw new IllegalStateException("Try sending events from EntrancePI while outputStream is not set.");
-		
-		while(!processor.isFinished()) {
-			if (!injectNextEvent()) {	
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					break;
-				}
-			}
-		}
-		
-		// Send last event
-		this.outputStream.put(processor.nextEvent());
-	}
+        super(processor);
+    }
+    
+    // The default waiting time when there is no available events is 100ms
+    // Override waitForNewEvents() to change it
 
 }

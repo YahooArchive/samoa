@@ -20,6 +20,9 @@
 package com.yahoo.labs.samoa.topology.impl;
 
 import static org.junit.Assert.*;
+
+import java.util.Set;
+
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
@@ -28,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.yahoo.labs.samoa.core.EntranceProcessor;
+import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
 
 /**
  * @author Anh Thu Vu
@@ -48,7 +52,10 @@ public class ThreadsTopologyTest {
 	@Test
 	public void testAddEntrancePi() {
 		topology.addEntranceProcessingItem(entrancePi);
-		assertSame("Entrance PI was not set correctly.",entrancePi,topology.getEntranceProcessingItem());
+		Set<EntranceProcessingItem> entrancePIs = topology.getEntranceProcessingItems();
+		assertNotNull("Set of entrance PIs is null.",entrancePIs);
+		assertEquals("Number of entrance PI in ThreadsTopology must be 1",1,entrancePIs.size());
+		assertSame("Entrance PI was not set correctly.",entrancePi,entrancePIs.toArray()[0]);
 		// TODO: verify that entrance PI is in the set of ProcessingItems
 		// Need to access topology's set of PIs (getProcessingItems() method)
 	}

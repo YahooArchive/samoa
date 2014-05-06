@@ -27,7 +27,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.AbstractStream;
 import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
@@ -35,7 +35,7 @@ import com.yahoo.labs.samoa.utils.StreamDestination;
  * @author Anh Thu Vu
  *
  */
-public class ThreadsStream implements Stream {
+public class ThreadsStream extends AbstractStream {
 	
 	private List<StreamDestination> destinations;
 	private int counter = 0;
@@ -53,34 +53,39 @@ public class ThreadsStream implements Stream {
 	public List<StreamDestination> getDestinations() {
 		return this.destinations;
 	}
+	
+	private int getNextCounter() {
+    	if (maxCounter > 0 && counter >= maxCounter) counter = 0;
+    	this.counter++;
+    	return this.counter;
+    }
 
-	@Override
-	public synchronized void put(ContentEvent event) {
-        ThreadsProcessingItem pi;
+    @Override
+    public synchronized void put(ContentEvent event) {
+    	this.put(event, this.getNextCounter());
+    }
+    
+    private void put(ContentEvent event, int counter) {
+    	ThreadsProcessingItem pi;
+        int parallelism;
         for (StreamDestination destination:destinations) {
             pi = (ThreadsProcessingItem) destination.getProcessingItem();
-            counter++;
-            if (counter >= maxCounter) counter = 0;
+            parallelism = destination.getParallelism();
             switch (destination.getPartitioningScheme()) {
             case SHUFFLE:
-                pi.processEvent(event, counter%destination.getParallelism());
+            	pi.processEvent(event, counter%parallelism);
                 break;
             case GROUP_BY_KEY:
-                pi.processEvent(event, getPIIndexForKey(event.getKey(), destination.getParallelism()));
+            	pi.processEvent(event, getPIIndexForKey(event.getKey(), parallelism));
                 break;
             case BROADCAST:
-                for (int p = 0; p < destination.getParallelism(); p++) {
+            	for (int p = 0; p < parallelism; p++) {
                     pi.processEvent(event, p);
                 }
                 break;
             }
         }
-	}
-
-	@Override
-	public String getStreamId() {
-		return null;
-	}
+    }
 	
 	private static int getPIIndexForKey(String key, int parallelism) {
 		// If key is null, return a default index: 0

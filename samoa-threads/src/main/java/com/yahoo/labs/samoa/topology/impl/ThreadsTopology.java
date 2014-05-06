@@ -20,55 +20,43 @@ package com.yahoo.labs.samoa.topology.impl;
  * #L%
  */
 
-import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
+import com.yahoo.labs.samoa.topology.AbstractTopology;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.topology.Topology;
 
 /**
  * Topology for multithreaded engine.
  * @author Anh Thu Vu
  *
  */
-public class ThreadsTopology extends Topology {
-	/*
-	 * TODO: support multiple entrance PIs
-	 */
-    public void run() {
-    	ThreadsEntranceProcessingItem entrancePi = (ThreadsEntranceProcessingItem) this.getEntranceProcessingItem();
-    	if (entrancePi == null) 
+public class ThreadsTopology extends AbstractTopology {
+	ThreadsTopology(String name) {
+		super(name);
+	}
+
+	public void run() {
+    	if (this.getEntranceProcessingItems() == null)
     		throw new IllegalStateException("You need to set entrance PI before running the topology.");
-    		
-    	this.setupProcessingItemInstances();
-    	entrancePi.getProcessor().onCreate(0); // id=0 as it's not used in multithreading mode
-    	entrancePi.startSendingEvents();
-    }
-    
-    public ThreadsTopology(String topoName) {
-    	super(topoName);
-    }
-
-    protected EntranceProcessingItem getEntranceProcessingItem() {
-    	if (this.entranceProcessingItems == null || this.entranceProcessingItems.size() < 1)
-    		return null;
+    	if (this.getEntranceProcessingItems().size() != 1)
+    		throw new IllegalStateException("ThreadsTopology supports 1 entrance PI only. Number of entrance PIs is "+this.getEntranceProcessingItems().size());
     	
-    	return (EntranceProcessingItem) this.entranceProcessingItems.toArray()[0];
+    	this.setupProcessingItemInstances();
+    	ThreadsEntranceProcessingItem entrancePi = (ThreadsEntranceProcessingItem) this.getEntranceProcessingItems().toArray()[0];
+    	if (entrancePi == null)
+            throw new IllegalStateException("You need to set entrance PI before running the topology.");
+    	entrancePi.getProcessor().onCreate(0); // id=0 as it is not used in simple mode
+        entrancePi.startSendingEvents();
     }
-
-    @Override
-    protected void addEntranceProcessingItem(EntranceProcessingItem epi) {
-        super.addEntranceProcessingItem(epi);
-    }
-    
-    /* 
-     * Tell all the ThreadsProcessingItems to create & init their 
-     * replicas (ThreadsProcessingItemInstance)
-     */
-    private void setupProcessingItemInstances() {
-    	for (IProcessingItem pi:this.processingItems) {
-    		if (pi instanceof ThreadsProcessingItem) {
-    			ThreadsProcessingItem tpi = (ThreadsProcessingItem) pi;
-    			tpi.setupInstances();
-    		}
-    	}
-    }
+	
+	/*
+	 * Tell all the ThreadsProcessingItems to create & init their
+	 * replicas (ThreadsProcessingItemInstance)
+	 */
+	private void setupProcessingItemInstances() {
+		for (IProcessingItem pi:this.getProcessingItems()) {
+			if (pi instanceof ThreadsProcessingItem) {
+				ThreadsProcessingItem tpi = (ThreadsProcessingItem) pi;
+				tpi.setupInstances();
+			}
+		}
+	}
 }

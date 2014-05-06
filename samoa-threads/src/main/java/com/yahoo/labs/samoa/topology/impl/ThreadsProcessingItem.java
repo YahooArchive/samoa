@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.topology.AbstractProcessingItem;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.PartitioningScheme;
@@ -35,11 +36,7 @@ import com.yahoo.labs.samoa.utils.StreamDestination;
  * @author Anh Thu Vu
  *
  */
-public class ThreadsProcessingItem implements ProcessingItem {
-	
-	private Processor processor;
-	private int parallelismHint;
-	
+public class ThreadsProcessingItem extends AbstractProcessingItem {
 	// Replicas of the ProcessingItem.
 	// When ProcessingItem receives an event, it assigns one
 	// of these replicas to process the event.
@@ -57,22 +54,8 @@ public class ThreadsProcessingItem implements ProcessingItem {
 	 * Constructor
 	 */
 	public ThreadsProcessingItem(Processor processor, int parallelismHint) {
-		this.processor = processor;
-		this.parallelismHint = parallelismHint;
+		super(processor, parallelismHint);
 		this.offset = (int) (Math.random()*ThreadsEngine.getNumberOfThreads());
-	}
-
-	/*
-	 * Getters
-	 */
-	@Override
-	public Processor getProcessor() {
-		return processor;
-	}
-	
-	@Override
-	public int getParalellism() {
-		return this.parallelismHint;
 	}
 	
 	public List<ThreadsProcessingItemInstance> getProcessingItemInstances() {
@@ -82,32 +65,18 @@ public class ThreadsProcessingItem implements ProcessingItem {
 	/*
 	 * Connects to streams
 	 */
-	private ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
-		StreamDestination destination = new StreamDestination(this, this.parallelismHint, scheme);
+	@Override
+    protected ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
+		StreamDestination destination = new StreamDestination(this, this.getParallelism(), scheme);
 		((ThreadsStream) inputStream).addDestination(destination);
 		return this;
-	}
-	
-	@Override
-	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
-		return this.addInputStream(inputStream, PartitioningScheme.SHUFFLE);
-	}
-
-	@Override
-	public ProcessingItem connectInputKeyStream(Stream inputStream) {
-		return this.addInputStream(inputStream, PartitioningScheme.GROUP_BY_KEY);
-	}
-
-	@Override
-	public ProcessingItem connectInputAllStream(Stream inputStream) {
-		return this.addInputStream(inputStream, PartitioningScheme.BROADCAST);
 	}
 
 	/*
 	 * Process the received event.
 	 */
 	public void processEvent(ContentEvent event, int counter) {
-		if (this.piInstances == null || this.piInstances.size() < this.parallelismHint)
+		if (this.piInstances == null || this.piInstances.size() < this.getParallelism())
 			throw new IllegalStateException("ThreadsWorkerProcessingItem(s) need to be setup before process any event (i.e. in ThreadsTopology.start()).");
 		
 		ThreadsProcessingItemInstance piInstance = this.piInstances.get(counter);
@@ -121,9 +90,9 @@ public class ThreadsProcessingItem implements ProcessingItem {
 	 * setup and connected to the respective streams) and before events are sent.
 	 */
 	public void setupInstances() {
-		this.piInstances = new ArrayList<ThreadsProcessingItemInstance>(parallelismHint);
-		for (int i=0; i<this.parallelismHint; i++) {
-			Processor newProcessor = this.processor.newProcessor(this.processor);
+		this.piInstances = new ArrayList<ThreadsProcessingItemInstance>(this.getParallelism());
+		for (int i=0; i<this.getParallelism(); i++) {
+			Processor newProcessor = this.getProcessor().newProcessor(this.getProcessor());
 			newProcessor.onCreate(i + 1);
 			this.piInstances.add(new ThreadsProcessingItemInstance(newProcessor, this.offset + i));
 		}
