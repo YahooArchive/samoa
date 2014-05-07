@@ -99,7 +99,7 @@ public class TopologyBuilder {
             this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         }
         EntranceProcessingItem epi = this.componentFactory.createEntrancePi(processor);
-        this.topology.addEntrancePi(epi);
+        this.topology.addEntranceProcessingItem(epi);
         this.mapProcessorToProcessingItem.put(processor, epi);
         return epi;
     }

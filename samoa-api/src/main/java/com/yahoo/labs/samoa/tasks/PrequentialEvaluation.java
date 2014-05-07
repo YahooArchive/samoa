@@ -78,6 +78,9 @@ public class PrequentialEvaluation implements Task, Configurable {
 
     public FileOption dumpFileOption = new FileOption("dumpFile", 'd', "File to append intermediate csv results to", null, "csv", true);
 
+    // Default=0: no delay/waiting
+    public IntOption sourceDelayOption = new IntOption("sourceDelay", 'w', "How many miliseconds between injections of two instances.", 0, 0, Integer.MAX_VALUE);
+    
     private PrequentialSourceProcessor preqSource;
 
     // private PrequentialSourceTopologyStarter preqStarter;
@@ -121,6 +124,7 @@ public class PrequentialEvaluation implements Task, Configurable {
         preqSource = new PrequentialSourceProcessor();
         preqSource.setStreamSource((InstanceStream) this.streamTrainOption.getValue());
         preqSource.setMaxNumInstances(instanceLimitOption.getValue());
+        preqSource.setSourceDelay(sourceDelayOption.getValue());
         builder.addEntranceProcessor(preqSource);
         logger.debug("Sucessfully instantiating PrequentialSourceProcessor");
 

@@ -1,18 +1,23 @@
 language: java
 
-# install S4 dependencies
 install:
-  - git clone https://github.com/apache/incubator-s4.git
-  - cd incubator-s4
-  - gradle wrapper
-  - gradle install
-  - gradle s4-tools::installApp
-  - cd ..
-  - mvn install -DskipTests=true -B
+- git clone https://github.com/apache/incubator-s4.git
+- cd incubator-s4
+- gradle wrapper
+- gradle install
+- gradle s4-tools::installApp
+- cd ..
+- echo "<settings><servers><server><id>sonatype-nexus-snapshots</id><username>${SOSS_USERNAME}</username><password>${SOSS_PASSWORD}</password></server></servers></settings>" > ${HOME}/.m2/settings.xml
+#- cat ${HOME}/.m2/settings.xml
 
-script: "mvn -B -Plocal,storm,s4 test"
+script: if [[ "$TRAVIS_SECURE_ENV_VARS" == "true" ]]; then CMD=deploy; else CMD=install; fi; echo $CMD; mvn -B -Plocal,storm,s4 $CMD
 
 notifications:
   email:
   on_success: never
   on_failure: change
+
+env:
+  global:
+  - secure: "hSyN3Ys3wDMJtL8jAcfFMh8pnG7B2TaKXc4qDWgE9a73XQ77JB8asCeXtQx/0/rNrJeNLBdSrVcXNAaOXXgGZpftJ0WdIBsyAj+tzpVAf+pcEHPVCgR4PHLkm1/UlyGX//1J+DjkDXnRgNfsD8xjZxTeNFH8xFzAU5YaP0AiLmk="
+  - secure: "MJLRFWi1uGZ1s5u/A44u4vDSGXF23H/3GGhofvLliaM4ivkeO9uthErlHgloGSmubEVkJMiThBLveZl01tNYRgn5a08qqyIsf/eShMagJDR7cX6FmbU7qOMOSzaAI84GDtrNuDQqaz2I1nTKfnzDYcTGXrpJMwLmbx30E9D/qaY="

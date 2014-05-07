@@ -138,7 +138,7 @@ public class S4ProcessingItem extends ProcessingElement implements
 	public ProcessingItem connectInputAllStream(Stream inputStream) {
 
 		S4Stream stream = (S4Stream) inputStream;
-		stream.setParalellism(this.paralellismLevel);
+		stream.setParallelism(this.paralellismLevel);
 		stream.addStream(inputStream.getStreamId(),
 				getKeyFinder(), this, S4Stream.BROADCAST);
 		return this;
@@ -149,7 +149,7 @@ public class S4ProcessingItem extends ProcessingElement implements
 	public ProcessingItem connectInputKeyStream(Stream inputStream) {
 
 		S4Stream stream = (S4Stream) inputStream;
-		stream.setParalellism(this.paralellismLevel);
+		stream.setParallelism(this.paralellismLevel);
 		stream.addStream(inputStream.getStreamId(),
 				getKeyFinder(), this,S4Stream.GROUP_BY_KEY);
 
@@ -159,7 +159,7 @@ public class S4ProcessingItem extends ProcessingElement implements
 	@Override
 	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
 		S4Stream stream = (S4Stream) inputStream;
-		stream.setParalellism(this.paralellismLevel);
+		stream.setParallelism(this.paralellismLevel);
 		stream.addStream(inputStream.getStreamId(),
 				getKeyFinder(), this,S4Stream.SHUFFLE);
 
@@ -182,7 +182,7 @@ public class S4ProcessingItem extends ProcessingElement implements
 	}
 
 	@Override
-	public int getParalellism() {
+	public int getParallelism() {
 		return this.paralellismLevel;
 	}
 }

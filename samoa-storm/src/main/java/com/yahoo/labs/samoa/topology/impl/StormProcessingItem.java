@@ -27,9 +27,11 @@ import java.util.UUID;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.topology.AbstractProcessingItem;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.impl.StormStream.InputStreamId;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -45,67 +47,45 @@ import backtype.storm.tuple.Tuple;
  * @author Arinto Murdopo
  *
  */
-class StormProcessingItem implements ProcessingItem, StormTopologyNode {
-	
-	private final Processor processor;
-	
+class StormProcessingItem extends AbstractProcessingItem implements StormTopologyNode {
 	private final ProcessingItemBolt piBolt;	
 	private BoltDeclarer piBoltDeclarer;
-	private final String piBoltUuidStr;
 	
 	//TODO: should we put parallelism hint here? 
 	//imo, parallelism hint only declared when we add this PI in the topology
 	//open for dicussion :p
-	private final int parallelismHint;
 		
 	StormProcessingItem(Processor processor, int parallelismHint){
 		this(processor, UUID.randomUUID().toString(), parallelismHint);
 	}
 	
 	StormProcessingItem(Processor processor, String friendlyId, int parallelismHint){
-		this.processor = processor;
+		super(processor, parallelismHint);
 		this.piBolt = new ProcessingItemBolt(processor);
-		this.piBoltUuidStr = friendlyId;
-		this.parallelismHint = parallelismHint;
+		this.setName(friendlyId);
 	}
 
 	@Override
-	public Processor getProcessor() {
-		return this.processor;
-	}
-
-	@Override
-	public ProcessingItem connectInputShuffleStream(Stream inputStream) {
+	protected ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
 		StormStream stormInputStream = (StormStream) inputStream;
 		InputStreamId inputId = stormInputStream.getInputId();
 		
-		piBoltDeclarer.shuffleGrouping(inputId.getComponentId(),
-				inputId.getStreamId());
-		return this;
-	}
-
-	@Override
-	public ProcessingItem connectInputKeyStream(Stream inputStream) {
-		StormStream stormInputStream = (StormStream) inputStream;
-		InputStreamId inputId = stormInputStream.getInputId();
-		
-		piBoltDeclarer.fieldsGrouping(
-				inputId.getComponentId(), 
-				inputId.getStreamId(), 
-				new Fields(StormSamoaUtils.KEY_FIELD));
-
-		return this;
-	}
-	
-	@Override
-	public ProcessingItem connectInputAllStream(Stream inputStream) {
-		StormStream stormInputStream = (StormStream) inputStream;
-		InputStreamId inputId = stormInputStream.getInputId();
-		
-		piBoltDeclarer.allGrouping(
-				inputId.getComponentId(), 
-				inputId.getStreamId());
-		
+		switch(scheme) {
+		case SHUFFLE:
+			piBoltDeclarer.shuffleGrouping(inputId.getComponentId(),inputId.getStreamId());
+			break;
+		case GROUP_BY_KEY:
+			piBoltDeclarer.fieldsGrouping(
+					inputId.getComponentId(), 
+					inputId.getStreamId(), 
+					new Fields(StormSamoaUtils.KEY_FIELD));
+			break;
+		case BROADCAST:
+			piBoltDeclarer.allGrouping(
+					inputId.getComponentId(), 
+					inputId.getStreamId());
+			break;
+		}
 		return this;
 	}
 	
@@ -115,25 +95,25 @@ class StormProcessingItem implements ProcessingItem, StormTopologyNode {
 			//throw exception that one PI only belong to one topology
 		}else{		
 			TopologyBuilder stormBuilder = topology.getStormBuilder();
-			this.piBoltDeclarer = stormBuilder.setBolt(this.piBoltUuidStr, 
+			this.piBoltDeclarer = stormBuilder.setBolt(this.getName(), 
 					this.piBolt, parallelismHint);
 		}	
 	}
 
 	@Override
 	public StormStream createStream() {
-		return piBolt.createStream(piBoltUuidStr);
+		return piBolt.createStream(this.getName());
 	}
 
 	@Override
 	public String getId() {
-		return piBoltUuidStr;
+		return this.getName();
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(super.toString());
-		sb.insert(0, String.format("id: %s, ", piBoltUuidStr));
+		sb.insert(0, String.format("id: %s, ", this.getName()));
 		return sb.toString();
 	}
 		
@@ -185,18 +165,6 @@ class StormProcessingItem implements ProcessingItem, StormTopologyNode {
 			return stream;
 		}
 	}
-	
-	//not used by samoa-storm
-	@Override
-	public int getParalellism() {
-		return this.parallelismHint;
-	}
-
-	//not used by samoa-storm
-//	@Override
-//	public void setName(String name) {
-//		//do nothing
-//	}
 }
 
 

@@ -26,75 +26,63 @@ package com.yahoo.labs.samoa.topology.impl;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.topology.AbstractProcessingItem;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
 import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.utils.PartitioningScheme;
+import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
  *
  * @author abifet
  */
-class SimpleProcessingItem implements ProcessingItem {
-
-    public static final int SHUFFLE = 0;
-    public static final int GROUP_BY_KEY = 1;
-    public static final int BROADCAST = 2;
-    protected Processor processor;
-    private int processingItemParalellism;
+class SimpleProcessingItem extends AbstractProcessingItem {
     private IProcessingItem[] arrayProcessingItem;
 
+    SimpleProcessingItem(Processor processor) {
+        super(processor);
+    }
+    
+    SimpleProcessingItem(Processor processor, int parallelism) {
+    	super(processor);
+        this.setParallelism(parallelism);
+    }
+    
     public IProcessingItem getProcessingItem(int i) {
         return arrayProcessingItem[i];
     }
-
-    SimpleProcessingItem(Processor processor, int paralellism) {
-        this.processor = processor;
-        this.processingItemParalellism = paralellism;
-    }
-
-    public ProcessingItem connectInputShuffleStream(Stream inputStream) {
-        SimpleStream stream = (SimpleStream) inputStream;
-        stream.add(this, SHUFFLE, this.processingItemParalellism);
-        return this;
-    }
-
-    public ProcessingItem connectInputKeyStream(Stream inputStream) {
-        SimpleStream stream = (SimpleStream) inputStream;
-        stream.add(this, GROUP_BY_KEY, this.processingItemParalellism);
-        return this;
-    }
-
-    public ProcessingItem connectInputAllStream(Stream inputStream) {
-        SimpleStream stream = (SimpleStream) inputStream;
-        stream.add(this, BROADCAST, this.processingItemParalellism);
-        return this;
-    }
-
-    public int getParalellism() {
-        return processingItemParalellism;
-    }
-
-    public Processor getProcessor() {
-        return this.processor;
-    }
+    
+    @Override
+    protected ProcessingItem addInputStream(Stream inputStream, PartitioningScheme scheme) {
+		StreamDestination destination = new StreamDestination(this, this.getParallelism(), scheme);
+		((SimpleStream)inputStream).addDestination(destination);
+		return this;
+	}
 
     public SimpleProcessingItem copy() {
-        SimpleProcessingItem ret = new SimpleProcessingItem(this.processor.newProcessor(this.processor), 0); // this.getParalellism());
+    	Processor processor = this.getProcessor();
+        SimpleProcessingItem ret = new SimpleProcessingItem(processor.newProcessor(processor));
         return ret;
     }
 
     public void processEvent(ContentEvent event, int counter) {
-        int paralellism = this.getParalellism();
-        if (this.arrayProcessingItem == null && paralellism > 0) {
+    	
+        int parallelism = this.getParallelism();
+        //System.out.println("Process event "+event+" (isLast="+event.isLastEvent()+") with counter="+counter+" while parallelism="+parallelism);
+        if (this.arrayProcessingItem == null && parallelism > 0) {
             //Init processing elements, the first time they are needed
-            this.arrayProcessingItem = new IProcessingItem[paralellism];
-            for (int j = 0; j < paralellism; j++) {
+            this.arrayProcessingItem = new IProcessingItem[parallelism];
+            for (int j = 0; j < parallelism; j++) {
                 arrayProcessingItem[j] = this.copy();
                 arrayProcessingItem[j].getProcessor().onCreate(j);
                 //System.out.println(j + " PROCESSOR create " + arrayProcessingItem[j].getProcessor());
             }
         }
         if (this.arrayProcessingItem != null) {
+        	IProcessingItem pi = this.getProcessingItem(counter);
+        	Processor p = pi.getProcessor();
+        	//System.out.println("PI="+pi+", p="+p);
             this.getProcessingItem(counter).getProcessor().process(event);
         }
     }
