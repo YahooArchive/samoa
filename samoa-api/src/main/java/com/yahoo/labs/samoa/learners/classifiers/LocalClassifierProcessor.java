@@ -111,15 +111,15 @@ final public class LocalClassifierProcessor implements Processor {
                 Instance inst = event.getInstance();
 		this.model.trainOnInstance(inst);
 		this.instancesCount++;
-		if (instancesCount % 10000 == 0) {
-			logger.info("Trained model using {} events with classifier id {}",
-					instancesCount, this.modelId); //getId());
-		}
+		//if (instancesCount % 10000 == 0) {
+		//	logger.info("Trained model using {} events with classifier id {}",
+		//			instancesCount, this.modelId); //getId());
+		//}
                 if (this.changeDetector != null) {
                     boolean correctlyClassifies = this.correctlyClassifies(inst);
                     double oldEstimation = this.changeDetector.getEstimation();
                     this.changeDetector.input(correctlyClassifies ? 0 : 1);
-                    if (this.changeDetector.getEstimation() > oldEstimation) {
+                    if (this.changeDetector.getChange() && this.changeDetector.getEstimation() > oldEstimation) {
                         //Start a new classifier
                         this.model.resetLearning();
                         this.changeDetector.resetLearning();
@@ -176,10 +176,10 @@ final public class LocalClassifierProcessor implements Processor {
 					+ " " + modelId + " " + dist);
 			outputStream.put(outContentEvent);
 			
-			if (++test % 10000 == 0) {
-				logger.info("Tested model using {} events with classifier id {}",
-						test, this.modelId);
-			}
+			//if (++test % 10000 == 0) {
+				//logger.info("Tested model using {} events with classifier id {}",
+				//		test, this.modelId);
+			//}
 		}
 		
 		if (inEvent.isTraining()) {
@@ -207,6 +207,9 @@ final public class LocalClassifierProcessor implements Processor {
 		if (originProcessor.getLearner() != null){
 			newProcessor.setClassifier(originProcessor.getLearner().create());
 		}
+                if (originProcessor.getChangeDetector() != null){
+                    newProcessor.setChangeDetector(originProcessor.getChangeDetector());
+                }
 		newProcessor.setOutputStream(originProcessor.getOutputStream());
 		return newProcessor;
 	}
