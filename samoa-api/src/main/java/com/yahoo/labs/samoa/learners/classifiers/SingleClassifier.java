@@ -28,7 +28,9 @@ import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
+import com.yahoo.labs.samoa.learners.AdaptiveLearner;
 import com.yahoo.labs.samoa.learners.Learner;
+import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 /**
@@ -36,7 +38,7 @@ import com.yahoo.labs.samoa.topology.TopologyBuilder;
  * Classifier that contain a single classifier.
  * 
  */
-public final class SingleClassifier implements Learner, Configurable {
+public final class SingleClassifier implements Learner, AdaptiveLearner, Configurable {
 
 	private static final long serialVersionUID = 684111382631697031L;
 	
@@ -65,6 +67,7 @@ public final class SingleClassifier implements Learner, Configurable {
 
 	protected void setLayout() {		
 		learnerP = new LocalClassifierProcessor();
+                learnerP.setChangeDetector(this.getChangeDetector());
                 LocalClassifierAdapter learner = (LocalClassifierAdapter) this.learnerOption.getValue();
                 learner.setDataset(this.dataset);
 		learnerP.setClassifier(learner);
@@ -88,4 +91,16 @@ public final class SingleClassifier implements Learner, Configurable {
 	public Stream getResultStream() {
 		return resultStream;
 	}
+
+        protected ChangeDetector changeDetector;    
+
+        @Override
+        public ChangeDetector getChangeDetector() {
+            return this.changeDetector;
+        }
+
+        @Override
+        public void setChangeDetector(ChangeDetector cd) {
+            this.changeDetector = cd;
+        }
 }

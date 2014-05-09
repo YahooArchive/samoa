@@ -43,6 +43,8 @@ import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
+import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
+import static com.yahoo.labs.samoa.moa.core.Utils.maxIndex;
 import com.yahoo.labs.samoa.learners.InstancesContentEvent;
 import com.yahoo.labs.samoa.topology.Stream;
 import java.util.HashSet;
@@ -110,6 +112,7 @@ final class ModelAggregatorProcessor implements Processor {
 		this.gracePeriod = builder.gracePeriod;
 		this.parallelismHint = builder.parallelismHint;
 		this.timeOut = builder.timeOut;
+        this.changeDetector = builder.changeDetector;
 
 		InstancesHeader ih = new InstancesHeader(dataset);
 		this.setModelContext(ih);
@@ -305,7 +308,6 @@ final class ModelAggregatorProcessor implements Processor {
             for (Instance inst: instances){
                 this.processInstance(inst,instContentEvent, isTesting, isTraining);
             }
-
         }
         
          private void processInstance(Instance inst, InstancesContentEvent instContentEvent, boolean isTesting, boolean isTraining){
@@ -313,17 +315,73 @@ final class ModelAggregatorProcessor implements Processor {
 		//Check the instance whether it is used for testing or training
                 //boolean testAndTrain = isTraining; //Train after testing
                 boolean testAndTrain = false;
+		double[] prediction = null;
 		if (isTesting) {
-                        double[] prediction = getVotesForInstance(inst, testAndTrain);
+                        prediction = getVotesForInstance(inst, testAndTrain);
 			this.resultStream.put(newResultContentEvent(prediction, inst,
 					instContentEvent));
 		}
 
 		if (isTraining && testAndTrain == false) {
 			trainOnInstanceImpl(inst);
+                        if (this.changeDetector != null) {
+                            if (prediction == null) {
+                                prediction = getVotesForInstance(inst);
+                            }
+                            boolean correctlyClassifies = this.correctlyClassifies(inst,prediction);
+                            double oldEstimation = this.changeDetector.getEstimation();
+                            this.changeDetector.input(correctlyClassifies ? 0 : 1);
+                            if (this.changeDetector.getEstimation() > oldEstimation) {
+                                //Start a new classifier
+                                logger.info("Change detected, resetting the classifier");
+                                this.resetLearning();
+                                this.changeDetector.resetLearning();
+                            }
+                    }
 		}
 	}
 	
+        private boolean correctlyClassifies(Instance inst, double[] prediction) {
+            return maxIndex(prediction) == (int) inst.classValue();
+        }
+        
+        private void resetLearning() {
+            this.treeRoot = null;
+            //Remove nodes
+            FoundNode[] learningNodes = findNodes();
+            for (FoundNode learningNode : learningNodes) {
+                Node node = learningNode.getNode();
+                if (node instanceof SplitNode) {
+                    SplitNode splitNode;
+                    splitNode = (SplitNode) node;
+                    for (int i = 0; i < splitNode.numChildren(); i++) {
+                        splitNode.setChild(i, null);
+                    }
+                }
+            }
+        }
+	
+        protected FoundNode[] findNodes() {
+        List<FoundNode> foundList = new LinkedList<>();
+        findNodes(this.treeRoot, null, -1, foundList);
+        return foundList.toArray(new FoundNode[foundList.size()]);
+    }
+
+    protected void findNodes(Node node, SplitNode parent,
+            int parentBranch, List<FoundNode> found) {
+        if (node != null) {
+            found.add(new FoundNode(node, parent, parentBranch));
+            if (node instanceof SplitNode) {
+                SplitNode splitNode = (SplitNode) node;
+                for (int i = 0; i < splitNode.numChildren(); i++) {
+                    findNodes(splitNode.getChild(i), splitNode, i,
+                            found);
+                }
+            }
+        }
+    }
+
+        
 	/**
 	 * Helper method to get the prediction result. 
 	 * The actual prediction result is delegated to the leaf node.
@@ -566,7 +624,7 @@ final class ModelAggregatorProcessor implements Processor {
 	private static double computeHoeffdingBound(double range, double confidence, double n){
 		return Math.sqrt((Math.pow(range, 2.0) * Math.log(1.0/confidence)) / (2.0*n));
 	}
-	
+
 	/**
 	 * AggregationTimeOutHandler is a class to support time-out feature while waiting for local computation results
 	 * from the local statistic PIs.
@@ -613,6 +671,16 @@ final class ModelAggregatorProcessor implements Processor {
 			this.scheduledFuture = scheduledFuture;
 		}
 	}
+        
+        protected ChangeDetector changeDetector;    
+
+        public ChangeDetector getChangeDetector() {
+            return this.changeDetector;
+        }
+
+        public void setChangeDetector(ChangeDetector cd) {
+            this.changeDetector = cd;
+        }
 	
 	/**
 	 * Builder class to replace constructors with many parameters
@@ -631,6 +699,7 @@ final class ModelAggregatorProcessor implements Processor {
 		private int gracePeriod = 200;
 		private int parallelismHint = 1;
 		private long timeOut = 30;
+                private ChangeDetector changeDetector = null;
 
 		Builder(Instances dataset){
 			this.dataset = dataset;
@@ -676,6 +745,10 @@ final class ModelAggregatorProcessor implements Processor {
 			return this;
 		}
 		
+                Builder changeDetector(ChangeDetector changeDetector){
+                        this.changeDetector = changeDetector;
+                        return this;
+                }
 		ModelAggregatorProcessor build(){
 			return new ModelAggregatorProcessor(this);
 		}

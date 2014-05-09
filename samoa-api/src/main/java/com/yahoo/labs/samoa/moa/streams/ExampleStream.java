@@ -20,10 +20,9 @@ package com.yahoo.labs.samoa.moa.streams;
  * #L%
  */
 
+import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.MOAObject;
 import com.yahoo.labs.samoa.moa.core.Example;
-import com.yahoo.labs.samoa.instances.InstancesHeader;
-import com.yahoo.labs.samoa.instances.Instance;
 
 /**
  * Interface representing a data stream of examples. 
