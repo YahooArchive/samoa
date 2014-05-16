@@ -90,7 +90,7 @@ public class SamzaEngine {
 		}
 		
 		// Create kafka streams
-		Set<Stream> streams = topo.getStreams(); 
+		Set<Stream> streams = topology.getStreams(); 
 		for (Stream stream:streams) {
 			SamzaStream samzaStream = (SamzaStream) stream;
 			List<SamzaSystemStream> systemStreams = samzaStream.getSystemStreams();
