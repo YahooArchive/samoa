@@ -44,8 +44,6 @@ public final class DistributedClusterer implements Learner, Configurable {
 
     private static final long serialVersionUID = 684111382631697031L;
 
-    private ProcessingItem learnerPI;
-
     private Stream resultStream;
 
     private Instances dataset;
@@ -86,9 +84,8 @@ public final class DistributedClusterer implements Learner, Configurable {
         LocalClustererAdapter learner = (LocalClustererAdapter) this.learnerOption.getValue();
         learner.setDataset(this.dataset);
         learnerP.setLearner(learner);
-        learnerPI = this.builder.createPi(learnerP, this.paralellismOption.getValue());
-//        learnerPI.connectInputShuffleStream(distributorToLocalStream);
-        localToGlobalStream = this.builder.createStream(learnerPI);
+        builder.addProcessor(learnerP, this.paralellismOption.getValue());
+        localToGlobalStream = this.builder.createStream(learnerP);
         learnerP.setOutputStream(localToGlobalStream);
 
         // Global Clustering
@@ -96,8 +93,8 @@ public final class DistributedClusterer implements Learner, Configurable {
         LocalClustererAdapter globalLearner = (LocalClustererAdapter) this.learnerOption.getValue();
         globalLearner.setDataset(this.dataset);
         globalClusteringCombinerP.setLearner(learner);
-        this.builder.addProcessor(globalClusteringCombinerP, 1);
-        this.builder.connectInputAllStream(localToGlobalStream, globalClusteringCombinerP);
+        builder.addProcessor(globalClusteringCombinerP, 1);
+        builder.connectInputAllStream(localToGlobalStream, globalClusteringCombinerP);
 
         // Output Stream
         resultStream = this.builder.createStream(globalClusteringCombinerP);

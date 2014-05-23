@@ -64,7 +64,7 @@ public class ClusteringDistributorProcessor implements Processor {
      * @return true, if successful
      */
     public boolean process(ContentEvent event) {
-        // TODO distinguish between ClusteringContentEvent and ClusteringEvaluationContentEvent
+        // distinguish between ClusteringContentEvent and ClusteringEvaluationContentEvent
         if (event instanceof ClusteringContentEvent) {
             ClusteringContentEvent cce = (ClusteringContentEvent) event;
             outputStream.put(event);

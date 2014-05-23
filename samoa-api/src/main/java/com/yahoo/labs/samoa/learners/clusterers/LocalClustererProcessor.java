@@ -134,17 +134,10 @@ final public class LocalClustererProcessor implements Processor {
                 model.trainOnInstance(point);
                 instancesCount++;
             }
-        }
-        
-        if (event instanceof ClusteringEvaluationContentEvent) {
-            // Pass the event along
-            this.outputStream.put(event);
-        }
-        
- 
+        }    
+
         if (instancesCount % this.sampleFrequency == 0) {
-            logger.info("Trained model using {} events with classifier id {}",
-                    instancesCount, this.modelId); //getId());
+            logger.info("Trained model using {} events with classifier id {}", instancesCount, this.modelId); // getId());
         }
     }
 
@@ -157,7 +150,7 @@ final public class LocalClustererProcessor implements Processor {
     @Override
     public boolean process(ContentEvent event) {
        
-        if (event.isLastEvent() == true || 
+        if (event.isLastEvent() || 
                 (instancesCount > 0 && instancesCount% this.sampleFrequency == 0)) {
             if (model.implementsMicroClusterer()) {
 

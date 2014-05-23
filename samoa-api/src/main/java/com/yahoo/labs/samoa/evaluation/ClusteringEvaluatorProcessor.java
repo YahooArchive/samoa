@@ -20,28 +20,28 @@ package com.yahoo.labs.samoa.evaluation;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.evaluation.*;
-import com.yahoo.labs.samoa.evaluation.measures.SSQ;
-import com.yahoo.labs.samoa.evaluation.measures.StatisticalCollection;
-import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.clusterers.KMeans;
-import com.yahoo.labs.samoa.moa.core.Measurement;
-import com.yahoo.labs.samoa.moa.evaluation.LearningCurve;
-import com.yahoo.labs.samoa.moa.evaluation.LearningEvaluation;
-import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
-import com.yahoo.labs.samoa.moa.core.DataPoint;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.evaluation.measures.SSQ;
+import com.yahoo.labs.samoa.evaluation.measures.StatisticalCollection;
+import com.yahoo.labs.samoa.moa.cluster.Clustering;
+import com.yahoo.labs.samoa.moa.clusterers.KMeans;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
+import com.yahoo.labs.samoa.moa.core.Measurement;
+import com.yahoo.labs.samoa.moa.evaluation.LearningCurve;
+import com.yahoo.labs.samoa.moa.evaluation.LearningEvaluation;
+import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
 
 public class ClusteringEvaluatorProcessor implements Processor {
 
@@ -224,7 +224,7 @@ public class ClusteringEvaluatorProcessor implements Processor {
 
     private void addMeasurement() {
         // printMeasures();
-        List<Measurement> measurements = new Vector<Measurement>();
+        List<Measurement> measurements = new ArrayList<Measurement>();
         measurements.add(new Measurement(ORDERING_MEASUREMENT_NAME, totalCount * this.samplingFrequency));
 
         addClusteringPerformanceMeasurements(measurements);
