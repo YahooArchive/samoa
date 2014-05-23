@@ -22,6 +22,7 @@ package com.yahoo.labs.samoa.learners.clusterers;
 /**
  * License
  */
+import com.yahoo.labs.samoa.evaluation.ClusteringEvaluationContentEvent;
 import com.yahoo.labs.samoa.evaluation.ClusteringResultContentEvent;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
@@ -133,6 +134,11 @@ final public class LocalClustererProcessor implements Processor {
                 model.trainOnInstance(point);
                 instancesCount++;
             }
+        }
+        
+        if (event instanceof ClusteringEvaluationContentEvent) {
+            // Pass the event along
+            this.outputStream.put(event);
         }
         
  

@@ -24,6 +24,7 @@ package com.yahoo.labs.samoa.learners.clusterers.simple;
  */
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.evaluation.ClusteringEvaluationContentEvent;
 import com.yahoo.labs.samoa.learners.clusterers.ClusteringContentEvent;
 import com.yahoo.labs.samoa.topology.Stream;
 
@@ -33,10 +34,9 @@ import com.yahoo.labs.samoa.topology.Stream;
 public class ClusteringDistributorProcessor implements Processor {
 
     private static final long serialVersionUID = -1550901409625192730L;
-    /**
-     * The output stream.
-     */
+
     private Stream outputStream;
+    private Stream evaluationStream;
 
     public Stream getOutputStream() {
         return outputStream;
@@ -46,29 +46,49 @@ public class ClusteringDistributorProcessor implements Processor {
         this.outputStream = outputStream;
     }
 
+    public Stream getEvaluationStream() {
+        return evaluationStream;
+    }
+
+    public void setEvaluationStream(Stream evaluationStream) {
+        this.evaluationStream = evaluationStream;
+    }
+
     /**
      * Process event.
-     *
-     * @param event the event
+     * 
+     * @param event
+     *            the event
      * @return true, if successful
      */
     public boolean process(ContentEvent event) {
-        ClusteringContentEvent inEvent = (ClusteringContentEvent) event;
-        outputStream.put(event);
+        // TODO distinguish between ClusteringContentEvent and ClusteringEvaluationContentEvent
+        if (event instanceof ClusteringContentEvent) {
+            ClusteringContentEvent cce = (ClusteringContentEvent) event;
+            outputStream.put(event);
+            if (cce.isSample()) {
+                evaluationStream.put(event);
+            }
+        } else if (event instanceof ClusteringEvaluationContentEvent) {
+            // TODO if evaluation event, send it to the evaluator
+            evaluationStream.put(event);
+        }
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see samoa.core.Processor#newProcessor(samoa.core.Processor)
      */
     @Override
     public Processor newProcessor(Processor sourceProcessor) {
         ClusteringDistributorProcessor newProcessor = new ClusteringDistributorProcessor();
         ClusteringDistributorProcessor originProcessor = (ClusteringDistributorProcessor) sourceProcessor;
-        if (originProcessor.getOutputStream() != null) {
+        if (originProcessor.getOutputStream() != null)
             newProcessor.setOutputStream(originProcessor.getOutputStream());
-        }
-
+        if (originProcessor.getEvaluationStream() != null)
+            newProcessor.setEvaluationStream(originProcessor.getEvaluationStream());
         return newProcessor;
     }
 

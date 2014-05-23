@@ -41,16 +41,19 @@ public interface Processor extends Serializable, Configurable {
     /**
      * Initializes the Processor. This method is called once after the topology is set up and before any call to the {@link process} method.
      * 
-     * @param the identifier of the processor.
+     * @param id
+     *            the identifier of the processor.
      */
     void onCreate(int id);
 
     /**
-     * New processor.
+     * Creates a copy of a processor. This method is used to instantiate multiple instances of the same {@link Processsor}.
      * 
-     * @param p
+     * @param processor
+     *            the processor to be copied.
      * 
-     * @return the processor
-     */
-    Processor newProcessor(Processor p);
+     * @return a new instance of the {@link Processor}.
+     * */
+    Processor newProcessor(Processor processor); // FIXME there should be no need for the processor as a parameter
+    // TODO can we substitute this with Cloneable?
 }

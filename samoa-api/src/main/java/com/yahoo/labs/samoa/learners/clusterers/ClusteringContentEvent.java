@@ -19,9 +19,10 @@ package com.yahoo.labs.samoa.learners.clusterers;
  * limitations under the License.
  * #L%
  */
+import net.jcip.annotations.Immutable;
+
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
-import net.jcip.annotations.Immutable;
 
 /**
  * The Class ClusteringContentEvent.
@@ -33,6 +34,7 @@ final public class ClusteringContentEvent implements ContentEvent {
     private Instance instance;
     private boolean isLast = false;
     private String key;
+    private boolean isSample;
 
     public ClusteringContentEvent() {
         // Necessary for kryo serializer
@@ -40,14 +42,16 @@ final public class ClusteringContentEvent implements ContentEvent {
 
     /**
      * Instantiates a new clustering event.
-     *
-     * @param index the index
-     * @param instance the instance
+     * 
+     * @param index
+     *            the index
+     * @param instance
+     *            the instance
      */
     public ClusteringContentEvent(long index, Instance instance) {
-        /*if (instance != null) {
-         this.instance = new SerializableInstance(instance);
-         }*/
+        /*
+         * if (instance != null) { this.instance = new SerializableInstance(instance); }
+         */
         this.instance = instance;
         this.setKey(Long.toString(index));
     }
@@ -73,5 +77,13 @@ final public class ClusteringContentEvent implements ContentEvent {
 
     Instance getInstance() {
         return this.instance;
+    }
+
+    public boolean isSample() {
+        return isSample;
+    }
+
+    public void setSample(boolean b) {
+        this.isSample = b;
     }
 }
