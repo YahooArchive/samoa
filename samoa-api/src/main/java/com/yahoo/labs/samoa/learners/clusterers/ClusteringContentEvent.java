@@ -75,7 +75,7 @@ final public class ClusteringContentEvent implements ContentEvent {
         this.isLast = isLast;
     }
 
-    Instance getInstance() {
+    public Instance getInstance() {
         return this.instance;
     }
 

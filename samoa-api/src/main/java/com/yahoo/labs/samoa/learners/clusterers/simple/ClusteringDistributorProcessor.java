@@ -26,6 +26,7 @@ import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.evaluation.ClusteringEvaluationContentEvent;
 import com.yahoo.labs.samoa.learners.clusterers.ClusteringContentEvent;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.yahoo.labs.samoa.topology.Stream;
 
 /**
@@ -37,6 +38,7 @@ public class ClusteringDistributorProcessor implements Processor {
 
     private Stream outputStream;
     private Stream evaluationStream;
+    private int numInstances;
 
     public Stream getOutputStream() {
         return outputStream;
@@ -67,10 +69,9 @@ public class ClusteringDistributorProcessor implements Processor {
             ClusteringContentEvent cce = (ClusteringContentEvent) event;
             outputStream.put(event);
             if (cce.isSample()) {
-                evaluationStream.put(event);
+                evaluationStream.put(new ClusteringEvaluationContentEvent(null, new DataPoint(cce.getInstance(), numInstances++), cce.isLastEvent()));
             }
         } else if (event instanceof ClusteringEvaluationContentEvent) {
-            // TODO if evaluation event, send it to the evaluator
             evaluationStream.put(event);
         }
         return true;

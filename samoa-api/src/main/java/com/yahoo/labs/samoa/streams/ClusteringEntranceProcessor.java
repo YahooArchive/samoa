@@ -61,6 +61,8 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
     private int numberInstances;
     private int numInstanceSent = 0;
 
+    private int groundTruthSamplingFrequency;
+
     @Override
     public boolean process(ContentEvent event) {
         // TODO: possible refactor of the super-interface implementation
@@ -121,6 +123,16 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
     public void setSamplingThreshold(double samplingThreshold) {
         this.samplingThreshold = samplingThreshold;
     }
+    
+    
+
+    public int getGroundTruthSamplingFrequency() {
+        return groundTruthSamplingFrequency;
+    }
+
+    public void setGroundTruthSamplingFrequency(int groundTruthSamplingFrequency) {
+        this.groundTruthSamplingFrequency = groundTruthSamplingFrequency;
+    }
 
     public StreamSource getStreamSource() {
         return streamSource;
@@ -140,7 +152,7 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
     }
 
     private Instance nextInstance() {
-        if (this.isInited == true) {
+        if (this.isInited) {
             return streamSource.nextInstance().getData();
         } else {
             this.isInited = true;
@@ -207,7 +219,7 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
         // evaluationStream.put(evalEvent);
         // }
 
-        int groundTruthSamplingFrequency = ((ClusteringStream) streamSource.getStream()).getDecayHorizon();
+        groundTruthSamplingFrequency = ((ClusteringStream) streamSource.getStream()).getDecayHorizon(); // FIXME should it be taken from the ClusteringEvaluation -f option instead?
         if (isFinished()) {
             // send ending event
             ClusteringContentEvent contentEvent = new ClusteringContentEvent(-1, firstInstance);
@@ -215,19 +227,19 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
             return contentEvent;
         } else {
             DataPoint nextDataPoint = new DataPoint(nextInstance(), numInstanceSent);
-            if (numInstanceSent > 0 && numInstanceSent % groundTruthSamplingFrequency == 0) {
+            numInstanceSent++;
+            if (numInstanceSent % groundTruthSamplingFrequency == 0) {
                 // TODO implement an interface ClusteringGroundTruth with a getGeneratingClusters() method, check if the source implements the interface
                 // send a clustering evaluation event for external measures (distance from the gt clusters)
                 Clustering gtClustering = ((RandomRBFGeneratorEvents) streamSource.getStream()).getGeneratingClusters();
                 ClusteringEvaluationContentEvent evaluationEvent = new ClusteringEvaluationContentEvent(gtClustering, nextDataPoint, false);
                 return evaluationEvent;
             } else {
-                // send a clustering content event for internal measures (cohesion, separation)
                 ClusteringContentEvent contentEvent = new ClusteringContentEvent(numInstanceSent, nextDataPoint);
                 if (random.nextDouble() < samplingThreshold) {
+                    // send a clustering content event for internal measures (cohesion, separation)
                     contentEvent.setSample(true);
                 }
-                numInstanceSent++;
                 return contentEvent;
             }
         }
