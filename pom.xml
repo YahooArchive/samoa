@@ -73,7 +73,7 @@
         <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
 
         <commons-lang3.version>3.1</commons-lang3.version>
-        <guava.version>13.0.1</guava.version>
+        <guava.version>17.0</guava.version>
         <javacliparser.version>0.5.0</javacliparser.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
         <jmockit.version>1.5</jmockit.version>
