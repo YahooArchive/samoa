@@ -22,6 +22,7 @@ package com.yahoo.labs.samoa.topology;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 import com.yahoo.labs.samoa.core.Processor;
 
@@ -49,6 +50,7 @@ public class TopologyBuilder {
         // ans: at the moment, no, i.e. each builder will has its associated factory!
         // and the factory will be instantiated using dynamic binding
         // this.componentFactory = new StormComponentFactory();
+        mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
     }
 
     // TODO: refactor, temporary constructor used by S4 code
@@ -77,11 +79,12 @@ public class TopologyBuilder {
      * @param paralellism
      * @return ProcessingItem
      */
-    public ProcessingItem createPi(Processor processor) {
+    @SuppressWarnings("unused")
+    private ProcessingItem createPi(Processor processor) {
         return createPi(processor, 1);
     }
 
-    public ProcessingItem createPi(Processor processor, int parallelism) {
+    private ProcessingItem createPi(Processor processor, int parallelism) {
         ProcessingItem pi = this.componentFactory.createPi(processor, parallelism);
         this.topology.addProcessingItem(pi, parallelism);
         return pi;
@@ -94,10 +97,7 @@ public class TopologyBuilder {
      * @param starter
      * @return
      */
-    public EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
-        if (this.mapProcessorToProcessingItem == null) {
-            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
-        }
+    private EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
         EntranceProcessingItem epi = this.componentFactory.createEntrancePi(processor);
         this.topology.addEntranceProcessingItem(epi);
         this.mapProcessorToProcessingItem.put(processor, epi);
@@ -111,7 +111,7 @@ public class TopologyBuilder {
      *            source processing item.
      * @return
      */
-    public Stream createStream(IProcessingItem sourcePi) {
+    private Stream createStream(IProcessingItem sourcePi) {
         Stream stream = this.componentFactory.createStream(sourcePi);
         this.topology.addStream(stream);
         return stream;
@@ -127,9 +127,6 @@ public class TopologyBuilder {
     }
 
     public ProcessingItem addProcessor(Processor processor, int parallelism) {
-        if (this.mapProcessorToProcessingItem == null) {
-            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
-        }
         ProcessingItem pi = createPi(processor, parallelism);
         this.mapProcessorToProcessingItem.put(processor, pi);
         return pi;
@@ -141,72 +138,60 @@ public class TopologyBuilder {
 
     public ProcessingItem connectInputShuffleStream(Stream inputStream, Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
-        ProcessingItem ret = null;
-        if (pi != null) {
-            ret = pi.connectInputShuffleStream(inputStream);
-        }
+        Preconditions.checkNotNull(pi, "Trying to connect to null PI");
+        ProcessingItem ret = pi.connectInputShuffleStream(inputStream);
         return ret;
     }
 
     public ProcessingItem connectInputKeyStream(Stream inputStream, Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
-        ProcessingItem ret = null;
-        if (pi != null) {
-            ret = pi.connectInputKeyStream(inputStream);
-        }
+        Preconditions.checkNotNull(pi, "Trying to connect to null PI");
+        ProcessingItem ret = pi.connectInputKeyStream(inputStream);
         return ret;
     }
 
     public ProcessingItem connectInputAllStream(Stream inputStream, Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
-        ProcessingItem ret = null;
-        if (pi != null) {
-            ret = pi.connectInputAllStream(inputStream);
-        }
+        Preconditions.checkNotNull(pi, "Trying to connect to null PI");
+        ProcessingItem ret = pi.connectInputAllStream(inputStream);
         return ret;
     }
 
     public Stream createInputShuffleStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
-        if (pi != null) {
-            pi.connectInputShuffleStream(inputStream);
-        }
+        Preconditions.checkNotNull(pi, "Trying to connect to null PI");
+        pi.connectInputShuffleStream(inputStream);
         return inputStream;
     }
 
     public Stream createInputKeyStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
-        if (pi != null) {
-            pi.connectInputKeyStream(inputStream);
-        }
+        Preconditions.checkNotNull(pi, "Trying to connect to null PI");
+        pi.connectInputKeyStream(inputStream);
         return inputStream;
     }
 
     public Stream createInputAllStream(Processor processor, Processor dest) {
         Stream inputStream = this.createStream(dest);
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
-        if (pi != null) {
-            pi.connectInputAllStream(inputStream);
-        }
+        Preconditions.checkNotNull(pi, "Trying to connect to null PI");
+        pi.connectInputAllStream(inputStream);
         return inputStream;
     }
 
     public Stream createStream(Processor processor) {
         IProcessingItem pi = mapProcessorToProcessingItem.get(processor);
         Stream ret = null;
-        if (pi != null)
-            ret = this.createStream(pi);
+        Preconditions.checkNotNull(pi, "Trying to create stream from null PI");
+        ret = this.createStream(pi);
         if (pi instanceof EntranceProcessingItem)
             ((EntranceProcessingItem) pi).setOutputStream(ret);
         return ret;
     }
 
     public EntranceProcessingItem addEntranceProcessor(EntranceProcessor entranceProcessor) {
-        if (mapProcessorToProcessingItem == null) {
-            mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
-        }
         EntranceProcessingItem pi = createEntrancePi(entranceProcessor);
         mapProcessorToProcessingItem.put(entranceProcessor, pi);
         return pi;
@@ -214,6 +199,7 @@ public class TopologyBuilder {
 
     public ProcessingItem getProcessingItem(Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
+        Preconditions.checkNotNull(pi, "Trying to retrieve null PI");
         return pi;
     }
 }
