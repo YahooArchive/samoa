@@ -89,9 +89,9 @@ public final class DistributedClusterer implements Learner, Configurable {
                 LocalClustererAdapter learner = (LocalClustererAdapter) this.learnerOption.getValue();
                 learner.setDataset(this.dataset);
 		learnerP.setLearner(learner);
-		learnerPI = this.builder.createPi(learnerP, this.paralellismOption.getValue());
+		learnerPI = this.builder.addProcessor(learnerP, this.paralellismOption.getValue());
     		learnerPI.connectInputShuffleStream(distributorToLocalStream);            
-                localToGlobalStream = this.builder.createStream(learnerPI);
+                localToGlobalStream = this.builder.createStream(learnerP);
                 learnerP.setOutputStream(localToGlobalStream);
                 
                 //Global Clustering
