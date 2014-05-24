@@ -19,49 +19,46 @@ package com.yahoo.labs.samoa.tasks;
  * limitations under the License.
  * #L%
  */
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.FileOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.StringOption;
-import com.yahoo.labs.samoa.core.TopologyStarter;
-import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.evaluation.ClusteringEvaluatorProcessor;
-import com.yahoo.labs.samoa.streams.ClusteringSourceProcessor;
-import com.yahoo.labs.samoa.streams.ClusteringSourceTopologyStarter;
+import com.yahoo.labs.samoa.learners.Learner;
+import com.yahoo.labs.samoa.learners.clusterers.simple.ClusteringDistributorProcessor;
 import com.yahoo.labs.samoa.learners.clusterers.simple.DistributedClusterer;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.moa.streams.clustering.ClusteringStream;
 import com.yahoo.labs.samoa.moa.streams.clustering.RandomRBFGeneratorEvents;
+import com.yahoo.labs.samoa.streams.ClusteringEntranceProcessor;
 import com.yahoo.labs.samoa.topology.ComponentFactory;
-import com.yahoo.labs.samoa.topology.EntranceProcessingItem;
-import com.yahoo.labs.samoa.topology.ProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.Topology;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Clustering Evaluation task is a scheme in evaluating performance of clusterers
- * 
- * @author Arinto Murdopo, Antonio Severien
+ * A task that runs and evaluates a distributed clustering algorithm.
  * 
  */
 public class ClusteringEvaluation implements Task, Configurable {
 
     private static final long serialVersionUID = -8246537378371580550L;
 
+    private static final int DISTRIBUTOR_PARALLELISM = 1;
+
     private static Logger logger = LoggerFactory.getLogger(ClusteringEvaluation.class);
 
-    public ClassOption learnerOption = new ClassOption("learner", 'l', "Clusterer to train.", Learner.class,
-    // SingleLearner.class.getName()
-            DistributedClusterer.class.getName());
+    public ClassOption learnerOption = new ClassOption("learner", 'l', "Clustering to run.", Learner.class, DistributedClusterer.class.getName());
 
-    public ClassOption streamTrainOption = new ClassOption("streamTrain", 's', "Stream to learn from.", InstanceStream.class,
+    public ClassOption streamTrainOption = new ClassOption("streamTrain", 's', "Input stream.", InstanceStream.class,
             RandomRBFGeneratorEvents.class.getName());
 
     public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i', "Maximum number of instances to test/train on  (-1 = no limit).", 100000, -1,
@@ -83,26 +80,16 @@ public class ClusteringEvaluation implements Task, Configurable {
     public FloatOption samplingThresholdOption = new FloatOption("samplingThreshold", 'a', "Ratio of instances sampled that will be used for evaluation.", 0.5,
             0.0, 1.0);
 
-    private ClusteringSourceProcessor source;
-
-    private ClusteringSourceTopologyStarter starter;
-
-    // private EntranceProcessingItem sourcePi;
-
-    private Stream sourcePiOutputStream;
-
-    private Stream sourcePiEvalStream;
-
+    private ClusteringEntranceProcessor source;
+    private Stream sourceStream;
+    private ClusteringDistributorProcessor distributor;
+    private Stream distributorStream;
+    private Stream evaluationStream;
     private Learner learner;
-
     private ClusteringEvaluatorProcessor evaluator;
-
-    // private ProcessingItem evaluatorPi;
-
     private Stream evaluatorPiInputStream;
 
     private Topology topology;
-
     private TopologyBuilder builder;
 
     public void getDescription(StringBuilder sb, int indent) {
@@ -111,12 +98,11 @@ public class ClusteringEvaluation implements Task, Configurable {
 
     @Override
     public void init() {
-        // TODO remove the if statement
-        // theoretically, dynamic binding will work here!
-        // test later!
-        // for now, the if statement is used by Storm
+        // TODO remove the if statement theoretically, dynamic binding will work here! for now, the if statement is used by Storm
 
         if (builder == null) {
+            logger.warn("Builder was not initialized, initializing it from the Task");
+
             builder = new TopologyBuilder();
             logger.debug("Sucessfully instantiating TopologyBuilder");
 
@@ -124,69 +110,61 @@ public class ClusteringEvaluation implements Task, Configurable {
             logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
         }
 
-        // instantiate PrequentialSourceProcessor and its output stream (sourcePiOutputStream)
-        source = new ClusteringSourceProcessor();
+        // instantiate ClusteringEntranceProcessor and its output stream (sourceStream)
+        source = new ClusteringEntranceProcessor();
         InstanceStream streamTrain = (InstanceStream) this.streamTrainOption.getValue();
         source.setStreamSource(streamTrain);
+        builder.addEntranceProcessor(source);
+        source.setSamplingThreshold(samplingThresholdOption.getValue());
+        source.setMaxNumInstances(instanceLimitOption.getValue());
+        logger.debug("Sucessfully instantiated ClusteringEntranceProcessor");
 
-        // TODO: refactor component creation, use Factory.createTopoStarter(this)
-        // inside Factory, we will use the public options attribute
-        // TODO: integrate time limit into TopologyStarter and PrequentialSourceProcessor
-
-        // starter = new ClusteringSourceTopologyStarter(source, instanceLimitOption.getValue(), this.samplingThresholdOption.getValue());
-        // sourcePi = builder.createEntrancePi(source, starter);
-        // sourcePiOutputStream = builder.createStream(sourcePi);
-        builder.addEntranceProcessor(source); // FIXME put the starter code inside the platform code
-        sourcePiOutputStream = builder.createStream(source);
+        sourceStream = builder.createStream(source);
         // starter.setInputStream(sourcePiOutputStream); // FIXME set stream in the EntrancePI
-        logger.debug("Sucessfully instantiating ClusteringSourceProcessor");
 
-        sourcePiEvalStream = builder.createStream(source);
-        starter.setEvalStream(sourcePiEvalStream);
-
-        // instantiate learner and connect it to sourcePiOutputStream
+        // distribution of instances and sampling for evaluation
+        distributor = new ClusteringDistributorProcessor();
+        builder.addProcessor(distributor, DISTRIBUTOR_PARALLELISM);
+        builder.connectInputShuffleStream(sourceStream, distributor);
+        distributorStream = builder.createStream(distributor);
+        distributor.setOutputStream(distributorStream);
+        evaluationStream = builder.createStream(distributor);
+        distributor.setEvaluationStream(evaluationStream); // passes evaluation events along
+        logger.debug("Successfully instantiated Distributor");
+       
+        // instantiate learner and connect it to distributorStream
         learner = (Learner) this.learnerOption.getValue();
         learner.init(builder, source.getDataset(), 1);
-        this.builder.connectInputShuffleStream(sourcePiOutputStream, learner.getInputProcessor());
-        logger.debug("Sucessfully instantiating Learner");
+        builder.connectInputShuffleStream(distributorStream, learner.getInputProcessor());
+        logger.debug("Sucessfully instantiated Learner");
 
         evaluatorPiInputStream = learner.getResultStream();
         evaluator = new ClusteringEvaluatorProcessor.Builder(// (ClassificationPerformanceEvaluator) this.evaluatorOption.getValue())
                 // .samplingFrequency(
                 sampleFrequencyOption.getValue()).dumpFile(dumpFileOption.getFile()).decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon()).build();
 
-        // evaluatorPi = builder.createPi(evaluator);
-        // evaluatorPi.connectInputShuffleStream(evaluatorPiInputStream);
-        // evaluatorPi.connectInputAllStream(sourcePiEvalStream);
         builder.addProcessor(evaluator);
         builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
-        builder.connectInputAllStream(sourcePiEvalStream, evaluator);
-        logger.debug("Sucessfully instantiating EvaluatorProcessor");
+        builder.connectInputAllStream(evaluationStream, evaluator);
+        logger.debug("Sucessfully instantiated EvaluatorProcessor");
 
         topology = builder.build();
-        logger.debug("Sucessfully building the topology");
+        logger.debug("Sucessfully built the topology");
     }
 
     @Override
     public void setFactory(ComponentFactory factory) {
-        // TODO unify this code with init()
-        // for now, it's used by S4 App
+        // TODO unify this code with init() for now, it's used by S4 App
         // dynamic binding theoretically will solve this problem
         builder = new TopologyBuilder(factory);
-        logger.debug("Sucessfully instantiating TopologyBuilder");
+        logger.debug("Sucessfully instantiated TopologyBuilder");
 
         builder.initTopology(evaluationNameOption.getValue());
-        logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
+        logger.debug("Sucessfully initialized SAMOA topology with name {}", evaluationNameOption.getValue());
 
     }
 
     public Topology getTopology() {
         return topology;
     }
-
-    // @Override
-    // public TopologyStarter getTopologyStarter() {
-    // return this.starter;
-    //
-    // }
 }

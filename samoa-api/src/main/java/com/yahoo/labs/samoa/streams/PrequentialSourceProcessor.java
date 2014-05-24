@@ -131,24 +131,24 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
         return newProcessor;
     }
 
-    /**
-     * Method to send instances via input stream
-     * 
-     * @param inputStream
-     * @param numberInstances
-     */
-    public void sendInstances(Stream inputStream, int numberInstances) {
-        int numInstanceSent = 0;
-        initStreamSource(sourceStream);
-
-        while (streamSource.hasMoreInstances() && numInstanceSent < numberInstances) {
-            numInstanceSent++;
-            InstanceContentEvent contentEvent = new InstanceContentEvent(numInstanceSent, nextInstance(), true, true);
-            inputStream.put(contentEvent);
-        }
-
-        sendEndEvaluationInstance(inputStream);
-    }
+//    /**
+//     * Method to send instances via input stream
+//     * 
+//     * @param inputStream
+//     * @param numberInstances
+//     */
+//    public void sendInstances(Stream inputStream, int numberInstances) {
+//        int numInstanceSent = 0;
+//        initStreamSource(sourceStream);
+//
+//        while (streamSource.hasMoreInstances() && numInstanceSent < numberInstances) {
+//            numInstanceSent++;
+//            InstanceContentEvent contentEvent = new InstanceContentEvent(numInstanceSent, nextInstance(), true, true);
+//            inputStream.put(contentEvent);
+//        }
+//
+//        sendEndEvaluationInstance(inputStream);
+//    }
 
     public StreamSource getStreamSource() {
         return streamSource;
@@ -174,11 +174,11 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
         }
     }
 
-    private void sendEndEvaluationInstance(Stream inputStream) {
-        InstanceContentEvent contentEvent = new InstanceContentEvent(-1, firstInstance, false, true);
-        contentEvent.setLast(true);
-        inputStream.put(contentEvent);
-    }
+//    private void sendEndEvaluationInstance(Stream inputStream) {
+//        InstanceContentEvent contentEvent = new InstanceContentEvent(-1, firstInstance, false, true);
+//        contentEvent.setLast(true);
+//        inputStream.put(contentEvent);
+//    }
 
     private void initStreamSource(InstanceStream stream) {
         if (stream instanceof AbstractOptionHandler) {
