@@ -198,8 +198,13 @@ elif [ $PLATFORM = 'STORM' ]; then
 	done
 	
 	DEPLOYABLE=$JAR_PATH
-
-	$STORM_EXEC jar $DEPLOYABLE com.yahoo.labs.samoa.topology.impl.StormDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
+	if [ "$MODE_ARG" = "cluster" ]; then
+		$STORM_EXEC jar $DEPLOYABLE com.yahoo.labs.samoa.topology.impl.StormDoTask $COMPLETE_ARG $NUM_WORKER $MODE_ARG
+	elif [ "$MODE_ARG" = "local" ]; then
+		STORM_JAR=$(ls $STORM_HOME/storm-*.jar)
+		CLASSPATH="$CLASSPATH:$STORM_HOME/lib/*:$STORM_JAR:$DEPLOYABLE"
+		java -cp $CLASSPATH com.yahoo.labs.samoa.LocalStormDoTask $COMPLETE_ARG
+	fi
 
 elif [ $PLATFORM = 'LOCAL' ]; then
 
