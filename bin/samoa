@@ -203,7 +203,7 @@ elif [ $PLATFORM = 'STORM' ]; then
 	elif [ "$MODE_ARG" = "local" ]; then
 		STORM_JAR=$(ls $STORM_HOME/storm-*.jar)
 		CLASSPATH="$CLASSPATH:$STORM_HOME/lib/*:$STORM_JAR:$DEPLOYABLE"
-		java -cp $CLASSPATH com.yahoo.labs.samoa.LocalStormDoTask $COMPLETE_ARG
+		java -cp $CLASSPATH com.yahoo.labs.samoa.LocalStormDoTask $COMPLETE_ARG $NUM_WORKER
 	fi
 
 elif [ $PLATFORM = 'LOCAL' ]; then
