@@ -50,7 +50,6 @@ public class TopologyBuilder {
         // ans: at the moment, no, i.e. each builder will has its associated factory!
         // and the factory will be instantiated using dynamic binding
         // this.componentFactory = new StormComponentFactory();
-        mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
     }
 
     // TODO: refactor, temporary constructor used by S4 code
@@ -73,51 +72,6 @@ public class TopologyBuilder {
     }
 
     /**
-     * Creates a processing item with a specific processor and its paralellism level.
-     * 
-     * @param processor
-     * @param paralellism
-     * @return ProcessingItem
-     */
-    @SuppressWarnings("unused")
-    private ProcessingItem createPi(Processor processor) {
-        return createPi(processor, 1);
-    }
-
-    private ProcessingItem createPi(Processor processor, int parallelism) {
-        ProcessingItem pi = this.componentFactory.createPi(processor, parallelism);
-        this.topology.addProcessingItem(pi, parallelism);
-        return pi;
-    }
-
-    /**
-     * Creates a platform specific entrance processing item.
-     * 
-     * @param processor
-     * @param starter
-     * @return
-     */
-    private EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
-        EntranceProcessingItem epi = this.componentFactory.createEntrancePi(processor);
-        this.topology.addEntranceProcessingItem(epi);
-        this.mapProcessorToProcessingItem.put(processor, epi);
-        return epi;
-    }
-
-    /**
-     * Creates a platform specific stream.
-     * 
-     * @param sourcePi
-     *            source processing item.
-     * @return
-     */
-    private Stream createStream(IProcessingItem sourcePi) {
-        Stream stream = this.componentFactory.createStream(sourcePi);
-        this.topology.addStream(stream);
-        return stream;
-    }
-
-    /**
      * Returns the platform specific topology.
      * 
      * @return
@@ -128,6 +82,8 @@ public class TopologyBuilder {
 
     public ProcessingItem addProcessor(Processor processor, int parallelism) {
         ProcessingItem pi = createPi(processor, parallelism);
+        if (this.mapProcessorToProcessingItem == null)
+            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         this.mapProcessorToProcessingItem.put(processor, pi);
         return pi;
     }
@@ -193,6 +149,8 @@ public class TopologyBuilder {
 
     public EntranceProcessingItem addEntranceProcessor(EntranceProcessor entranceProcessor) {
         EntranceProcessingItem pi = createEntrancePi(entranceProcessor);
+        if (this.mapProcessorToProcessingItem == null)
+            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
         mapProcessorToProcessingItem.put(entranceProcessor, pi);
         return pi;
     }
@@ -201,5 +159,57 @@ public class TopologyBuilder {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         Preconditions.checkNotNull(pi, "Trying to retrieve null PI");
         return pi;
+    }
+
+    /**
+     * Creates a processing item with a specific processor and paralellism level of 1.
+     * 
+     * @param processor
+     * @return ProcessingItem
+     */
+    @SuppressWarnings("unused")
+    private ProcessingItem createPi(Processor processor) {
+        return createPi(processor, 1);
+    }
+
+    /**
+     * Creates a processing item with a specific processor and paralellism level.
+     * 
+     * @param processor
+     * @param paralellism
+     * @return ProcessingItem
+     */
+    private ProcessingItem createPi(Processor processor, int parallelism) {
+        ProcessingItem pi = this.componentFactory.createPi(processor, parallelism);
+        this.topology.addProcessingItem(pi, parallelism);
+        return pi;
+    }
+
+    /**
+     * Creates a platform specific entrance processing item.
+     * 
+     * @param processor
+     * @return
+     */
+    private EntranceProcessingItem createEntrancePi(EntranceProcessor processor) {
+        EntranceProcessingItem epi = this.componentFactory.createEntrancePi(processor);
+        this.topology.addEntranceProcessingItem(epi);
+        if (this.mapProcessorToProcessingItem == null)
+            this.mapProcessorToProcessingItem = new HashMap<Processor, IProcessingItem>();
+        this.mapProcessorToProcessingItem.put(processor, epi);
+        return epi;
+    }
+
+    /**
+     * Creates a platform specific stream.
+     * 
+     * @param sourcePi
+     *            source processing item.
+     * @return
+     */
+    private Stream createStream(IProcessingItem sourcePi) {
+        Stream stream = this.componentFactory.createStream(sourcePi);
+        this.topology.addStream(stream);
+        return stream;
     }
 }
