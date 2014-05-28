@@ -69,18 +69,25 @@ The deployable jar for SAMOA will be in `target/SAMOA-Local-0.0.1-SNAPSHOT.jar`.
 The documentation is intended to give an introduction on how to use SAMOA in the various different ways possible. 
 As a user you can use it to develop new algorithms and test different Stream Processing Engines.
 
+### Getting Started
+
 * [0 Getting Started in 5 minutes](../../wiki/Getting Started)
 
-* [1 Scalable Advanced Massive Online Analysis](../../wiki/Scalable Advanced Massive Online Analysis)
+### Users
+
+* [1 Building and Executing SAMOA](../../wiki/Scalable Advanced Massive Online Analysis)
     * [1.0 Building SAMOA](../../wiki/Building SAMOA)
     * [1.1 Executing SAMOA with Apache Storm](../../wiki/Executing SAMOA with Apache Storm)
     * [1.2 Executing SAMOA with Apache S4](../../wiki/Executing-SAMOA-with-Apache-S4)
-* [2 SAMOA and Machine Learning](../../wiki/SAMOA and Machine Learning)
+* [2 Machine Learning Methods in SAMOA](../../wiki/SAMOA and Machine Learning)
     * [2.1 Prequential Evaluation Task](../../wiki/Prequential Evaluation Task)
     * [2.2 Vertical Hoeffding Tree Classifier](../../wiki/Vertical Hoeffding Tree Classifier)
     * [2.3 Bagging and Boosting](../../wiki/Bagging and Boosting)
     * [2.4 Distributed Stream Clustering](../../wiki/Distributed Stream Clustering)
-* [3 SAMOA Topology](../../wiki/SAMOA Topology)
+
+### Developers
+
+* [3 Understanding SAMOA Topologies](../../wiki/SAMOA Topology)
     * [3.1 Processor](../../wiki/Processor)
     * [3.2 Content Event](../../wiki/Content Event)
     * [3.3 Stream](../../wiki/Stream)
