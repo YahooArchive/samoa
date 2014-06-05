@@ -49,7 +49,7 @@ public class StormSamoaUtils {
 		Properties props = new Properties();
 		InputStream is = null;
 		
-		File f = new File("src/main/resources/samoa-storm-cluster.properties");
+		File f = new File("src/main/resources/samoa-storm-cluster.properties"); // FIXME it does not exist anymore
 		is = new FileInputStream(f);
 		
 		try {
