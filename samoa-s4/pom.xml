@@ -117,7 +117,7 @@
                             <Implementation-Vendor>Yahoo Labs</Implementation-Vendor>
                             <Implementation-Vendor-Id>SAMOA</Implementation-Vendor-Id>
                             <S4-App-Class>com.yahoo.labs.samoa.topology.impl.S4DoTask</S4-App-Class>
-                            <S4-Version>0.6.0-incubating</S4-Version>
+                            <S4-Version>${s4.version}</S4-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
