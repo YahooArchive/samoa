@@ -36,6 +36,13 @@
         <url>http://labs.yahoo.com</url>
     </organization>
 
+    <scm>
+        <connection>scm:git:git@github.com:yahoo/samoa.git</connection>
+        <url>scm:git:git@github.com:yahoo/samoa.git</url>
+        <developerConnection>scm:git:git@github.com:yahoo/samoa.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <profiles>
         <profile>
             <id>local</id>
