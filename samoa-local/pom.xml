@@ -27,7 +27,6 @@
 
     <name>samoa-local</name>
     <description>Simple local engine for SAMOA</description>
-
     <artifactId>samoa-local</artifactId>
     <parent>
         <groupId>com.yahoo.labs.samoa</groupId>
