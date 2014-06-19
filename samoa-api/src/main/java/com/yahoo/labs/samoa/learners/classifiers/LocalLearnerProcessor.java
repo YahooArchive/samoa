@@ -41,16 +41,16 @@ import com.yahoo.labs.samoa.topology.Stream;
 /**
  * The Class LearnerProcessor.
  */
-final public class LocalClassifierProcessor implements Processor {
+final public class LocalLearnerProcessor implements Processor {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1577910988699148691L;
 
-	private static final Logger logger = LoggerFactory.getLogger(LocalClassifierProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocalLearnerProcessor.class);
 	
-	private LocalClassifierAdapter model;
+	private LocalLearner model;
 	private Stream outputStream;
 	private int modelId;
 	private long instancesCount = 0;
@@ -60,7 +60,7 @@ final public class LocalClassifierProcessor implements Processor {
 	 *
 	 * @param model the model to set
 	 */
-	public void setClassifier(LocalClassifierAdapter model) {
+	public void setLearner(LocalLearner model) {
 		this.model = model;
 	}
 
@@ -69,7 +69,7 @@ final public class LocalClassifierProcessor implements Processor {
 	 *
 	 * @return the model
 	 */
-	public LocalClassifierAdapter getLearner() {
+	public LocalLearner getLearner() {
 		return model;
 	}
 
@@ -80,7 +80,6 @@ final public class LocalClassifierProcessor implements Processor {
 	 * {@link PredictionCombinerPE}.
 	 */
 	public void setOutputStream(Stream outputStream) {
-
 		this.outputStream = outputStream;
 	}
 	
@@ -202,10 +201,10 @@ final public class LocalClassifierProcessor implements Processor {
 	 */
 	@Override
 	public Processor newProcessor(Processor sourceProcessor) {
-		LocalClassifierProcessor newProcessor = new LocalClassifierProcessor();
-		LocalClassifierProcessor originProcessor = (LocalClassifierProcessor) sourceProcessor;
+		LocalLearnerProcessor newProcessor = new LocalLearnerProcessor();
+		LocalLearnerProcessor originProcessor = (LocalLearnerProcessor) sourceProcessor;
 		if (originProcessor.getLearner() != null){
-			newProcessor.setClassifier(originProcessor.getLearner().create());
+			newProcessor.setLearner(originProcessor.getLearner().create());
 		}
                 if (originProcessor.getChangeDetector() != null){
                     newProcessor.setChangeDetector(originProcessor.getChangeDetector());

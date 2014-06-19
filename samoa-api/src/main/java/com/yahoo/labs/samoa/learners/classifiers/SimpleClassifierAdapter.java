@@ -22,6 +22,8 @@ package com.yahoo.labs.samoa.learners.classifiers;
 /**
  * License
  */
+import java.util.Map;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.yahoo.labs.samoa.instances.Instance;
@@ -34,7 +36,7 @@ import com.yahoo.labs.samoa.moa.classifiers.functions.MajorityClass;
  * Base class for adapting external classifiers.
  *
  */
-public class SimpleClassifierAdapter implements LocalClassifierAdapter, Configurable {
+public class SimpleClassifierAdapter implements LocalLearner, Configurable {
 
     /**
      *
@@ -149,4 +151,5 @@ public class SimpleClassifierAdapter implements LocalClassifierAdapter, Configur
     public void resetLearning() {
         learner.resetLearning();
     }
+
 }

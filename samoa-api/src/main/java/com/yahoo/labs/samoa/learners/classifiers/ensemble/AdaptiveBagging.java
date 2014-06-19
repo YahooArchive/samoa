@@ -27,20 +27,18 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.topology.Stream;
-import com.yahoo.labs.samoa.topology.TopologyBuilder;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.AdaptiveLearner;
-import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierProcessor;
+import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.learners.classifiers.trees.VerticalHoeffdingTree;
 import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ADWINChangeDetector;
 import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
+import com.yahoo.labs.samoa.topology.Stream;
+import com.yahoo.labs.samoa.topology.TopologyBuilder;
 
 /**
  * The Bagging Classifier by Oza and Russell.
@@ -48,7 +46,7 @@ import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
 public class AdaptiveBagging implements Learner , Configurable {
     
     /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(LocalClassifierProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdaptiveBagging.class);
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2971850264864952099L;
