@@ -118,14 +118,16 @@ public class NaiveBayes implements LocalLearner {
         	votes[classIndex] = Math.log(getPrior(classIndex));
         	// Iterate over all the attributes of the instance
             for (int i = 0; i < inst.numAttributes(); i++) {
+            	// Get the attribute index - Dense -> 1:1, Sparse is remapped
+            	int attributeIndex = inst.index(i);
             	// Skip class attribute itself
-            	if (i==inst.classIndex())
+            	if (attributeIndex == inst.classIndex())
             		continue;
             	// Get the observer for the given attribute
-                AttributeClassObserver obs = attributeObservers.get(i);
+                AttributeClassObserver obs = attributeObservers.get(attributeIndex);
                 // Sanity check - observer nor instance is missing
-                if ((obs != null) && !inst.isMissing(i)) {
-                	double value = obs.probabilityOfAttributeValueGivenClass(inst.value(i), classIndex);
+                if ((obs != null) && !inst.isMissing(attributeIndex)) {
+                	double value = obs.probabilityOfAttributeValueGivenClass(inst.value(attributeIndex), classIndex);
                 	votes[classIndex] += Math.log(value);
                 }
             }
@@ -170,30 +172,30 @@ public class NaiveBayes implements LocalLearner {
      */
 	@Override
 	public void trainOnInstance(Instance inst) {
-		
 		// Update class statistics with weights
 		int classIndex = (int) inst.classValue();
 		Double currentValue = this.classInstances.get(classIndex);
 		if (currentValue == null)
 			currentValue = 0.0;
 		this.classInstances.put(classIndex, currentValue + inst.weight());
-		
 		// Iterate over the attributes of the given instance
         for (int i = 0; i < inst.numAttributes(); i++) {
+        	// Get the attribute index - Dense -> 1:1, Sparse is remapped
+        	int attributeIndex = inst.index(i);
         	// Skip class attribute
-        	if (i == inst.classIndex())
+        	if (attributeIndex == inst.classIndex())
         		continue;
         	// Get the attribute observer for the current attribute
-            AttributeClassObserver obs = this.attributeObservers.get(i);
+            AttributeClassObserver obs = this.attributeObservers.get(attributeIndex);
             // Lazy init of observers, if null, instantiate a new one
             if (obs == null) {
             	// FIXME: At this point, we model everything as a numeric attribute
             	obs = new GaussianNumericAttributeClassObserver();
-                this.attributeObservers.set(i, obs);
+                this.attributeObservers.set(attributeIndex, obs);
             }
             // FIXME: Sanity check on data values, for now just learn
             // Learn attribute value for given class
-        	obs.observeAttributeClass(inst.value(i), (int) inst.classValue(), inst.weight());
+        	obs.observeAttributeClass(inst.value(attributeIndex), (int) inst.classValue(), inst.weight());
         }
         // Count another training instance
         this.instancesSeen++;
