@@ -146,7 +146,7 @@ public class NaiveBayes implements LocalLearner {
 	private double getPrior(int classIndex) {
 		// Maximum likelihood
 		Double currentCount = this.classInstances.getValue(classIndex);
-		if (currentCount == null)
+		if (currentCount == null || currentCount == 0)
 			return 0;
 		else 
 			return currentCount * 1. / this.instancesSeen;
