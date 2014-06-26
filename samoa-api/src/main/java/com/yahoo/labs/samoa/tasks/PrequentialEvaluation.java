@@ -31,9 +31,14 @@ import com.github.javacliparser.FileOption;
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.StringOption;
 import com.yahoo.labs.samoa.evaluation.BasicClassificationPerformanceEvaluator;
+import com.yahoo.labs.samoa.evaluation.BasicRegressionPerformanceEvaluator;
 import com.yahoo.labs.samoa.evaluation.ClassificationPerformanceEvaluator;
+import com.yahoo.labs.samoa.evaluation.PerformanceEvaluator;
 import com.yahoo.labs.samoa.evaluation.EvaluatorProcessor;
+import com.yahoo.labs.samoa.evaluation.RegressionPerformanceEvaluator;
+import com.yahoo.labs.samoa.learners.ClassificationLearner;
 import com.yahoo.labs.samoa.learners.Learner;
+import com.yahoo.labs.samoa.learners.RegressionLearner;
 import com.yahoo.labs.samoa.learners.classifiers.trees.VerticalHoeffdingTree;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.moa.streams.generators.RandomTreeGenerator;
@@ -62,7 +67,7 @@ public class PrequentialEvaluation implements Task, Configurable {
             RandomTreeGenerator.class.getName());
 
     public ClassOption evaluatorOption = new ClassOption("evaluator", 'e', "Classification performance evaluation method.",
-            ClassificationPerformanceEvaluator.class, BasicClassificationPerformanceEvaluator.class.getName());
+            PerformanceEvaluator.class, BasicClassificationPerformanceEvaluator.class.getName());
 
     public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i', "Maximum number of instances to test/train on  (-1 = no limit).", 1000000, -1,
             Integer.MAX_VALUE);
@@ -142,7 +147,11 @@ public class PrequentialEvaluation implements Task, Configurable {
         logger.debug("Sucessfully instantiating Classifier");
 
         evaluatorPiInputStream = classifier.getResultStream();
-        evaluator = new EvaluatorProcessor.Builder((ClassificationPerformanceEvaluator) this.evaluatorOption.getValue())
+        PerformanceEvaluator evaluatorOptionValue = (PerformanceEvaluator) this.evaluatorOption.getValue();
+        if (!PrequentialEvaluation.isLearnerAndEvaluatorCompatible(classifier, evaluatorOptionValue)) {
+        	evaluatorOptionValue = getDefaultPerformanceEvaluatorForLearner(classifier);
+        }
+        evaluator = new EvaluatorProcessor.Builder(evaluatorOptionValue)
                 .samplingFrequency(sampleFrequencyOption.getValue()).dumpFile(dumpFileOption.getFile()).build();
 
         // evaluatorPi = builder.createPi(evaluator);
@@ -177,4 +186,22 @@ public class PrequentialEvaluation implements Task, Configurable {
     // public TopologyStarter getTopologyStarter() {
     // return this.preqStarter;
     // }
+    
+    private static boolean isLearnerAndEvaluatorCompatible(Learner learner, PerformanceEvaluator evaluator) {
+    	if (learner instanceof RegressionLearner && evaluator instanceof RegressionPerformanceEvaluator) {
+    		return true;
+    	}
+    	if (learner instanceof ClassificationLearner && evaluator instanceof ClassificationPerformanceEvaluator) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private static PerformanceEvaluator getDefaultPerformanceEvaluatorForLearner(Learner learner) {
+    	if (learner instanceof RegressionLearner) {
+    		return new BasicRegressionPerformanceEvaluator();
+    	}
+    	// Default to BasicClassificationPerformanceEvaluator for all other cases
+    	return new BasicClassificationPerformanceEvaluator();
+    }
 }
