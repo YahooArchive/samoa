@@ -24,6 +24,9 @@ package com.yahoo.labs.samoa.learners.classifiers;
  * License
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.yahoo.labs.samoa.core.Processor;
@@ -41,66 +44,68 @@ import com.yahoo.labs.samoa.topology.TopologyBuilder;
 public final class SingleClassifier implements Learner, AdaptiveLearner, Configurable {
 
 	private static final long serialVersionUID = 684111382631697031L;
-	
+
 	private LocalClassifierProcessor learnerP;
-		
+
 	private Stream resultStream;
-	
+
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
 			"Classifier to train.", LocalClassifierAdapter.class, SimpleClassifierAdapter.class.getName());
-	
+
 	private TopologyBuilder builder;
-        
-        private int parallelism;
+
+	private int parallelism;
 
 
 	@Override
 	public void init(TopologyBuilder builder, Instances dataset, int parallelism){
 		this.builder = builder;
 		this.dataset = dataset;
-                this.parallelism = parallelism;
+		this.parallelism = parallelism;
 		this.setLayout();
 	}
 
 
 	protected void setLayout() {		
 		learnerP = new LocalClassifierProcessor();
-                learnerP.setChangeDetector(this.getChangeDetector());
-                LocalClassifierAdapter learner = (LocalClassifierAdapter) this.learnerOption.getValue();
-                learner.setDataset(this.dataset);
+		learnerP.setChangeDetector(this.getChangeDetector());
+		LocalClassifierAdapter learner = (LocalClassifierAdapter) this.learnerOption.getValue();
+		learner.setDataset(this.dataset);
 		learnerP.setClassifier(learner);
-                
+
 		//learnerPI = this.builder.createPi(learnerP, 1);
-                this.builder.addProcessor(learnerP, parallelism);
+		this.builder.addProcessor(learnerP, parallelism);
 		resultStream = this.builder.createStream(learnerP);
-		
+
 		learnerP.setOutputStream(resultStream);
 	}
 
-        @Override
+	@Override
 	public Processor getInputProcessor() {
 		return learnerP;
 	}
-		
+
 	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
+	 * @see samoa.learners.Learner#getResultStreams()
 	 */
 	@Override
-	public Stream getResultStream() {
-		return resultStream;
+	public List<Stream> getResultStreams() {
+		List<Stream> list = new ArrayList<Stream>();
+		list.add(this.resultStream);
+		return list;
 	}
 
-        protected ChangeDetector changeDetector;    
+	protected ChangeDetector changeDetector;    
 
-        @Override
-        public ChangeDetector getChangeDetector() {
-            return this.changeDetector;
-        }
+	@Override
+	public ChangeDetector getChangeDetector() {
+		return this.changeDetector;
+	}
 
-        @Override
-        public void setChangeDetector(ChangeDetector cd) {
-            this.changeDetector = cd;
-        }
+	@Override
+	public void setChangeDetector(ChangeDetector cd) {
+		this.changeDetector = cd;
+	}
 }

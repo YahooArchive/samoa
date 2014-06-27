@@ -87,7 +87,7 @@ public class ClusteringEvaluation implements Task, Configurable {
     private Stream evaluationStream;
     private Learner learner;
     private ClusteringEvaluatorProcessor evaluator;
-    private Stream evaluatorPiInputStream;
+    //private Stream evaluatorPiInputStream;
 
     private Topology topology;
     private TopologyBuilder builder;
@@ -138,13 +138,14 @@ public class ClusteringEvaluation implements Task, Configurable {
         builder.connectInputShuffleStream(distributorStream, learner.getInputProcessor());
         logger.debug("Sucessfully instantiated Learner");
 
-        evaluatorPiInputStream = learner.getResultStream();
         evaluator = new ClusteringEvaluatorProcessor.Builder(// (ClassificationPerformanceEvaluator) this.evaluatorOption.getValue())
                 // .samplingFrequency(
                 sampleFrequencyOption.getValue()).dumpFile(dumpFileOption.getFile()).decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon()).build();
 
         builder.addProcessor(evaluator);
-        builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
+        for (Stream evaluatorPiInputStream:learner.getResultStreams()) {
+        	builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
+        }
         builder.connectInputAllStream(evaluationStream, evaluator);
         logger.debug("Sucessfully instantiated EvaluatorProcessor");
 

@@ -100,7 +100,7 @@ public class PrequentialEvaluation implements Task, Configurable {
 
     // private ProcessingItem evaluatorPi;
 
-    private Stream evaluatorPiInputStream;
+    // private Stream evaluatorPiInputStream;
 
     private Topology prequentialTopology;
 
@@ -146,7 +146,6 @@ public class PrequentialEvaluation implements Task, Configurable {
         builder.connectInputShuffleStream(sourcePiOutputStream, classifier.getInputProcessor());
         logger.debug("Sucessfully instantiating Classifier");
 
-        evaluatorPiInputStream = classifier.getResultStream();
         PerformanceEvaluator evaluatorOptionValue = (PerformanceEvaluator) this.evaluatorOption.getValue();
         if (!PrequentialEvaluation.isLearnerAndEvaluatorCompatible(classifier, evaluatorOptionValue)) {
         	evaluatorOptionValue = getDefaultPerformanceEvaluatorForLearner(classifier);
@@ -157,8 +156,10 @@ public class PrequentialEvaluation implements Task, Configurable {
         // evaluatorPi = builder.createPi(evaluator);
         // evaluatorPi.connectInputShuffleStream(evaluatorPiInputStream);
         builder.addProcessor(evaluator);
-        builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
-
+        for (Stream evaluatorPiInputStream:classifier.getResultStreams()) {
+        	builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
+        }
+        
         logger.debug("Sucessfully instantiating EvaluatorProcessor");
 
         prequentialTopology = builder.build();

@@ -161,7 +161,9 @@ public class AMRulesRegressor implements RegressionLearner, Configurable {
 	}
 
 	@Override
-	public Stream getResultStream() {
-		return resultStream;
+	public List<Stream> getResultStreams() {
+		List<Stream> list = new ArrayList<Stream>();
+		list.add(this.resultStream);
+		return list;
 	}
 }

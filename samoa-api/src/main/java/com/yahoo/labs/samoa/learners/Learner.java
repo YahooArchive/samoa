@@ -29,7 +29,9 @@ import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * The Interface Classifier.
@@ -48,7 +50,7 @@ public interface Learner extends Serializable{
 	 */	
 	public void init(TopologyBuilder topologyBuilder, Instances dataset, int parallelism);
 	
-        /**
+    /**
 	 * Gets the input processing item.
 	 *
 	 * @return the input processing item
@@ -57,9 +59,9 @@ public interface Learner extends Serializable{
 
 	
 	/**
-	 * Gets the result stream
+	 * Gets the result streams
 	 *
-	 * @return the result stream
+	 * @return the list of result streams
 	 */
-	public Stream getResultStream();
+	public List<Stream> getResultStreams();
 }

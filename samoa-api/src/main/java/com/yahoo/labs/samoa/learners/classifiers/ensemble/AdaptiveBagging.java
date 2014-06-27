@@ -24,6 +24,9 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +34,6 @@ import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
@@ -111,7 +113,9 @@ public class AdaptiveBagging implements Learner , Configurable {
 		resultStream = this.builder.createStream(predictionCombinerP);
 		predictionCombinerP.setOutputStream(resultStream);
 
- 		this.builder.connectInputKeyStream(classifier.getResultStream(), predictionCombinerP);
+		for (Stream subResultStream:classifier.getResultStreams()) {
+			this.builder.connectInputKeyStream(subResultStream, predictionCombinerP);
+		}
 		
 		testingStream = this.builder.createStream(distributorP);
                 this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
@@ -141,10 +145,12 @@ public class AdaptiveBagging implements Learner , Configurable {
 	}
         
 	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
+	 * @see samoa.learners.Learner#getResultStreams()
 	 */
 	@Override
-	public Stream getResultStream() {
-		return this.resultStream;
+	public List<Stream> getResultStreams() {
+		List<Stream> list = new ArrayList<Stream>();
+		list.add(this.resultStream);
+		return list;
 	}
 }

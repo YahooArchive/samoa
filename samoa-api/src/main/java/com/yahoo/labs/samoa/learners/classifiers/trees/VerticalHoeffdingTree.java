@@ -19,6 +19,9 @@ package com.yahoo.labs.samoa.learners.classifiers.trees;
  * limitations under the License.
  * #L%
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.FlagOption;
@@ -173,10 +176,12 @@ public final class VerticalHoeffdingTree implements Learner, AdaptiveLearner, Co
     public Processor getInputProcessor() {
         return this.filterProc; 
     }
-
+    
     @Override
-    public Stream getResultStream() {
-        return resultStream;
+    public List<Stream> getResultStreams() {
+    	List<Stream> list = new ArrayList<Stream>();
+    	list.add(this.resultStream);
+    	return list;
     }
 
     protected ChangeDetector changeDetector;    

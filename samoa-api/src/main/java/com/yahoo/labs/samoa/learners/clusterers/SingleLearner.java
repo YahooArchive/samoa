@@ -25,6 +25,9 @@ package com.yahoo.labs.samoa.learners.clusterers;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.yahoo.labs.samoa.core.Processor;
@@ -83,11 +86,13 @@ public final class SingleLearner implements Learner, Configurable {
 		return learnerP;
 	}
 		
-	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
-	 */
-	@Override
-	public Stream getResultStream() {
-		return resultStream;
-	}
+    /* (non-Javadoc)
+     * @see samoa.learners.Learner#getResultStreams()
+     */
+    @Override
+    public List<Stream> getResultStreams() {
+    	List<Stream> list = new ArrayList<Stream>();
+       	list.add(this.resultStream);
+       	return list;
+    }
 }
