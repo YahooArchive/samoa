@@ -34,6 +34,7 @@ import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.RegressionLearner;
 import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRDefaultRuleProcessor;
 import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRLearnerProcessor;
+import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRResultCombinerProcessor;
 import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRRuleSetProcessor;
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.attributeclassobservers.FIMTDDNumericAttributeClassLimitObserver;
 import com.yahoo.labs.samoa.topology.Stream;
@@ -142,7 +143,7 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 	private AMRRuleSetProcessor model;
 	private AMRDefaultRuleProcessor root;
 	private AMRLearnerProcessor learner;
-	// private AMRCombineResultProcessor combiner;
+	private AMRResultCombinerProcessor combiner;
 
 	// Stream
 	private Stream forwardToRootStream;
@@ -153,6 +154,8 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 	private Stream rootResultStream;
 	
 	private Stream predicateStream;
+	
+	private Stream combinedResultStream;
 	
 	// private Stream resultStream;
 
@@ -219,6 +222,13 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 		this.predicateStream = topologyBuilder.createStream(learner);
 		this.learner.setOutputStream(predicateStream);
 		
+		// Create Result Combiner
+		this.combiner = new AMRResultCombinerProcessor();
+		topologyBuilder.addProcessor(this.combiner);
+		
+		this.combinedResultStream = topologyBuilder.createStream(combiner);
+		this.combiner.setResultStream(this.combinedResultStream);
+		
 		// Connect streams
 		// to MODEL
 		topologyBuilder.connectInputAllStream(this.newRuleStream, this.model);
@@ -228,6 +238,9 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 		// to LEARNER
 		topologyBuilder.connectInputKeyStream(this.forwardToLearnerStream, this.learner);
 		topologyBuilder.connectInputAllStream(this.newRuleStream, this.learner);
+		// to COMBINER
+		topologyBuilder.connectInputShuffleStream(this.modelResultStream, this.combiner);
+		topologyBuilder.connectInputShuffleStream(this.rootResultStream, this.combiner);
 	}
 
 	@Override
@@ -237,9 +250,9 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 
 	@Override
 	public Stream getResultStream() {
-		// TODO: need to include the result stream from default rule learner
-		// refer to the commented getResultStreams() below
-		return this.modelResultStream;
+		// TODO: allow a learner to have multiple output streams
+		// refer to the commented getResultStreams() method below
+		return this.combinedResultStream;
 	}
 	
 //	@Override
