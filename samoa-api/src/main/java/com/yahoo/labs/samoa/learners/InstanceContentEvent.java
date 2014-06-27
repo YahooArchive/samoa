@@ -109,12 +109,30 @@ final public class InstanceContentEvent implements ContentEvent {
 	}
 	
 	/**
+	 * Set training flag.
+	 *
+	 * @param training flag.
+	 */
+	public void setTraining(boolean training) {
+		this.isTraining = training;
+	}
+	
+	/**
 	 * Checks if is testing.
 	 *
 	 * @return true if this is testing data.
 	 */
 	public boolean isTesting(){
 		return isTesting;
+	}
+	
+	/**
+	 * Set testing flag.
+	 *
+	 * @param testing flag.
+	 */
+	public void setTesting(boolean testing) {
+		this.isTesting = testing;
 	}
 
 	/**
