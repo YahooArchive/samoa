@@ -1,10 +1,10 @@
-package com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria;
+package com.yahoo.labs.samoa.learners.classifiers.rules.common;
 
 /*
  * #%L
  * SAMOA
  * %%
- *    Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013 - 2014 Yahoo! Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,21 @@ package com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria;
  * #L%
  */
 
-public class SDRSplitCriterion extends VarianceReductionSplitCriterion {
-	private static final long serialVersionUID = 1L;
+public class NonLearningRule extends Rule {
 
-	public static double computeSD(double[] dist) {
-    	int N = (int)dist[0];
-        double sum = dist[1];
-        double sumSq = dist[2];
-        return Math.sqrt((sumSq - ((sum * sum)/N))/N);
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1210907339230307784L;
+
+	public NonLearningRule(ActiveRule rule) {
+		this.nodeList = rule.nodeList;
+		this.ruleNumberID = rule.ruleNumberID;
+	}
+
+	@Override
+	public void getDescription(StringBuilder sb, int indent) {
+		// TODO Auto-generated method stub
+	}
 
 }

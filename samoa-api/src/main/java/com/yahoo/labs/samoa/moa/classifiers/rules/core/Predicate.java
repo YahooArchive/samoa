@@ -1,10 +1,10 @@
-package com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria;
+package com.yahoo.labs.samoa.moa.classifiers.rules.core;
 
 /*
  * #%L
  * SAMOA
  * %%
- *    Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013 - 2014 Yahoo! Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,10 @@ package com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria;
  * #L%
  */
 
-public class SDRSplitCriterion extends VarianceReductionSplitCriterion {
-	private static final long serialVersionUID = 1L;
+import com.yahoo.labs.samoa.instances.Instance;
 
-	public static double computeSD(double[] dist) {
-    	int N = (int)dist[0];
-        double sum = dist[1];
-        double sumSq = dist[2];
-        return Math.sqrt((sumSq - ((sum * sum)/N))/N);
-    }
-
+public interface Predicate {
+        
+         public boolean evaluate(Instance instance);
+         
 }

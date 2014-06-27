@@ -30,14 +30,14 @@ import com.yahoo.labs.samoa.instances.Instance;
  * @author Arinto Murdopo
  *
  */
-final class SplitNode extends Node {
+public class SplitNode extends Node {
 	
 	private static final long serialVersionUID = -7380795529928485792L;
 	
 	private final AutoExpandVector<Node> children;
-	private final InstanceConditionalTest splitTest;
+	protected final InstanceConditionalTest splitTest;
 	
-	SplitNode(InstanceConditionalTest splitTest, 
+	public SplitNode(InstanceConditionalTest splitTest, 
 			double[] classObservation) {
 		super(classObservation);
 		this.children = new AutoExpandVector<Node>();
