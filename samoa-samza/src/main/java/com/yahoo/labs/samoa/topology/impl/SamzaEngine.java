@@ -77,7 +77,8 @@ public class SamzaEngine {
 		.setContainerMemory(containerMem)
 		.setPiPerContainerRatio(piPerContainerRatio)
 		.setKryoRegisterFile(kryoRegisterFile)
-		.setCheckpointFrequency(checkpointFrequency);
+		.setCheckpointFrequency(checkpointFrequency)
+		.setReplicationFactor(kafkaReplicationFactor);
 		
 		// Generate the list of Configs
 		List<MapConfig> configs;

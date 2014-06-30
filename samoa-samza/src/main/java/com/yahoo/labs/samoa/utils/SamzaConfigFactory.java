@@ -107,6 +107,7 @@ public class SamzaConfigFactory {
 	private boolean isLocalMode;
 	private String zookeeper;
 	private String kafkaBrokerList;
+	private int replicationFactor;
 	private int amMemory;
 	private int containerMemory;
 	private int piPerContainerRatio;
@@ -120,6 +121,7 @@ public class SamzaConfigFactory {
 		this.zookeeper = DEFAULT_ZOOKEEPER;
 		this.kafkaBrokerList = DEFAULT_BROKER_LIST;
 		this.checkpointFrequency = 60000; // default: 1 minute
+		this.replicationFactor = 1;
 	}
 
 	/*
@@ -147,6 +149,11 @@ public class SamzaConfigFactory {
 	
 	public SamzaConfigFactory setCheckpointFrequency(int freq) {
 		this.checkpointFrequency = freq;
+		return this;
+	}
+	
+	public SamzaConfigFactory setReplicationFactor(int replicationFactor) {
+		this.replicationFactor = replicationFactor;
 		return this;
 	}
 
@@ -231,6 +238,7 @@ public class SamzaConfigFactory {
 		setValue(map,"task.checkpoint.factory","org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory");
 		setValue(map,"task.checkpoint.system","kafka0");
 		setValue(map,"task.commit.ms","1000");
+		setValue(map,"task.checkpoint.replication.factor",Integer.toString(this.replicationFactor));
 		
 		// Number of containers
 		setNumberOfContainers(map, pi.getParallelism(), this.piPerContainerRatio);
