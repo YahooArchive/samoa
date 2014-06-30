@@ -107,8 +107,6 @@ public class SamzaConfigFactory {
 	private boolean isLocalMode;
 	private String zookeeper;
 	private String kafkaBrokerList;
-	private int kafkaBatchSize;
-	private String kafkaProducerType;
 	private int amMemory;
 	private int containerMemory;
 	private int piPerContainerRatio;
@@ -121,8 +119,6 @@ public class SamzaConfigFactory {
 		this.isLocalMode = false;
 		this.zookeeper = DEFAULT_ZOOKEEPER;
 		this.kafkaBrokerList = DEFAULT_BROKER_LIST;
-		this.kafkaBatchSize = 1;
-		this.kafkaProducerType = "sync";
 		this.checkpointFrequency = 60000; // default: 1 minute
 	}
 
@@ -144,10 +140,8 @@ public class SamzaConfigFactory {
 		return this;
 	}
 
-	public SamzaConfigFactory setKafka(String brokerList, String prodType, int batchSize) {
+	public SamzaConfigFactory setKafka(String brokerList) {
 		this.kafkaBrokerList = brokerList;
-		this.kafkaBatchSize = batchSize;
-		this.kafkaProducerType = prodType;
 		return this;
 	}
 	

@@ -52,9 +52,7 @@ public class SamzaEngine {
 	
 	private String zookeeper;
 	private String kafka;
-	private int kafkaBatchSize;
 	private int kafkaReplicationFactor;
-	private String kafkaProducerType;
 	private boolean isLocalMode;
 	private String yarnPackagePath;
 	private String yarnConfHome;
@@ -73,7 +71,7 @@ public class SamzaEngine {
 		SamzaConfigFactory configFactory = new SamzaConfigFactory();
 		configFactory.setLocalMode(isLocalMode)
 		.setZookeeper(zookeeper)
-		.setKafka(kafka, kafkaProducerType, kafkaBatchSize)
+		.setKafka(kafka)
 		.setYarnPackage(yarnPackagePath)
 		.setAMMemory(amMem)
 		.setContainerMemory(containerMem)
@@ -136,18 +134,8 @@ public class SamzaEngine {
 		return this;
 	}
 	
-	public SamzaEngine setKafkaBatchSize(int kafkaBatchSize) {
-		this.kafkaBatchSize = kafkaBatchSize;
-		return this;
-	}
-	
 	public SamzaEngine setKafkaReplicationFactor(int replicationFactor) {
 		this.kafkaReplicationFactor = replicationFactor;
-		return this;
-	}
-	
-	public SamzaEngine setKafkaProducerType(String type) {
-		this.kafkaProducerType = type;
 		return this;
 	}
 	

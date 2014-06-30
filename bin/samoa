@@ -214,8 +214,6 @@ elif [ $PLATFORM = 'SAMZA' ]; then
         ZOOKEEPER_HOST_OPTION='zookeeper.host'
         ZOOKEEPER_PORT_OPTION='zookeeper.port'
         KAFKA_BROKER_LIST_OPTION='kafka.broker.list'
-        KAFKA_BATCH_SIZE_OPTION='kafka.batchsize'
-	KAFKA_PRODUCER_OPTION='kafka.producer.type'
 	KAFKA_REPLICATION_OPTION='kafka.replication.factor'
 	CHECKPOINT_FREQ_OPTION='checkpoint.commit.ms'
 
@@ -242,12 +240,6 @@ elif [ $PLATFORM = 'SAMZA' ]; then
 
         getvalue "$MODE_OPTION"
         MODE_ARG="$VALUE"
-
-        getvalue "$KAFKA_BATCH_SIZE_OPTION"
-        KAFKA_BATCH_SIZE="$VALUE"
-
-	getvalue "$KAFKA_PRODUCER_OPTION"
-        KAFKA_PRODUCER_TYPE="$VALUE"
 
         getvalue "$KAFKA_REPLICATION_OPTION"
         KAFKA_REPLICATION_FACTOR="$VALUE"
@@ -279,8 +271,8 @@ elif [ $PLATFORM = 'SAMZA' ]; then
 
         DEPLOYABLE=$JAR_PATH
         java -Dsamza.log.dir=$BASE_DIR/logs -Dsamza.container.name=client -cp $DEPLOYABLE com.yahoo.labs.samoa.SamzaDoTask $COMPLETE_ARG --mode=$MODE_ARG \
-               --yarn_home=$YARN_HOME/conf --zookeeper=$ZOOKEEPER_HOST:$ZOOKEEPER_PORT --kafka=$KAFKA_BROKER_LIST --kafka_batch=$KAFKA_BATCH_SIZE \
-               --jar_package=$JAR_PATH --yarn_am_mem=$YARN_AM_MEMORY --yarn_container_mem=$YARN_CONTAINER_MEMORY --kafka_producer_type=$KAFKA_PRODUCER_TYPE \
+               --yarn_home=$YARN_HOME/conf --zookeeper=$ZOOKEEPER_HOST:$ZOOKEEPER_PORT --kafka=$KAFKA_BROKER_LIST \
+               --jar_package=$JAR_PATH --yarn_am_mem=$YARN_AM_MEMORY --yarn_container_mem=$YARN_CONTAINER_MEMORY \
                --kafka_replication_factor=$KAFKA_REPLICATION_FACTOR --checkpoint_frequency=$CHECKPOINT_FREQUENCY \
                --kryo_register=$BASE_DIR/$KRYO_REGISTER_FILE --pi_per_container=$PI_PER_CONTAINER
 
