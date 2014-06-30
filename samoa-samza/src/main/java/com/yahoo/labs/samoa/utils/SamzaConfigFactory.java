@@ -112,6 +112,7 @@ public class SamzaConfigFactory {
 	private int amMemory;
 	private int containerMemory;
 	private int piPerContainerRatio;
+	private int checkpointFrequency; // in ms
 
 	private String jarPath;
 	private String kryoRegisterFile = null;
@@ -122,6 +123,7 @@ public class SamzaConfigFactory {
 		this.kafkaBrokerList = DEFAULT_BROKER_LIST;
 		this.kafkaBatchSize = 1;
 		this.kafkaProducerType = "sync";
+		this.checkpointFrequency = 60000; // default: 1 minute
 	}
 
 	/*
@@ -146,6 +148,11 @@ public class SamzaConfigFactory {
 		this.kafkaBrokerList = brokerList;
 		this.kafkaBatchSize = batchSize;
 		this.kafkaProducerType = prodType;
+		return this;
+	}
+	
+	public SamzaConfigFactory setCheckpointFrequency(int freq) {
+		this.checkpointFrequency = freq;
 		return this;
 	}
 
@@ -192,8 +199,12 @@ public class SamzaConfigFactory {
 		setFileName(map, filename);
 		setFileSystem(map, filesystem);
 		
-		// Output streams: set kafka systems
 		List<String> nameList = new ArrayList<String>();
+		// Default kafka system: kafka0: sync producer
+		// This system is always required: it is used for checkpointing
+		nameList.add("kafka0");
+		setKafkaSystem(map, "kafka0", this.zookeeper, this.kafkaBrokerList, 1);
+		// Output streams: set kafka systems
 		for (SamzaStream stream:pi.getOutputStreams()) {
 			boolean found = false;
 			for (String name:nameList) {
@@ -207,6 +218,7 @@ public class SamzaConfigFactory {
 				setKafkaSystem(map, stream.getSystemName(), this.zookeeper, this.kafkaBrokerList, stream.getBatchSize());
 			}
 		}
+		// Input streams: set kafka systems
 		for (SamzaSystemStream stream:pi.getInputStreams()) {
 			boolean found = false;
 			for (String name:nameList) {
@@ -220,6 +232,11 @@ public class SamzaConfigFactory {
 				setKafkaSystem(map, stream.getSystem(), this.zookeeper, this.kafkaBrokerList, 1);
 			}
 		}
+		
+		// Checkpointing
+		setValue(map,"task.checkpoint.factory","org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory");
+		setValue(map,"task.checkpoint.system","kafka0");
+		setValue(map,"task.commit.ms","1000");
 		
 		// Number of containers
 		setNumberOfContainers(map, pi.getParallelism(), this.piPerContainerRatio);
@@ -243,6 +260,7 @@ public class SamzaConfigFactory {
 		// Output from entrance task
 		// Since entrancePI should have only 1 output stream
 		// there is no need for checking the batch size, setting different system names
+		// It does not consume messages => does not require checkpointing
 		SamzaStream outputStream = (SamzaStream)epi.getOutputStream();
 		StringBuilder allStreams = new StringBuilder();
 		boolean first = true;
@@ -370,6 +388,7 @@ public class SamzaConfigFactory {
 	 */
 	public void setSystemNameForStreams(Set<Stream> streams) {
 		Map<Integer, String> batchSizeMap = new HashMap<Integer, String>();
+		batchSizeMap.put(1, "kafka0"); // default system with sync producer
 		int counter = 0;
 		for (Stream stream:streams) {
 			SamzaStream samzaStream = (SamzaStream) stream;
@@ -379,12 +398,8 @@ public class SamzaConfigFactory {
 				// Add new system
 				systemName = "kafka"+Integer.toString(counter);
 				batchSizeMap.put(samzaStream.getBatchSize(), systemName);
-				samzaStream.setSystemName(systemName);
 			}
-			else {
-				// Set systemName for the stream
-				samzaStream.setSystemName(systemName);
-			}
+			samzaStream.setSystemName(systemName);
 		}
 
 }

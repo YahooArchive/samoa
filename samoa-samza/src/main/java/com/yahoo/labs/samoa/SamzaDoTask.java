@@ -57,6 +57,7 @@ public class SamzaDoTask {
 	private static final String KAFKA_BATCHSIZE_FLAG = "--kafka_batch";
 	private static final String KAFKA_REPLICATION_FLAG = "--kafka_replication_factor";
 	private static final String KAFKA_PRODUCER_TYPE_FLAG = "--kafka_producer_type";
+	private static final String CHECKPOINT_FREQ_FLAG = "--checkpoint_frequency";
 	private static final String JAR_PACKAGE_FLAG = "--jar_package";
 	private static final String AM_MEMORY_FLAG = "--yarn_am_mem";
 	private static final String CONTAINER_MEMORY_FLAG = "--yarn_container_mem";
@@ -68,6 +69,7 @@ public class SamzaDoTask {
 	private static int kafkaBatchSize = 1;
 	private static int kafkaReplicationFactor = 1;
 	private static String kafkaProducerType = "sync";
+	private static int checkpointFrequency = 60000;
 	private static String kafka = "localhost:9092";
 	private static String zookeeper = "localhost:2181";
 	private static boolean isLocal = true;
@@ -135,7 +137,8 @@ public class SamzaDoTask {
 		.setAMMemory(amMem)
 		.setContainerMemory(containerMem)
 		.setPiPerContainerRatio(piPerContainer)
-		.setKryoRegisterFile(kryoRegisterFile);
+		.setKryoRegisterFile(kryoRegisterFile)
+		.setCheckpointFrequency(checkpointFrequency);
 		
 		// Submit topology
 		SamzaEngine.submitTopology((SamzaTopology)task.getTopology());
@@ -208,6 +211,11 @@ public class SamzaDoTask {
 				// kafka streams replication factor
 				else if (splitted[0].equals(KAFKA_REPLICATION_FLAG)) {
 					kafkaReplicationFactor = Integer.parseInt(splitted[1]);
+					args.remove(i);
+				}
+				// checkpoint frequency in ms
+				else if (splitted[0].equals(CHECKPOINT_FREQ_FLAG)) {
+					checkpointFrequency = Integer.parseInt(splitted[1]);
 					args.remove(i);
 				}
 				// the file contains registration information for Kryo serializer

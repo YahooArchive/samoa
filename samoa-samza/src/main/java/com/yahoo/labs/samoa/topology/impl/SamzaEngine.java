@@ -65,6 +65,8 @@ public class SamzaEngine {
 	private int containerMem;
 	private int piPerContainerRatio;
 	
+	private int checkpointFrequency;
+	
 	private void _submitTopology(SamzaTopology topology) {
 		
 		// Setup SamzaConfigFactory
@@ -76,7 +78,8 @@ public class SamzaEngine {
 		.setAMMemory(amMem)
 		.setContainerMemory(containerMem)
 		.setPiPerContainerRatio(piPerContainerRatio)
-		.setKryoRegisterFile(kryoRegisterFile);
+		.setKryoRegisterFile(kryoRegisterFile)
+		.setCheckpointFrequency(checkpointFrequency);
 		
 		// Generate the list of Configs
 		List<MapConfig> configs;
@@ -145,6 +148,11 @@ public class SamzaEngine {
 	
 	public SamzaEngine setKafkaProducerType(String type) {
 		this.kafkaProducerType = type;
+		return this;
+	}
+	
+	public SamzaEngine setCheckpointFrequency(int freq) {
+		this.checkpointFrequency = freq;
 		return this;
 	}
 	
