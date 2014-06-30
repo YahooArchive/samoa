@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
-import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.topology.AbstractEntranceProcessingItem;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.SamzaConfigFactory;
@@ -124,7 +123,7 @@ public class SamzaEntranceProcessingItem extends AbstractEntranceProcessingItem
 	@Override
 	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
 		((SamzaStream)this.getOutputStream()).setCollector(collector);
-		InstanceContentEvent event = (InstanceContentEvent) envelope.getMessage();
+		ContentEvent event = (ContentEvent) envelope.getMessage();
 		this.getOutputStream().put(event);
 	}
 	
