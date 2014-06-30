@@ -55,6 +55,7 @@ public class SamzaDoTask {
 	private static final String ZK_FLAG = "--zookeeper";
 	private static final String KAFKA_FLAG = "--kafka";
 	private static final String KAFKA_BATCHSIZE_FLAG = "--kafka_batch";
+	private static final String KAFKA_REPLICATION_FLAG = "--kafka_replication_factor";
 	private static final String KAFKA_PRODUCER_TYPE_FLAG = "--kafka_producer_type";
 	private static final String JAR_PACKAGE_FLAG = "--jar_package";
 	private static final String AM_MEMORY_FLAG = "--yarn_am_mem";
@@ -65,6 +66,7 @@ public class SamzaDoTask {
 	
 	// config values
 	private static int kafkaBatchSize = 1;
+	private static int kafkaReplicationFactor = 1;
 	private static String kafkaProducerType = "sync";
 	private static String kafka = "localhost:9092";
 	private static String zookeeper = "localhost:2181";
@@ -127,6 +129,7 @@ public class SamzaDoTask {
 		.setKafka(kafka)
 		.setKafkaBatchSize(kafkaBatchSize)
 		.setYarnPackage(hdfsPath)
+		.setKafkaReplicationFactor(kafkaReplicationFactor)
 		.setKafkaProducerType(kafkaProducerType)
 		.setConfigHome(yarnConfHome)
 		.setAMMemory(amMem)
@@ -200,6 +203,11 @@ public class SamzaDoTask {
 				// producer type: either sync or async 
 				else if (splitted[0].equals(KAFKA_PRODUCER_TYPE_FLAG)) {
 					kafkaProducerType = splitted[1];
+					args.remove(i);
+				}
+				// kafka streams replication factor
+				else if (splitted[0].equals(KAFKA_REPLICATION_FLAG)) {
+					kafkaReplicationFactor = Integer.parseInt(splitted[1]);
 					args.remove(i);
 				}
 				// the file contains registration information for Kryo serializer

@@ -53,6 +53,7 @@ public class SamzaEngine {
 	private String zookeeper;
 	private String kafka;
 	private int kafkaBatchSize;
+	private int kafkaReplicationFactor;
 	private String kafkaProducerType;
 	private boolean isLocalMode;
 	private String yarnPackagePath;
@@ -96,7 +97,7 @@ public class SamzaEngine {
 			List<SamzaSystemStream> systemStreams = samzaStream.getSystemStreams();
 			for (SamzaSystemStream systemStream:systemStreams) {
 				// all streams should be kafka streams
-				SystemsUtils.createKafkaTopic(systemStream.getStream(),systemStream.getParallelism());
+				SystemsUtils.createKafkaTopic(systemStream.getStream(),systemStream.getParallelism(),kafkaReplicationFactor);
 			}
 		}
 		
@@ -137,6 +138,16 @@ public class SamzaEngine {
 		return this;
 	}
 	
+	public SamzaEngine setKafkaReplicationFactor(int replicationFactor) {
+		this.kafkaReplicationFactor = replicationFactor;
+		return this;
+	}
+	
+	public SamzaEngine setKafkaProducerType(String type) {
+		this.kafkaProducerType = type;
+		return this;
+	}
+	
 	public SamzaEngine setLocalMode(boolean isLocal) {
 		this.isLocalMode = isLocal;
 		return this;
@@ -164,11 +175,6 @@ public class SamzaEngine {
 	
 	public SamzaEngine setPiPerContainerRatio(int piPerContainer) {
 		this.piPerContainerRatio = piPerContainer;
-		return this;
-	}
-	
-	public SamzaEngine setKafkaProducerType(String type) {
-		this.kafkaProducerType = type;
 		return this;
 	}
 	
