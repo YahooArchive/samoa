@@ -421,8 +421,12 @@ public class SamzaConfigFactory {
 			map.put(YARN_PACKAGE_KEY,SystemsUtils.getHDFSNameNodeUri()+jarPath);
 			map.put(CONTAINER_MEMORY_KEY, Integer.toString(this.containerMemory));
 			map.put(AM_MEMORY_KEY, Integer.toString(this.amMemory));
-			map.put(CONTAINER_COUNT_KEY, "1"); // TODO: should it = parallelism?
+			map.put(CONTAINER_COUNT_KEY, "1"); 
 			map.put(YARN_CONF_HOME_KEY, SystemsUtils.getHadoopConfigHome());
+			
+			// Task opts (Heap size = 0.75 container memory) 
+			int heapSize = (int)(0.75*this.containerMemory);
+			map.put("task.opts", "-Xmx"+Integer.toString(heapSize)+"M -XX:+PrintGCDateStamps");
 		}
 
 

@@ -66,11 +66,14 @@ if [ -z "$SAMZA_CONTAINER_NAME" ]; then
 fi
 
 if [ -z "$JAVA_OPTS" ]; then
-  JAVA_OPTS="-Xmx768M -XX:+PrintGCDateStamps -Xloggc:$SAMZA_LOG_DIR/gc.log -Dsamza.log.dir=$SAMZA_LOG_DIR -Dsamza.container.name=$SAMZA_CONTAINER_NAME"
-  if [ -f $base_dir/lib/log4j.xml ]; then
-    JAVA_OPTS="$JAVA_OPTS -Dlog4j.configuration=file:$base_dir/log4j.xml"
-  fi
+  JAVA_OPTS="-Xmx768M -XX:+PrintGCDateStamps"
 fi
+
+if [ -f $base_dir/lib/log4j.xml ]; then
+  JAVA_OPTS="$JAVA_OPTS -Dlog4j.configuration=file:$base_dir/log4j.xml"
+fi
+
+JAVA_OPTS="$JAVA_OPTS -Xloggc:$SAMZA_LOG_DIR/gc.log -Dsamza.log.dir=$SAMZA_LOG_DIR -Dsamza.container.name=$SAMZA_CONTAINER_NAME"
 
 echo $JAVA $JAVA_OPTS -cp $CLASSPATH $@
 exec $JAVA $JAVA_OPTS -cp $CLASSPATH $@
