@@ -30,7 +30,6 @@ import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.AttributeClassObserver;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.GaussianNumericAttributeClassObserver;
-import com.yahoo.labs.samoa.moa.core.DoubleVector;
 
 /**
  * Implementation of a non-distributed Naive Bayes classifier.
@@ -60,7 +59,7 @@ public class NaiveBayes implements LocalLearner {
 	/**
 	 * Class statistics
 	 */
-	protected DoubleVector classInstances;
+	protected Map<Integer, Double> classInstances;
 
 	/**
 	 * Retrieve the number of classes currently known to this local model
@@ -68,7 +67,7 @@ public class NaiveBayes implements LocalLearner {
 	 * @return the number of classes currently known to this local model
 	 */
 	protected int getNumberOfClasses() {
-		return this.classInstances.numValues();
+		return this.classInstances.size();
 	}
 
 	/**
@@ -152,7 +151,7 @@ public class NaiveBayes implements LocalLearner {
 	 */
 	private double getPrior(int classIndex) {
 		// Maximum likelihood
-		Double currentCount = this.classInstances.getValue(classIndex);
+		Double currentCount = this.classInstances.get(classIndex);
 		if (currentCount == null || currentCount == 0)
 			return 0;
 		else
@@ -167,7 +166,7 @@ public class NaiveBayes implements LocalLearner {
 	public void resetLearning() {
 		// Reset priors
 		this.instancesSeen = 0L;
-		this.classInstances = new DoubleVector();
+		this.classInstances = new HashMap<Integer, Double>();
 		// Init the attribute observers
 		this.attributeObservers = new HashMap<Integer, AttributeClassObserver>();
 	}
@@ -182,7 +181,10 @@ public class NaiveBayes implements LocalLearner {
 	public void trainOnInstance(Instance inst) {
 		// Update class statistics with weights
 		int classIndex = (int) inst.classValue();
-		this.classInstances.addToValue(classIndex, inst.weight());
+		Double weight = this.classInstances.get(classIndex);
+		if (weight == null)
+			weight = 0.;
+		this.classInstances.put(classIndex, weight + inst.weight());
 		// Iterate over the attributes of the given instance
 		for (int attributePosition = 0; attributePosition < inst
 				.numAttributes(); attributePosition++) {
