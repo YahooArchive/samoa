@@ -22,8 +22,6 @@ package com.yahoo.labs.samoa.learners.classifiers;
 /**
  * License
  */
-import java.util.Map;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.yahoo.labs.samoa.instances.Instance;
