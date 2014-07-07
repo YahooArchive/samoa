@@ -21,6 +21,8 @@ package com.yahoo.labs.samoa.learners.classifiers;
  */
 
 import java.io.Serializable;
+import java.util.Map;
+
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 
@@ -29,15 +31,15 @@ import com.yahoo.labs.samoa.instances.Instances;
  * 
  * @author abifet
  */
-public interface LocalClassifierAdapter extends Serializable {
+public interface LocalLearner extends Serializable {
     
     /**
      * Creates a new learner object.
      *
      * @return the learner
      */
-    LocalClassifierAdapter create();
-
+    LocalLearner create();
+ 
     /**
      * Predicts the class memberships for a given instance. If an instance is
      * unclassified, the returned array elements must be all zero.
@@ -70,8 +72,7 @@ public interface LocalClassifierAdapter extends Serializable {
      * @param dataset
      *            the dataset that contains the information
      */
+    @Deprecated
     public void setDataset(Instances dataset);
-        
-    
-    
+
 }

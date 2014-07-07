@@ -30,8 +30,6 @@ import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
-import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierAdapter;
-import com.yahoo.labs.samoa.learners.classifiers.LocalClassifierProcessor;
 import com.yahoo.labs.samoa.learners.classifiers.SingleClassifier;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;

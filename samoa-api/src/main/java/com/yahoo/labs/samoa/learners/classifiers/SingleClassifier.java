@@ -42,14 +42,14 @@ public final class SingleClassifier implements Learner, AdaptiveLearner, Configu
 
 	private static final long serialVersionUID = 684111382631697031L;
 	
-	private LocalClassifierProcessor learnerP;
+	private LocalLearnerProcessor learnerP;
 		
 	private Stream resultStream;
 	
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
-			"Classifier to train.", LocalClassifierAdapter.class, SimpleClassifierAdapter.class.getName());
+			"Classifier to train.", LocalLearner.class, SimpleClassifierAdapter.class.getName());
 	
 	private TopologyBuilder builder;
         
@@ -66,11 +66,11 @@ public final class SingleClassifier implements Learner, AdaptiveLearner, Configu
 
 
 	protected void setLayout() {		
-		learnerP = new LocalClassifierProcessor();
+		learnerP = new LocalLearnerProcessor();
                 learnerP.setChangeDetector(this.getChangeDetector());
-                LocalClassifierAdapter learner = (LocalClassifierAdapter) this.learnerOption.getValue();
+                LocalLearner learner = (LocalLearner) this.learnerOption.getValue();
                 learner.setDataset(this.dataset);
-		learnerP.setClassifier(learner);
+		learnerP.setLearner(learner);
                 
 		//learnerPI = this.builder.createPi(learnerP, 1);
                 this.builder.addProcessor(learnerP, parallelism);

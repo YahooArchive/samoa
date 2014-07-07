@@ -34,7 +34,7 @@ import com.yahoo.labs.samoa.moa.classifiers.functions.MajorityClass;
  * Base class for adapting external classifiers.
  *
  */
-public class SimpleClassifierAdapter implements LocalClassifierAdapter, Configurable {
+public class SimpleClassifierAdapter implements LocalLearner, Configurable {
 
     /**
      *
@@ -149,4 +149,5 @@ public class SimpleClassifierAdapter implements LocalClassifierAdapter, Configur
     public void resetLearning() {
         learner.resetLearning();
     }
+
 }
