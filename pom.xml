@@ -93,8 +93,9 @@
                 <module>samoa-instances</module>
                 <module>samoa-api</module>
                 <module>samoa-local</module>
-                <module>samoa-s4</module>
+                <module>samoa-threads</module>
                 <module>samoa-storm</module>
+                <module>samoa-s4</module>
                 <module>samoa-samza</module>
             </modules>
         </profile>
