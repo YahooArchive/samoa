@@ -32,6 +32,6 @@
     <parent>
         <groupId>com.yahoo.labs.samoa</groupId>
         <artifactId>samoa</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
     </parent>
 </project>

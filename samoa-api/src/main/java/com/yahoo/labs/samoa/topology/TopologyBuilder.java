@@ -63,6 +63,17 @@ public class TopologyBuilder {
      * @param topologyName
      */
     public void initTopology(String topologyName) {
+    	this.initTopology(topologyName, 0);
+    }
+    
+    /**
+     * Initiates topology with a specific name and a delay between consecutive instances.
+     * 
+     * @param topologyName
+     * @param delay
+     * 			delay between injections of two instances from source (in milliseconds)
+     */
+    public void initTopology(String topologyName, int delay) {
         if (this.topology != null) {
             // TODO: possible refactor this code later
             System.out.println("Topology has been initialized before!");

@@ -76,7 +76,6 @@ class SimpleProcessingItem extends AbstractProcessingItem {
             for (int j = 0; j < parallelism; j++) {
                 arrayProcessingItem[j] = this.copy();
                 arrayProcessingItem[j].getProcessor().onCreate(j);
-                //System.out.println(j + " PROCESSOR create " + arrayProcessingItem[j].getProcessor());
             }
         }
         if (this.arrayProcessingItem != null) {
