@@ -80,6 +80,14 @@
             </modules>
         </profile>
         <profile>
+            <id>samza</id>
+            <modules>
+                <module>samoa-instances</module>
+                <module>samoa-api</module>
+                <module>samoa-samza</module>
+            </modules>
+        </profile>
+        <profile>
             <id>all</id>
             <modules>
                 <module>samoa-instances</module>
@@ -87,6 +95,7 @@
                 <module>samoa-local</module>
                 <module>samoa-s4</module>
                 <module>samoa-storm</module>
+                <module>samoa-samza</module>
             </modules>
         </profile>
     </profiles>
