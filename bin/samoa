@@ -206,6 +206,91 @@ elif [ $PLATFORM = 'STORM' ]; then
 		java -cp $CLASSPATH com.yahoo.labs.samoa.LocalStormDoTask $COMPLETE_ARG $NUM_WORKER
 	fi
 
+elif [ $PLATFORM = 'SAMZA' ]; then
+	echo "Deploying to SAMZA"
+
+	SAMOA_SAMZA_PROPERTIES=samoa-samza.properties
+	MODE_OPTION='samoa.samza.mode'
+        ZOOKEEPER_HOST_OPTION='zookeeper.host'
+        ZOOKEEPER_PORT_OPTION='zookeeper.port'
+        KAFKA_BROKER_LIST_OPTION='kafka.broker.list'
+	KAFKA_REPLICATION_OPTION='kafka.replication.factor'
+	CHECKPOINT_FREQ_OPTION='checkpoint.commit.ms'
+
+        YARN_AM_MEMORY_OPTION='yarn.am.memory'
+        YARN_CONTAINER_MEMORY_OPTION='yarn.container.memory'
+        PI_PER_CONTAINER_OPTION='max.pi.per.container'
+
+	KRYO_REGISTER_OPTION='kryo.register.file'
+
+        VALUE=""
+        getvalue()
+        {
+            VALUE=`sed '/^\#/d' $BASE_DIR/$SAMOA_SAMZA_PROPERTIES | grep "$1" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+        }
+
+        getvalue "$ZOOKEEPER_HOST_OPTION"
+        ZOOKEEPER_HOST="$VALUE"
+
+        getvalue "$ZOOKEEPER_PORT_OPTION"
+        ZOOKEEPER_PORT="$VALUE"
+
+        getvalue "$KAFKA_BROKER_LIST_OPTION"
+        KAFKA_BROKER_LIST="$VALUE"
+
+        getvalue "$MODE_OPTION"
+        MODE_ARG="$VALUE"
+
+        getvalue "$KAFKA_REPLICATION_OPTION"
+        KAFKA_REPLICATION_FACTOR="$VALUE"
+
+	getvalue "$CHECKPOINT_FREQ_OPTION"
+        CHECKPOINT_FREQUENCY="$VALUE"
+
+        getvalue "$YARN_AM_MEMORY_OPTION"
+        YARN_AM_MEMORY="$VALUE"
+
+        getvalue "$YARN_CONTAINER_MEMORY_OPTION"
+        YARN_CONTAINER_MEMORY="$VALUE"
+
+        getvalue "$KRYO_REGISTER_OPTION"
+        KRYO_REGISTER_FILE="$VALUE"
+
+	getvalue "$PI_PER_CONTAINER_OPTION"
+        PI_PER_CONTAINER="$VALUE"
+
+        COMPLETE_ARG=""
+        COUNTER=0
+        for var in "$@"
+        do
+            COUNTER=`expr $COUNTER + 1`
+            if [ $COUNTER -gt 2 ];then
+                COMPLETE_ARG="$COMPLETE_ARG $var"
+            fi
+        done
+
+        DEPLOYABLE=$JAR_PATH
+        java -Dsamza.log.dir=$BASE_DIR/logs -Dsamza.container.name=client -cp $DEPLOYABLE com.yahoo.labs.samoa.SamzaDoTask $COMPLETE_ARG --mode=$MODE_ARG \
+               --yarn_home=$YARN_HOME/conf --zookeeper=$ZOOKEEPER_HOST:$ZOOKEEPER_PORT --kafka=$KAFKA_BROKER_LIST \
+               --jar_package=$JAR_PATH --yarn_am_mem=$YARN_AM_MEMORY --yarn_container_mem=$YARN_CONTAINER_MEMORY \
+               --kafka_replication_factor=$KAFKA_REPLICATION_FACTOR --checkpoint_frequency=$CHECKPOINT_FREQUENCY \
+               --kryo_register=$BASE_DIR/$KRYO_REGISTER_FILE --pi_per_container=$PI_PER_CONTAINER
+
+elif [ $PLATFORM = 'THREADS' ]; then
+	
+	echo "Deploying to LOCAL with MULTITHREADING."
+	COMPLETE_ARG=""
+        COUNTER=0
+        for var in "$@"
+        do
+            COUNTER=`expr $COUNTER + 1`
+            if [ $COUNTER -gt 2 ];then
+                COMPLETE_ARG="$COMPLETE_ARG $var"
+            fi
+        done
+        
+	java $JAVA_OPTS -cp $JAR_PATH com.yahoo.labs.samoa.LocalThreadsDoTask $COMPLETE_ARG
+
 elif [ $PLATFORM = 'LOCAL' ]; then
 
 	echo "Deploying to $PLATFORM"

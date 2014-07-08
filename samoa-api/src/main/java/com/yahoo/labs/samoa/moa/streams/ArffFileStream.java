@@ -92,6 +92,7 @@ public class ArffFileStream extends AbstractOptionHandler implements
             ObjectRepository repository) {
         //restart();
         this.hasStarted = false;
+        this.lastInstanceRead = null;
     }
 
     @Override

@@ -35,6 +35,13 @@ public class HelloWorldContentEvent implements ContentEvent {
         this.isLastEvent = isLastEvent;
         this.helloWorldData = helloWorldData;
     }
+    
+    /*
+     * No-argument constructor for Kryo
+     */
+    public HelloWorldContentEvent() {
+    	this(0,false);
+    }
 
     @Override
     public String getKey() {

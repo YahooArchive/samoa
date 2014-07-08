@@ -85,6 +85,10 @@ public class ClusteringEvaluation implements Task, Configurable {
     private ClusteringDistributorProcessor distributor;
     private Stream distributorStream;
     private Stream evaluationStream;
+    
+    // Default=0: no delay/waiting
+    public IntOption sourceDelayOption = new IntOption("sourceDelay", 'w', "How many miliseconds between injections of two instances.", 0, 0, Integer.MAX_VALUE);
+    
     private Learner learner;
     private ClusteringEvaluatorProcessor evaluator;
     private Stream evaluatorPiInputStream;
@@ -106,7 +110,7 @@ public class ClusteringEvaluation implements Task, Configurable {
             builder = new TopologyBuilder();
             logger.debug("Sucessfully instantiating TopologyBuilder");
 
-            builder.initTopology(evaluationNameOption.getValue());
+            builder.initTopology(evaluationNameOption.getValue(), sourceDelayOption.getValue());
             logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
         }
 
