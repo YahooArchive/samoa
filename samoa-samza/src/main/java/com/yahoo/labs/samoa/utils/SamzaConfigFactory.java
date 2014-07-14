@@ -262,44 +262,14 @@ public class SamzaConfigFactory {
 		// Output from entrance task
 		// Since entrancePI should have only 1 output stream
 		// there is no need for checking the batch size, setting different system names
-		// It does not consume messages => does not require checkpointing
+		// The custom consumer (samoa system) does not suuport reading from a specific index
+		// => no need for checkpointing
 		SamzaStream outputStream = (SamzaStream)epi.getOutputStream();
-		StringBuilder allStreams = new StringBuilder();
-		boolean first = true;
-		for (SamzaSystemStream stream:outputStream.getSystemStreams()) {
-			if (!first) allStreams.append(COMMA);
-
-			// Name (system.stream)
-			allStreams.append(stream.getSystem());
-			allStreams.append(COLON);
-			allStreams.append(stream.getStream());
-			allStreams.append(COLON);
-
-			// Type
-			switch(stream.getPartitioningScheme())  {
-			case SHUFFLE:
-				allStreams.append(SamzaConfigFactory.SHUFFLE);
-				break;
-			case GROUP_BY_KEY:
-				allStreams.append(SamzaConfigFactory.KEY);
-				break;
-			case BROADCAST:
-				allStreams.append(SamzaConfigFactory.BROADCAST);
-				break;
-			}
-			allStreams.append(COLON);
-
-			// Parallelism
-			allStreams.append(stream.getParallelism());
-
-		}
-		setValue(map, ENTRANCE_OUTPUT_KEY, allStreams.toString());
-
 		// Set samoa system factory
 		setValue(map, "systems."+SYSTEM_NAME+".samza.factory", SamoaSystemFactory.class.getName());
-		
-		// Set Kafka system
-		setKafkaSystem(map, outputStream.getSystemName(), this.zookeeper, this.kafkaBrokerList, outputStream.getBatchSize());
+		// Set Kafka system (only if there is an output stream)
+		if (outputStream != null)
+			setKafkaSystem(map, outputStream.getSystemName(), this.zookeeper, this.kafkaBrokerList, outputStream.getBatchSize());
 
 		// Processor file
 		setFileName(map, filename);
