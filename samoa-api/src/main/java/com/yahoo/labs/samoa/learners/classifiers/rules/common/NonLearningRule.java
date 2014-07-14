@@ -20,6 +20,17 @@ package com.yahoo.labs.samoa.learners.classifiers.rules.common;
  * #L%
  */
 
+/**
+ * The most basic rule: inherit from Rule the ID and list of features.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
+/*
+ * This branch (Non-learning rule) was created for an old implementation.
+ * Probably should remove None-Learning and Learning Rule classes,
+ * merge Rule with LearningRule.
+ */
 public class NonLearningRule extends Rule {
 
 	/**

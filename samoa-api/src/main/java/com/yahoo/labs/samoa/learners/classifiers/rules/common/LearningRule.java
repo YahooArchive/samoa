@@ -24,6 +24,12 @@ import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.moa.core.StringUtils;
 
+/**
+ * Rule with LearningNode (statistical data).
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public abstract class LearningRule extends Rule {
 
 	/**

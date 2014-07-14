@@ -32,6 +32,13 @@ import com.yahoo.labs.samoa.moa.classifiers.Regressor;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.moa.core.Measurement;
 
+/**
+ * Prediction scheme using Perceptron:
+ * Predictions are computed according to a linear function of the attributes.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class Perceptron extends AbstractClassifier implements Regressor {
 
 	private final double SD_THRESHOLD = 0.0000001; //THRESHOLD for normalizing attribute and target values

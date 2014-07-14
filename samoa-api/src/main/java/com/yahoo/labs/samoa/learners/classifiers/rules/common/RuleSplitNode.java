@@ -26,6 +26,12 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.conditionaltests.NumericA
 import com.yahoo.labs.samoa.learners.classifiers.trees.SplitNode;
 import com.yahoo.labs.samoa.instances.Instance;
 
+/**
+ * Represent a feature of rules (an element of ruleś nodeList).
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class RuleSplitNode extends SplitNode {
 
     protected double lastTargetMean;

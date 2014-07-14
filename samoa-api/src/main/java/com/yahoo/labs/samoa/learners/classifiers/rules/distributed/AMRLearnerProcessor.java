@@ -39,6 +39,8 @@ import com.yahoo.labs.samoa.learners.classifiers.rules.common.RuleSplitNode;
 import com.yahoo.labs.samoa.topology.Stream;
 
 /**
+ * Learner Processor (HAMR).
+ * 
  * @author Anh Thu Vu
  *
  */

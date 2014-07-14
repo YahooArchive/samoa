@@ -27,6 +27,14 @@ import com.yahoo.labs.samoa.moa.classifiers.core.conditionaltests.NumericAttribu
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.attributeclassobservers.FIMTDDNumericAttributeClassLimitObserver;
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.conditionaltests.NumericAttributeBinaryRulePredicate;
 
+/**
+ * ActiveRule is a LearningRule that actively update its LearningNode
+ * with incoming instances.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
+
 public class ActiveRule extends LearningRule {
 	
 	private static final long serialVersionUID = 1L;

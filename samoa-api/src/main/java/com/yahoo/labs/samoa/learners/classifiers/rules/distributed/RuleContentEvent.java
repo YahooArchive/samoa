@@ -23,6 +23,13 @@ package com.yahoo.labs.samoa.learners.classifiers.rules.distributed;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.learners.classifiers.rules.common.ActiveRule;
 
+/**
+ * New rule from Model Aggregator/Default Rule Learner to Learners
+ * or removed rule from Learner to Model Aggregators.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class RuleContentEvent implements ContentEvent {
 
 	

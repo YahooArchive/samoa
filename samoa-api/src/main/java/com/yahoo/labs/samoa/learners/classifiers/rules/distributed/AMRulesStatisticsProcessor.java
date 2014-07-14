@@ -37,6 +37,12 @@ import com.yahoo.labs.samoa.learners.classifiers.rules.common.RulePassiveRegress
 import com.yahoo.labs.samoa.learners.classifiers.rules.common.RuleSplitNode;
 import com.yahoo.labs.samoa.topology.Stream;
 
+/**
+ * Learner Processor (VAMR).
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class AMRulesStatisticsProcessor implements Processor {
 
 	/**

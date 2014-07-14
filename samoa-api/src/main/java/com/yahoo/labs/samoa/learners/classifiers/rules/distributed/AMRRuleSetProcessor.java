@@ -42,6 +42,7 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.UniformWeightedVot
 import com.yahoo.labs.samoa.topology.Stream;
 
 /**
+ * Model Aggregator Processor (HAMR).
  * @author Anh Thu Vu
  *
  */

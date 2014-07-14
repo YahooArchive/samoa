@@ -23,6 +23,14 @@ package com.yahoo.labs.samoa.learners.classifiers.rules.common;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 
+/**
+ * LearningNode for regression rule that does not update
+ * statistics for expanding rule. It only updates statistics for
+ * computing predictions.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class RulePassiveRegressionNode extends RuleRegressionNode implements RulePassiveLearningNode {
 
 	/**

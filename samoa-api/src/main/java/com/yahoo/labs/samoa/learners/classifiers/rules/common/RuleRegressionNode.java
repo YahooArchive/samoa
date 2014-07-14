@@ -25,6 +25,12 @@ import java.io.Serializable;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 
+/**
+ * The base class for LearningNode for regression rule.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public abstract class RuleRegressionNode implements Serializable {
 	
 	private static final long serialVersionUID = 9129659494380381126L;

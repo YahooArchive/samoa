@@ -44,6 +44,12 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.InverseErrorWeight
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.UniformWeightedVote;
 import com.yahoo.labs.samoa.topology.Stream;
 
+/**
+ * Model Aggregator Processor (VAMR).
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class AMRulesAggregatorProcessor implements Processor {
 
 	/**

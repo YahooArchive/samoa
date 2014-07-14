@@ -39,6 +39,7 @@ package com.yahoo.labs.samoa.learners.classifiers.rules.common;
  * #L%
  */
 /**
+ * Prediction scheme using TargetMean:
  * TargetMean - Returns the mean of the target variable of the training instances
  * 
  * @author Joao Duarte 

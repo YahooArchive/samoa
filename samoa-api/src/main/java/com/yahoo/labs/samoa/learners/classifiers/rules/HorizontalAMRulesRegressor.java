@@ -40,6 +40,11 @@ import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 
 /**
+ * Horizontal  AMRules Regressor
+ * is a distributed learner for regression rules learner.
+ * It applies both horizontal parallelism (dividing incoming streams)
+ * and vertical parallelism on AMRules algorithm.
+ * 
  * @author Anh Thu Vu
  *
  */

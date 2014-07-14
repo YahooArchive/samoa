@@ -37,6 +37,14 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.attributeclassobservers.F
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.ErrorWeightedVote;
 import com.yahoo.labs.samoa.topology.Stream;
 
+/**
+ * AMRules Regressor Processor
+ * is the main (and only) processor for AMRulesRegressor task.
+ * It is adapted from the AMRules implementation in MOA.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class AMRulesRegressorProcessor implements Processor {
 	/**
 	 * 

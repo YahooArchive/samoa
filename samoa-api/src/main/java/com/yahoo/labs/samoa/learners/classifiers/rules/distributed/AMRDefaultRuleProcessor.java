@@ -36,6 +36,8 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.attributeclassobservers.F
 import com.yahoo.labs.samoa.topology.Stream;
 
 /**
+ * Default Rule Learner Processor (HAMR).
+ * 
  * @author Anh Thu Vu
  *
  */

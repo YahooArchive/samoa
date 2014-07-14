@@ -24,6 +24,12 @@ import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.learners.classifiers.rules.common.RulePassiveRegressionNode;
 import com.yahoo.labs.samoa.learners.classifiers.rules.common.RuleSplitNode;
 
+/**
+ * New features (of newly expanded rules) from Learners to Model Aggregators.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class PredicateContentEvent implements ContentEvent {
 
 	/**

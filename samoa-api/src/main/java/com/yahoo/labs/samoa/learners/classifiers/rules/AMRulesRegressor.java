@@ -38,6 +38,15 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.ErrorWeightedVote;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 
+/**
+ * AMRules Regressor
+ * is the task for the serialized implementation of AMRules algorithm for regression rule. 
+ * It is adapted to SAMOA from the implementation of AMRules in MOA.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
+
 public class AMRulesRegressor implements RegressionLearner, Configurable {
 
 	/**

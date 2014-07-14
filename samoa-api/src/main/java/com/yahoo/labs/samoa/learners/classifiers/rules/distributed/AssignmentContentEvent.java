@@ -23,6 +23,12 @@ package com.yahoo.labs.samoa.learners.classifiers.rules.distributed;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
 
+/**
+ * Forwarded instances from Model Agrregator to Learners/Default Rule Learner.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class AssignmentContentEvent implements ContentEvent {
 
 	/**

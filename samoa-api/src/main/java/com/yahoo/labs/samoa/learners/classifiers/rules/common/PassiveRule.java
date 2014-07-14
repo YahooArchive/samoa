@@ -1,10 +1,5 @@
 package com.yahoo.labs.samoa.learners.classifiers.rules.common;
 
-import java.util.LinkedList;
-
-import com.yahoo.labs.samoa.moa.classifiers.core.conditionaltests.InstanceConditionalTest;
-import com.yahoo.labs.samoa.moa.classifiers.rules.core.conditionaltests.NumericAttributeBinaryRulePredicate;
-
 /*
  * #%L
  * SAMOA
@@ -25,6 +20,18 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.conditionaltests.NumericA
  * #L%
  */
 
+import java.util.LinkedList;
+
+import com.yahoo.labs.samoa.moa.classifiers.core.conditionaltests.InstanceConditionalTest;
+import com.yahoo.labs.samoa.moa.classifiers.rules.core.conditionaltests.NumericAttributeBinaryRulePredicate;
+
+/**
+ * PassiveRule is a LearningRule that update its LearningNode
+ * with the received new LearningNode.
+ * 
+ * @author Anh Thu Vu
+ *
+ */
 public class PassiveRule extends LearningRule {
 
 	/**
