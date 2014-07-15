@@ -34,7 +34,7 @@ import com.yahoo.labs.samoa.instances.Utils;
  * @version $Revision: 7 $
  */
 public class WindowClassificationPerformanceEvaluator extends AbstractMOAObject implements
-        PerformanceEvaluator {
+        ClassificationPerformanceEvaluator {
 
      private static final long serialVersionUID = 1L;
 

@@ -20,11 +20,6 @@ package com.yahoo.labs.samoa.learners;
  * #L%
  */
 
-/**
- * License
- */
-
-
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.topology.Stream;
