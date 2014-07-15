@@ -26,7 +26,7 @@ import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * The Interface Classifier.
@@ -56,7 +56,7 @@ public interface Learner extends Serializable{
 	/**
 	 * Gets the result streams
 	 *
-	 * @return the list of result streams
+	 * @return the set of result streams
 	 */
-	public List<Stream> getResultStreams();
+	public Set<Stream> getResultStreams();
 }

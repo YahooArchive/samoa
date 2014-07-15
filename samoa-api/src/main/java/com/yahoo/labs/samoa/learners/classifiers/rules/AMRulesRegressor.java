@@ -20,8 +20,8 @@ package com.yahoo.labs.samoa.learners.classifiers.rules;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.ClassOption;
@@ -170,9 +170,9 @@ public class AMRulesRegressor implements RegressionLearner, Configurable {
 	}
 
 	@Override
-	public List<Stream> getResultStreams() {
-		List<Stream> list = new ArrayList<Stream>();
-		list.add(this.resultStream);
-		return list;
+	public Set<Stream> getResultStreams() {
+		Set<Stream> streams = new HashSet<Stream>();
+		streams.add(this.resultStream);
+		return streams;
 	}
 }

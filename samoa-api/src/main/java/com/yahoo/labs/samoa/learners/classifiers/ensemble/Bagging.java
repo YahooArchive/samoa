@@ -24,8 +24,8 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
@@ -131,9 +131,9 @@ public class Bagging implements Learner , Configurable {
      * @see samoa.learners.Learner#getResultStreams()
      */
     @Override
-    public List<Stream> getResultStreams() {
-    	List<Stream> list = new ArrayList<Stream>();
-    	list.add(this.resultStream);
-    	return list;
+    public Set<Stream> getResultStreams() {
+    	Set<Stream> streams = new HashSet<Stream>();
+    	streams.add(this.resultStream);
+    	return streams;
     }
 }
