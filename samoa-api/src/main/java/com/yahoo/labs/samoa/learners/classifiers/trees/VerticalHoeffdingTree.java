@@ -30,7 +30,7 @@ import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.AdaptiveLearner;
-import com.yahoo.labs.samoa.learners.Learner;
+import com.yahoo.labs.samoa.learners.ClassificationLearner;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.AttributeClassObserver;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.DiscreteAttributeClassObserver;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.NumericAttributeClassObserver;
@@ -49,7 +49,7 @@ import com.yahoo.labs.samoa.topology.TopologyBuilder;
  * @author Arinto Murdopo
  *
  */
-public final class VerticalHoeffdingTree implements Learner, AdaptiveLearner, Configurable {
+public final class VerticalHoeffdingTree implements ClassificationLearner, AdaptiveLearner, Configurable {
 
     private static final long serialVersionUID = -4937416312929984057L;
 
