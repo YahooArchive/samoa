@@ -57,6 +57,7 @@ public class SamzaDoTask {
 	private static final String KAFKA_REPLICATION_FLAG = "--kafka_replication_factor";
 	private static final String CHECKPOINT_FREQ_FLAG = "--checkpoint_frequency";
 	private static final String JAR_PACKAGE_FLAG = "--jar_package";
+	private static final String SAMOA_HDFS_DIR_FLAG = "--samoa_hdfs_dir";
 	private static final String AM_MEMORY_FLAG = "--yarn_am_mem";
 	private static final String CONTAINER_MEMORY_FLAG = "--yarn_container_mem";
 	private static final String PI_PER_CONTAINER_FLAG = "--pi_per_container";
@@ -70,6 +71,7 @@ public class SamzaDoTask {
 	private static String zookeeper = "localhost:2181";
 	private static boolean isLocal = true;
 	private static String yarnConfHome = null;
+	private static String samoaHDFSDir = null;
 	private static String jarPackagePath = null;
 	private static int amMem = 1024;
 	private static int containerMem = 1024;
@@ -185,6 +187,12 @@ public class SamzaDoTask {
 					jarPackagePath = splitted[1];
 					args.remove(i);
 				}
+				// the HDFS dir for SAMOA files
+				else if (splitted[0].equals(SAMOA_HDFS_DIR_FLAG)) {
+					samoaHDFSDir = splitted[1];
+					if (samoaHDFSDir.length() < 1) samoaHDFSDir = null;
+					args.remove(i);
+				}
 				// number of max PI instances per container
 				// this will be used to compute the number of containers 
 				// AM will request for the job
@@ -213,9 +221,7 @@ public class SamzaDoTask {
 	
 	private static String uploadJarToHDFS(File file) {
 		SystemsUtils.setHadoopConfigHome(yarnConfHome);
-		String absDstPath = "/samoa/"+file.getName();
-		if (SystemsUtils.copyToHDFS(file, absDstPath)) 
-			return absDstPath;
-		return null;
+		SystemsUtils.setSAMOADir(samoaHDFSDir);
+		return SystemsUtils.copyToHDFS(file, file.getName());
 	}
 }

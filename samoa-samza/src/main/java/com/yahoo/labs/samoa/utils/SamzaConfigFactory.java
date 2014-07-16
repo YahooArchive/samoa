@@ -293,28 +293,42 @@ public class SamzaConfigFactory {
 		String filename = topology.getTopologyName() + ".dat";
 		Path dirPath = FileSystems.getDefault().getPath("dat");
 		Path filePath= FileSystems.getDefault().getPath(dirPath.toString(), filename);
+		String dstPath = filePath.toString();
 		String resPath;
 		String filesystem;
 		if (this.isLocalMode) {
-			resPath = filePath.toString();
 			filesystem = SystemsUtils.LOCAL_FS;
+			File dir = dirPath.toFile();
+			if (!dir.exists()) 
+				FileUtils.forceMkdir(dir);
 		}
 		else {
-			resPath = SystemsUtils.getHDFSNameNodeUri()+"/samoa/dat/"+filename;
 			filesystem = SystemsUtils.HDFS;
 		}
-
-		File dir = dirPath.toFile();
-		if (!dir.exists()) 
-			FileUtils.forceMkdir(dir);
 
 		Map<String,Object> piMap = new HashMap<String,Object>();
 		Set<EntranceProcessingItem> entranceProcessingItems = topology.getEntranceProcessingItems();
 		Set<IProcessingItem> processingItems = topology.getNonEntranceProcessingItems();
-		
-		//
+
+		// Correct system name for streams
 		this.setSystemNameForStreams(topology.getStreams());
-		
+
+		// Serialize all PIs
+		boolean serialized = false;
+		if (this.isLocalMode) {
+			serialized = SystemsUtils.serializeObjectToLocalFileSystem(piMap, dstPath);
+			resPath = dstPath;
+		}
+		else {
+			resPath = SystemsUtils.serializeObjectToHDFS(piMap, dstPath);
+			serialized = resPath != null;
+		}
+
+		if (!serialized) {
+			throw new Exception("Fail serialize map of PIs to file");
+		}
+
+		// MapConfig for all PIs
 		for(EntranceProcessingItem epi:entranceProcessingItems) {
 			SamzaEntranceProcessingItem sepi = (SamzaEntranceProcessingItem) epi;
 			piMap.put(sepi.getName(), sepi);
@@ -326,18 +340,6 @@ public class SamzaConfigFactory {
 			maps.add(this.getMapForPI(spi, resPath, filesystem));
 		}
 
-		// Serialize all PIs
-		boolean serialized = false;
-		if (this.isLocalMode) {
-			serialized = SystemsUtils.serializeObjectToLocalFileSystem(piMap, resPath);
-		}
-		else {
-			serialized = SystemsUtils.serializeObjectToHDFS(piMap, resPath);
-		}
-
-		if (!serialized) {
-			throw new Exception("Fail serialize map of PIs to file");
-		}
 		return maps;
 	}
 
@@ -388,7 +390,7 @@ public class SamzaConfigFactory {
 			map.put(JOB_FACTORY_CLASS_KEY, YarnJobFactory.class.getName());
 
 			// yarn
-			map.put(YARN_PACKAGE_KEY,SystemsUtils.getHDFSNameNodeUri()+jarPath);
+			map.put(YARN_PACKAGE_KEY,jarPath);
 			map.put(CONTAINER_MEMORY_KEY, Integer.toString(this.containerMemory));
 			map.put(AM_MEMORY_KEY, Integer.toString(this.amMemory));
 			map.put(CONTAINER_COUNT_KEY, "1"); 

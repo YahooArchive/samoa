@@ -98,6 +98,7 @@ public class SystemsUtils {
 		private static String coreConfPath;
 		private static String hdfsConfPath;
 		private static String configHomePath;
+		private static String samoaDir = null;
 		
 		static void setHadoopConfigHome(String hadoopConfPath) {
 			logger.info("Hadoop config home:{}",hadoopConfPath);
@@ -120,12 +121,32 @@ public class SystemsUtils {
 			return configHomePath;
 		}
 		
-		static boolean deleteFileIfExist(String absPath) {
+		static void setSAMOADir(String dir) {
+			if (dir != null)
+				samoaDir = getNameNodeUri()+dir;
+			else 
+				samoaDir = null;
+		}
+		
+		static String getDefaultSAMOADir() throws IOException {
 			Configuration config = new Configuration();
 			config.addResource(new Path(coreConfPath));
 			config.addResource(new Path(hdfsConfPath));
 			
+			FileSystem fs = FileSystem.get(config);
+			Path defaultDir = new Path(fs.getHomeDirectory(),".samoa");
+			return defaultDir.toString();
+		}
+		
+		static boolean deleteFileIfExist(String absPath) {
 			Path p = new Path(absPath);
+			return deleteFileIfExist(p);
+		}
+		
+		static boolean deleteFileIfExist(Path p) {
+			Configuration config = new Configuration();
+			config.addResource(new Path(coreConfPath));
+			config.addResource(new Path(hdfsConfPath));
 			
 			FileSystem fs;
 			try {
@@ -145,26 +166,43 @@ public class SystemsUtils {
 		/*
 		 * Write to HDFS
 		 */
-		static boolean writeToHDFS(File file, String absDstPath) {
+		static String writeToHDFS(File file, String dstPath) {
 			Configuration config = new Configuration();
 			config.addResource(new Path(coreConfPath));
 			config.addResource(new Path(hdfsConfPath));
-			
 			logger.info("Filesystem name:{}",config.get("fs.defaultFS"));
 			
-			Path dst = new Path(absDstPath);
+			// Default samoaDir
+			if (samoaDir == null) {
+				try {
+					samoaDir = getDefaultSAMOADir();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			
+			// Setup src and dst paths
+			//java.nio.file.Path tempPath = FileSystems.getDefault().getPath(samoaDir, dstPath);
+			Path dst = new Path(samoaDir,dstPath);
 			Path src = new Path(file.getAbsolutePath());
 			
+			// Delete file if already exists in HDFS
+			if (deleteFileIfExist(dst) == false)
+				return null;
+			
+			// Copy to HDFS
 			FileSystem fs;
 			try {
 				fs = FileSystem.get(config);
 				fs.copyFromLocalFile(src, dst);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return false;
+				return null;
 			}
-			return true;
+			
+			return dst.toString(); // abs path to file
 		}
 		
 		/*
@@ -279,7 +317,7 @@ public class SystemsUtils {
 		return LocalFileSystemUtils.serializObjectToFile(object, path);
 	}
 	
-	public static boolean serializeObjectToHDFS(Object object, String path) {
+	public static String serializeObjectToHDFS(Object object, String path) {
 		File tmpDatFile;
 		try {
 			tmpDatFile = File.createTempFile(TEMP_FILE, TEMP_FILE_SUFFIX);
@@ -290,7 +328,7 @@ public class SystemsUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 	
 	/*
@@ -325,6 +363,10 @@ public class SystemsUtils {
 		HDFSUtils.setHadoopConfigHome(hadoopHome);
 	}
 	
+	public static void setSAMOADir(String samoaDir) {
+		HDFSUtils.setSAMOADir(samoaDir);
+	}
+	
 	/*
 	 * Others
 	 */
@@ -335,10 +377,7 @@ public class SystemsUtils {
 		return HDFSUtils.getHadoopConfigHome();
 	}
 	
-	public static boolean copyToHDFS(File file, String absDstPath) {
-		if (HDFSUtils.deleteFileIfExist(absDstPath)) {
-			return HDFSUtils.writeToHDFS(file, absDstPath);
-		}
-		return false;
+	public static String copyToHDFS(File file, String dstPath) {
+		return HDFSUtils.writeToHDFS(file, dstPath);
 	}
 }
