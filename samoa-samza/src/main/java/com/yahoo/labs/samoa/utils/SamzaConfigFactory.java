@@ -306,12 +306,21 @@ public class SamzaConfigFactory {
 			filesystem = SystemsUtils.HDFS;
 		}
 
+		// Correct system name for streams
+		this.setSystemNameForStreams(topology.getStreams());
+		
+		// Add all PIs to a collection (map)
 		Map<String,Object> piMap = new HashMap<String,Object>();
 		Set<EntranceProcessingItem> entranceProcessingItems = topology.getEntranceProcessingItems();
 		Set<IProcessingItem> processingItems = topology.getNonEntranceProcessingItems();
-
-		// Correct system name for streams
-		this.setSystemNameForStreams(topology.getStreams());
+		for(EntranceProcessingItem epi:entranceProcessingItems) {
+			SamzaEntranceProcessingItem sepi = (SamzaEntranceProcessingItem) epi;
+			piMap.put(sepi.getName(), sepi);
+		}
+		for(IProcessingItem pi:processingItems) {
+			SamzaProcessingItem spi = (SamzaProcessingItem) pi;
+			piMap.put(spi.getName(), spi);
+		}
 
 		// Serialize all PIs
 		boolean serialized = false;
@@ -331,12 +340,10 @@ public class SamzaConfigFactory {
 		// MapConfig for all PIs
 		for(EntranceProcessingItem epi:entranceProcessingItems) {
 			SamzaEntranceProcessingItem sepi = (SamzaEntranceProcessingItem) epi;
-			piMap.put(sepi.getName(), sepi);
 			maps.add(this.getMapForEntrancePI(sepi, resPath, filesystem));
 		}
 		for(IProcessingItem pi:processingItems) {
 			SamzaProcessingItem spi = (SamzaProcessingItem) pi;
-			piMap.put(spi.getName(), spi);
 			maps.add(this.getMapForPI(spi, resPath, filesystem));
 		}
 
