@@ -80,6 +80,8 @@ public class PrequentialEvaluation implements Task, Configurable {
 
     // Default=0: no delay/waiting
     public IntOption sourceDelayOption = new IntOption("sourceDelay", 'w', "How many miliseconds between injections of two instances.", 0, 0, Integer.MAX_VALUE);
+    // Batch size to delay the incoming stream: delay of x milliseconds after each batch
+    public IntOption batchDelayOption = new IntOption("delayBatchSize", 'b', "The delay batch size: delay of x milliseconds after each batch ", 1, 1, Integer.MAX_VALUE);
     
     private PrequentialSourceProcessor preqSource;
 
@@ -125,6 +127,7 @@ public class PrequentialEvaluation implements Task, Configurable {
         preqSource.setStreamSource((InstanceStream) this.streamTrainOption.getValue());
         preqSource.setMaxNumInstances(instanceLimitOption.getValue());
         preqSource.setSourceDelay(sourceDelayOption.getValue());
+        preqSource.setDelayBatchSize(batchDelayOption.getValue());
         builder.addEntranceProcessor(preqSource);
         logger.debug("Sucessfully instantiating PrequentialSourceProcessor");
 
