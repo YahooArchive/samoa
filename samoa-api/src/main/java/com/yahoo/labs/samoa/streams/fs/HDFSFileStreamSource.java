@@ -64,7 +64,6 @@ public class HDFSFileStreamSource implements FileStreamSource {
         		FileStatus[] filesInDir = fs.globStatus(new Path(path.toString(),"*."+ext));
         		for (int i=0; i<filesInDir.length; i++) {
         			if (filesInDir[i].isFile()) {
-        				System.out.println("ADD FILE:"+filesInDir[i].getPath().toString());
         				filePaths.add(filesInDir[i].getPath().toString());
         			}
     			}
