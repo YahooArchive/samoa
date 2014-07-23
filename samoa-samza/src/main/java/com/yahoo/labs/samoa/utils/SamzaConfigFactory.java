@@ -262,44 +262,14 @@ public class SamzaConfigFactory {
 		// Output from entrance task
 		// Since entrancePI should have only 1 output stream
 		// there is no need for checking the batch size, setting different system names
-		// It does not consume messages => does not require checkpointing
+		// The custom consumer (samoa system) does not suuport reading from a specific index
+		// => no need for checkpointing
 		SamzaStream outputStream = (SamzaStream)epi.getOutputStream();
-		StringBuilder allStreams = new StringBuilder();
-		boolean first = true;
-		for (SamzaSystemStream stream:outputStream.getSystemStreams()) {
-			if (!first) allStreams.append(COMMA);
-
-			// Name (system.stream)
-			allStreams.append(stream.getSystem());
-			allStreams.append(COLON);
-			allStreams.append(stream.getStream());
-			allStreams.append(COLON);
-
-			// Type
-			switch(stream.getPartitioningScheme())  {
-			case SHUFFLE:
-				allStreams.append(SamzaConfigFactory.SHUFFLE);
-				break;
-			case GROUP_BY_KEY:
-				allStreams.append(SamzaConfigFactory.KEY);
-				break;
-			case BROADCAST:
-				allStreams.append(SamzaConfigFactory.BROADCAST);
-				break;
-			}
-			allStreams.append(COLON);
-
-			// Parallelism
-			allStreams.append(stream.getParallelism());
-
-		}
-		setValue(map, ENTRANCE_OUTPUT_KEY, allStreams.toString());
-
 		// Set samoa system factory
 		setValue(map, "systems."+SYSTEM_NAME+".samza.factory", SamoaSystemFactory.class.getName());
-		
-		// Set Kafka system
-		setKafkaSystem(map, outputStream.getSystemName(), this.zookeeper, this.kafkaBrokerList, outputStream.getBatchSize());
+		// Set Kafka system (only if there is an output stream)
+		if (outputStream != null)
+			setKafkaSystem(map, outputStream.getSystemName(), this.zookeeper, this.kafkaBrokerList, outputStream.getBatchSize());
 
 		// Processor file
 		setFileName(map, filename);
@@ -323,51 +293,60 @@ public class SamzaConfigFactory {
 		String filename = topology.getTopologyName() + ".dat";
 		Path dirPath = FileSystems.getDefault().getPath("dat");
 		Path filePath= FileSystems.getDefault().getPath(dirPath.toString(), filename);
+		String dstPath = filePath.toString();
 		String resPath;
 		String filesystem;
 		if (this.isLocalMode) {
-			resPath = filePath.toString();
 			filesystem = SystemsUtils.LOCAL_FS;
+			File dir = dirPath.toFile();
+			if (!dir.exists()) 
+				FileUtils.forceMkdir(dir);
 		}
 		else {
-			resPath = SystemsUtils.getHDFSNameNodeUri()+"/samoa/dat/"+filename;
 			filesystem = SystemsUtils.HDFS;
 		}
 
-		File dir = dirPath.toFile();
-		if (!dir.exists()) 
-			FileUtils.forceMkdir(dir);
-
+		// Correct system name for streams
+		this.setSystemNameForStreams(topology.getStreams());
+		
+		// Add all PIs to a collection (map)
 		Map<String,Object> piMap = new HashMap<String,Object>();
 		Set<EntranceProcessingItem> entranceProcessingItems = topology.getEntranceProcessingItems();
 		Set<IProcessingItem> processingItems = topology.getNonEntranceProcessingItems();
-		
-		//
-		this.setSystemNameForStreams(topology.getStreams());
-		
 		for(EntranceProcessingItem epi:entranceProcessingItems) {
 			SamzaEntranceProcessingItem sepi = (SamzaEntranceProcessingItem) epi;
 			piMap.put(sepi.getName(), sepi);
-			maps.add(this.getMapForEntrancePI(sepi, resPath, filesystem));
 		}
 		for(IProcessingItem pi:processingItems) {
 			SamzaProcessingItem spi = (SamzaProcessingItem) pi;
 			piMap.put(spi.getName(), spi);
-			maps.add(this.getMapForPI(spi, resPath, filesystem));
 		}
 
 		// Serialize all PIs
 		boolean serialized = false;
 		if (this.isLocalMode) {
-			serialized = SystemsUtils.serializeObjectToLocalFileSystem(piMap, resPath);
+			serialized = SystemsUtils.serializeObjectToLocalFileSystem(piMap, dstPath);
+			resPath = dstPath;
 		}
 		else {
-			serialized = SystemsUtils.serializeObjectToHDFS(piMap, resPath);
+			resPath = SystemsUtils.serializeObjectToHDFS(piMap, dstPath);
+			serialized = resPath != null;
 		}
 
 		if (!serialized) {
 			throw new Exception("Fail serialize map of PIs to file");
 		}
+
+		// MapConfig for all PIs
+		for(EntranceProcessingItem epi:entranceProcessingItems) {
+			SamzaEntranceProcessingItem sepi = (SamzaEntranceProcessingItem) epi;
+			maps.add(this.getMapForEntrancePI(sepi, resPath, filesystem));
+		}
+		for(IProcessingItem pi:processingItems) {
+			SamzaProcessingItem spi = (SamzaProcessingItem) pi;
+			maps.add(this.getMapForPI(spi, resPath, filesystem));
+		}
+
 		return maps;
 	}
 
@@ -418,7 +397,7 @@ public class SamzaConfigFactory {
 			map.put(JOB_FACTORY_CLASS_KEY, YarnJobFactory.class.getName());
 
 			// yarn
-			map.put(YARN_PACKAGE_KEY,SystemsUtils.getHDFSNameNodeUri()+jarPath);
+			map.put(YARN_PACKAGE_KEY,jarPath);
 			map.put(CONTAINER_MEMORY_KEY, Integer.toString(this.containerMemory));
 			map.put(AM_MEMORY_KEY, Integer.toString(this.amMemory));
 			map.put(CONTAINER_COUNT_KEY, "1"); 

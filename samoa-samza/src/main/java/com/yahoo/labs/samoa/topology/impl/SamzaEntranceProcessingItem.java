@@ -117,14 +117,18 @@ public class SamzaEntranceProcessingItem extends AbstractEntranceProcessingItem
 		this.setName(config.get(SamzaConfigFactory.JOB_NAME_KEY));
 		SerializationProxy wrapper = (SerializationProxy) SystemsUtils.deserializeObjectFromFileAndKey(filesystem, filename, this.getName());
 		this.setOutputStream(wrapper.outputStream);
-		((SamzaStream)this.getOutputStream()).onCreate();
+		SamzaStream output = (SamzaStream)this.getOutputStream();
+		if (output != null) // if output stream exists, set it up
+			output.onCreate();
 	}
 
 	@Override
 	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-		((SamzaStream)this.getOutputStream()).setCollector(collector);
+		SamzaStream output = (SamzaStream)this.getOutputStream();
+		if (output == null) return; // if there is no output stream, do nothing
+		output.setCollector(collector);
 		ContentEvent event = (ContentEvent) envelope.getMessage();
-		this.getOutputStream().put(event);
+		output.put(event);
 	}
 	
 	/*

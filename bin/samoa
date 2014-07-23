@@ -223,6 +223,8 @@ elif [ $PLATFORM = 'SAMZA' ]; then
 
 	KRYO_REGISTER_OPTION='kryo.register.file'
 
+	HDFS_SAMOA_HOME_OPTION='hdfs.samoa.dir'
+
         VALUE=""
         getvalue()
         {
@@ -259,6 +261,9 @@ elif [ $PLATFORM = 'SAMZA' ]; then
 	getvalue "$PI_PER_CONTAINER_OPTION"
         PI_PER_CONTAINER="$VALUE"
 
+	getvalue "$HDFS_SAMOA_HOME_OPTION"
+	HDFS_SAMOA_HOME="$VALUE"
+
         COMPLETE_ARG=""
         COUNTER=0
         for var in "$@"
@@ -274,7 +279,8 @@ elif [ $PLATFORM = 'SAMZA' ]; then
                --yarn_home=$YARN_HOME/conf --zookeeper=$ZOOKEEPER_HOST:$ZOOKEEPER_PORT --kafka=$KAFKA_BROKER_LIST \
                --jar_package=$JAR_PATH --yarn_am_mem=$YARN_AM_MEMORY --yarn_container_mem=$YARN_CONTAINER_MEMORY \
                --kafka_replication_factor=$KAFKA_REPLICATION_FACTOR --checkpoint_frequency=$CHECKPOINT_FREQUENCY \
-               --kryo_register=$BASE_DIR/$KRYO_REGISTER_FILE --pi_per_container=$PI_PER_CONTAINER
+               --kryo_register=$BASE_DIR/$KRYO_REGISTER_FILE --pi_per_container=$PI_PER_CONTAINER \
+	       --samoa_hdfs_dir=$HDFS_SAMOA_HOME
 
 elif [ $PLATFORM = 'THREADS' ]; then
 	

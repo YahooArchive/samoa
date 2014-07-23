@@ -1,3 +1,6 @@
 com.yahoo.labs.samoa.learners.classifiers.trees.AttributeContentEvent:com.yahoo.labs.samoa.learners.classifiers.trees.AttributeContentEvent$AttributeCEFullPrecSerializer
 com.yahoo.labs.samoa.learners.classifiers.trees.ComputeContentEvent:com.yahoo.labs.samoa.learners.classifiers.trees.ComputeContentEvent$ComputeCEFullPrecSerializer
 com.yahoo.labs.samoa.moa.classifiers.core.AttributeSplitSuggestion:com.yahoo.labs.samoa.utils.SerializableSerializer
+
+com.yahoo.labs.samoa.learners.classifiers.rules.common.TargetMean:com.yahoo.labs.samoa.learners.classifiers.rules.common.TargetMean$TargetMeanSerializer
+com.yahoo.labs.samoa.learners.classifiers.rules.common.Perceptron:com.yahoo.labs.samoa.learners.classifiers.rules.common.Perceptron$PerceptronSerializer
