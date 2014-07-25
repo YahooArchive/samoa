@@ -108,13 +108,16 @@ public class LocalFileStreamSource implements FileStreamSource {
 	private class FileExtensionFilter implements FilenameFilter {
 		private String extension;
 		FileExtensionFilter(String ext) {
-			extension = "."+ext;
+			extension = ext;
 		}
 		
 		@Override
 		public boolean accept(File dir, String name) {
 			File f = new File(dir,name);
-	        return f.isFile() && name.toLowerCase().endsWith(extension);
+			if (extension == null)
+				return f.isFile();
+			else
+				return f.isFile() && name.toLowerCase().endsWith("."+extension);
 	    }
 	}
 }
