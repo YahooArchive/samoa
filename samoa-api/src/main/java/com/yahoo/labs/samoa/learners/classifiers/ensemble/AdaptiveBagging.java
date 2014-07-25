@@ -24,7 +24,7 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
-import java.util.HashSet;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -148,8 +148,7 @@ public class AdaptiveBagging implements Learner , Configurable {
 	 */
 	@Override
 	public Set<Stream> getResultStreams() {
-		Set<Stream> streams = new HashSet<Stream>();
-		streams.add(this.resultStream);
+		Set<Stream> streams = ImmutableSet.of(this.resultStream);
 		return streams;
 	}
 }

@@ -20,7 +20,7 @@ package com.yahoo.labs.samoa.learners.classifiers.rules;
  * #L%
  */
 
-import java.util.HashSet;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 import com.github.javacliparser.ClassOption;
@@ -241,9 +241,7 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 	
 	@Override
 	public Set<Stream> getResultStreams() {
-		Set<Stream> streams = new HashSet<Stream>();
-		streams.add(this.modelResultStream);
-		streams.add(this.rootResultStream);
+		Set<Stream> streams = ImmutableSet.of(this.modelResultStream,this.rootResultStream);
 		return streams;
 	}
 

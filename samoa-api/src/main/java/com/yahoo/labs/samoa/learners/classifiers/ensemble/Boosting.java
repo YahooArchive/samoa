@@ -24,7 +24,7 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
-import java.util.HashSet;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 import com.github.javacliparser.ClassOption;
@@ -143,8 +143,7 @@ public class Boosting implements Learner , Configurable {
      */
     @Override
     public Set<Stream> getResultStreams() {
-    	Set<Stream> streams = new HashSet<Stream>();
-    	streams.add(this.resultStream);
-    	return streams;
+    	Set<Stream> streams = ImmutableSet.of(this.resultStream);
+		return streams;
     }
 }
