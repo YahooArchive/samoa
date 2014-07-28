@@ -53,7 +53,11 @@ public class HDFSFileStreamSource implements FileStreamSource {
 	}
 	
 	public void init(String path, String ext) {
-		this.setupConfig();
+		this.init(this.getDefaultConfig(), path, ext);
+	}
+	
+	public void init(Configuration config, String path, String ext) {
+		this.config = config;
 		this.filePaths = new ArrayList<String>();
 		Path hdfsPath = new Path(path);
         FileSystem fs;
@@ -64,6 +68,9 @@ public class HDFSFileStreamSource implements FileStreamSource {
         		Path filterPath = hdfsPath;
         		if (ext != null) {
         			filterPath = new Path(path.toString(),"*."+ext);
+        		}
+        		else {
+        			filterPath = new Path(path.toString(),"*");
         		}
         		FileStatus[] filesInDir = fs.globStatus(filterPath);
         		for (int i=0; i<filesInDir.length; i++) {
@@ -83,15 +90,16 @@ public class HDFSFileStreamSource implements FileStreamSource {
 		this.currentIndex = -1;
 	}
 	
-	private void setupConfig() {
+	private Configuration getDefaultConfig() {
 		String hadoopHome = System.getenv("HADOOP_HOME");
-        config = new Configuration();
+        Configuration conf = new Configuration();
         if (hadoopHome != null) {
         	java.nio.file.Path coreSitePath = FileSystems.getDefault().getPath(hadoopHome, "etc/hadoop/core-site.xml");
         	java.nio.file.Path hdfsSitePath = FileSystems.getDefault().getPath(hadoopHome, "etc/hadoop/hdfs-site.xml");
-            config.addResource(new Path(coreSitePath.toAbsolutePath().toString()));
-            config.addResource(new Path(hdfsSitePath.toAbsolutePath().toString()));
+            conf.addResource(new Path(coreSitePath.toAbsolutePath().toString()));
+            conf.addResource(new Path(hdfsSitePath.toAbsolutePath().toString()));
         }
+        return conf;
 	}
 	
 	public void reset() throws IOException {
@@ -128,7 +136,15 @@ public class HDFSFileStreamSource implements FileStreamSource {
 		return fileStream;
 	}
 	
-	public boolean isAtLastFile() {
-		return (this.currentIndex >= (this.filePaths.size()-1));
+	protected int getFilePathListSize() {
+		if (filePaths != null)
+			return filePaths.size();
+		return 0;
+	}
+	
+	protected String getFilePathAt(int index) {
+		if (filePaths != null && filePaths.size() > index)
+			return filePaths.get(index);
+		return null;
 	}
 }

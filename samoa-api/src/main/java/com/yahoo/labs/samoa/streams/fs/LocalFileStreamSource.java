@@ -101,8 +101,16 @@ public class LocalFileStreamSource implements FileStreamSource {
 		return fileStream;
 	}
 	
-	public boolean isAtLastFile() {
-		return (this.currentIndex >= (this.filePaths.size()-1));
+	protected int getFilePathListSize() {
+		if (filePaths != null)
+			return filePaths.size();
+		return 0;
+	}
+	
+	protected String getFilePathAt(int index) {
+		if (filePaths != null && filePaths.size() > index)
+			return filePaths.get(index);
+		return null;
 	}
 	
 	private class FileExtensionFilter implements FilenameFilter {

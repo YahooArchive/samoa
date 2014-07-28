@@ -30,10 +30,18 @@ import java.io.Serializable;
  */
 public interface FileStreamSource extends Serializable {
 
+	/**
+	 * Init the source with file/directory path and file extension
+	 * @param path
+	 *            File or directory path
+	 * @param ext
+	 *            File extension to be used to filter files in a directory. 
+	 *            If null, all files in the directory are accepted.
+	 */
 	public void init(String path, String ext);
 	
 	/**
-	 * Reset or init the source
+	 * Reset the source
 	 */
 	public void reset() throws IOException;
 	
@@ -56,12 +64,4 @@ public interface FileStreamSource extends Serializable {
 	 * @return InputStream for current file in the list
 	 */
 	public InputStream getCurrentInputStream();
-	
-	/**
-	 * Whether we are at the last file in the list
-	 * 
-	 * @return true if we are at the last file in the 
-	 * list and false otherwise.
-	 */
-	public boolean isAtLastFile();
 }
