@@ -55,6 +55,14 @@ public class GaussianNumericAttributeClassObserver extends AbstractOptionHandler
 
     protected AutoExpandVector<GaussianEstimator> attValDistPerClass = new AutoExpandVector<GaussianEstimator>();
 
+    /**
+     * @param classVal
+     * @return The requested Estimator if it exists, or null if not present.
+     */
+    public GaussianEstimator getEstimator(int classVal) {
+    	return this.attValDistPerClass.get(classVal);
+    }
+    
     public IntOption numBinsOption = new IntOption("numBins", 'n',
             "The number of bins.", 10, 1, Integer.MAX_VALUE);
 
