@@ -130,7 +130,7 @@ public class NaiveBayes implements LocalLearner {
 				// Get the estimator
 				GaussianEstimator estimator = obs.getEstimator(classIndex);
 				// Get mass for the attribute
-				Double attrMass = estimator.getTotalWeightObserved();
+				Double attrMass = estimator == null? 0 : estimator.getTotalWeightObserved();
 				// Compute the mass for zero attributes we must have seen
 				Double zeroMass = classMass - attrMass;
 				// Create a new empty Estimator
@@ -139,7 +139,8 @@ public class NaiveBayes implements LocalLearner {
 				zeroEstimator.addObservation(0, zeroMass);
 				// Merge the existing estimator for the seen attribute for this class,
 				// with the one for the previously ignored zero observations
-				zeroEstimator.addObservations(estimator);				
+				if (estimator != null)
+					zeroEstimator.addObservations(estimator);				
 				// Directly invoke probabilityDensity on the new estimator to get the value
 				double value = zeroEstimator.probabilityDensity(inst.value(attributeID));
 				// Back to adding to NB membership scores (in log space)
