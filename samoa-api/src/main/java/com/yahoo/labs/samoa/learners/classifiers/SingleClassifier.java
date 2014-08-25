@@ -24,6 +24,9 @@ package com.yahoo.labs.samoa.learners.classifiers;
  * License
  */
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.yahoo.labs.samoa.core.Processor;
@@ -45,22 +48,22 @@ public final class SingleClassifier implements Learner, AdaptiveLearner, Configu
 	private LocalLearnerProcessor learnerP;
 		
 	private Stream resultStream;
-	
+
 	private Instances dataset;
 
 	public ClassOption learnerOption = new ClassOption("learner", 'l',
 			"Classifier to train.", LocalLearner.class, SimpleClassifierAdapter.class.getName());
 	
 	private TopologyBuilder builder;
-        
-        private int parallelism;
+
+	private int parallelism;
 
 
 	@Override
 	public void init(TopologyBuilder builder, Instances dataset, int parallelism){
 		this.builder = builder;
 		this.dataset = dataset;
-                this.parallelism = parallelism;
+		this.parallelism = parallelism;
 		this.setLayout();
 	}
 
@@ -73,34 +76,35 @@ public final class SingleClassifier implements Learner, AdaptiveLearner, Configu
 		learnerP.setLearner(learner);
                 
 		//learnerPI = this.builder.createPi(learnerP, 1);
-                this.builder.addProcessor(learnerP, parallelism);
+		this.builder.addProcessor(learnerP, parallelism);
 		resultStream = this.builder.createStream(learnerP);
-		
+
 		learnerP.setOutputStream(resultStream);
 	}
 
-        @Override
+	@Override
 	public Processor getInputProcessor() {
 		return learnerP;
 	}
-		
+
 	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
+	 * @see samoa.learners.Learner#getResultStreams()
 	 */
 	@Override
-	public Stream getResultStream() {
-		return resultStream;
+	public Set<Stream> getResultStreams() {
+		Set<Stream> streams = ImmutableSet.of(this.resultStream);
+		return streams;
 	}
 
-        protected ChangeDetector changeDetector;    
+	protected ChangeDetector changeDetector;    
 
-        @Override
-        public ChangeDetector getChangeDetector() {
-            return this.changeDetector;
-        }
+	@Override
+	public ChangeDetector getChangeDetector() {
+		return this.changeDetector;
+	}
 
-        @Override
-        public void setChangeDetector(ChangeDetector cd) {
-            this.changeDetector = cd;
-        }
+	@Override
+	public void setChangeDetector(ChangeDetector cd) {
+		this.changeDetector = cd;
+	}
 }

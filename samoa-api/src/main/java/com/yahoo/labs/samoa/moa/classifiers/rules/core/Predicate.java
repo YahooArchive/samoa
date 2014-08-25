@@ -1,10 +1,10 @@
-package com.yahoo.labs.samoa.evaluation;
+package com.yahoo.labs.samoa.moa.classifiers.rules.core;
 
 /*
  * #%L
  * SAMOA
  * %%
- * Copyright (C) 2013 Yahoo! Inc.
+ * Copyright (C) 2013 - 2014 Yahoo! Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,5 +20,14 @@ package com.yahoo.labs.samoa.evaluation;
  * #L%
  */
 
-public interface ClassificationPerformanceEvaluator extends PerformanceEvaluator {
+import com.yahoo.labs.samoa.instances.Instance;
+
+/**
+ * Interface for a predicate (a feature) in rules.
+ *
+ */
+public interface Predicate {
+        
+         public boolean evaluate(Instance instance);
+         
 }

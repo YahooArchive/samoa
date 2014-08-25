@@ -24,6 +24,9 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +112,9 @@ public class AdaptiveBagging implements Learner , Configurable {
 		resultStream = this.builder.createStream(predictionCombinerP);
 		predictionCombinerP.setOutputStream(resultStream);
 
- 		this.builder.connectInputKeyStream(classifier.getResultStream(), predictionCombinerP);
+		for (Stream subResultStream:classifier.getResultStreams()) {
+			this.builder.connectInputKeyStream(subResultStream, predictionCombinerP);
+		}
 		
 		testingStream = this.builder.createStream(distributorP);
                 this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
@@ -139,10 +144,11 @@ public class AdaptiveBagging implements Learner , Configurable {
 	}
         
 	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
+	 * @see samoa.learners.Learner#getResultStreams()
 	 */
 	@Override
-	public Stream getResultStream() {
-		return this.resultStream;
+	public Set<Stream> getResultStreams() {
+		Set<Stream> streams = ImmutableSet.of(this.resultStream);
+		return streams;
 	}
 }

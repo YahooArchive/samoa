@@ -24,11 +24,13 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
@@ -94,7 +96,9 @@ public class Bagging implements Learner , Configurable {
 		resultStream = this.builder.createStream(predictionCombinerP);
 		predictionCombinerP.setOutputStream(resultStream);
 
- 		this.builder.connectInputKeyStream(classifier.getResultStream(), predictionCombinerP);
+		for (Stream subResultStream:classifier.getResultStreams()) {
+			this.builder.connectInputKeyStream(subResultStream, predictionCombinerP);
+		}
 		
 		testingStream = this.builder.createStream(distributorP);
                 this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
@@ -123,11 +127,12 @@ public class Bagging implements Learner , Configurable {
 		return distributorP;
 	}
         
-	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
-	 */
-	@Override
-	public Stream getResultStream() {
-		return this.resultStream;
-	}
+    /* (non-Javadoc)
+     * @see samoa.learners.Learner#getResultStreams()
+     */
+    @Override
+    public Set<Stream> getResultStreams() {
+    	Set<Stream> streams = ImmutableSet.of(this.resultStream);
+		return streams;
+    }
 }

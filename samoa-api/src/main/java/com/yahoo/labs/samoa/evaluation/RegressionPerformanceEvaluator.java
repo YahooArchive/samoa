@@ -20,5 +20,6 @@ package com.yahoo.labs.samoa.evaluation;
  * #L%
  */
 
-public interface ClassificationPerformanceEvaluator extends PerformanceEvaluator {
+public interface RegressionPerformanceEvaluator extends PerformanceEvaluator {
+
 }

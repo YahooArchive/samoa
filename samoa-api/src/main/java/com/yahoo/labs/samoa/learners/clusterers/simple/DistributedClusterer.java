@@ -24,6 +24,9 @@ package com.yahoo.labs.samoa.learners.clusterers.simple;
  * License
  */
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.IntOption;
@@ -108,7 +111,8 @@ public final class DistributedClusterer implements Learner, Configurable {
     }
 
     @Override
-    public Stream getResultStream() {
-        return resultStream;
+    public Set<Stream> getResultStreams() {
+    	Set<Stream> streams = ImmutableSet.of(this.resultStream);
+		return streams;
     }
 }

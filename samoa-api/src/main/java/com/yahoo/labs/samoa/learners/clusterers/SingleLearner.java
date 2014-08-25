@@ -24,6 +24,8 @@ package com.yahoo.labs.samoa.learners.clusterers;
  * License
  */
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
@@ -32,6 +34,7 @@ import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.Learner;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
+
 /**
  * 
  * Learner that contain a single learner.
@@ -83,11 +86,12 @@ public final class SingleLearner implements Learner, Configurable {
 		return learnerP;
 	}
 		
-	/* (non-Javadoc)
-	 * @see samoa.classifiers.Classifier#getResultStream()
-	 */
-	@Override
-	public Stream getResultStream() {
-		return resultStream;
-	}
+    /* (non-Javadoc)
+     * @see samoa.learners.Learner#getResultStreams()
+     */
+    @Override
+    public Set<Stream> getResultStreams() {
+    	Set<Stream> streams = ImmutableSet.of(this.resultStream);
+		return streams;
+    }
 }
