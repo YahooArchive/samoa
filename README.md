@@ -69,9 +69,9 @@ The deployable jar for SAMOA will be in `target/SAMOA-Local-0.0.1-SNAPSHOT.jar`.
 The documentation is intended to give an introduction on how to use SAMOA in the various possible ways. 
 As a user you can use it to develop new algorithms and test different Distributed Stream Processing Engines.
 
-[Wiki Documentation](../../wiki)
+[Wiki Documentation](http://github.com/yahoo/samoa/wiki)
 
-[Javadoc](docs/api)
+[Javadoc](http://yahoo.github.io/samoa/docs/api)
 
 ## Slides
 
