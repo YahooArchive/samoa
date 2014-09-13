@@ -78,11 +78,9 @@ As a user you can use it to develop new algorithms and test different Stream Pro
 G. De Francisci Morales [SAMOA: A Platform for Mining Big Data Streams](http://melmeric.files.wordpress.com/2013/04/samoa-a-platform-for-mining-big-data-streams.pdf)
 Keynote Talk at [RAMSS ’13](http://www.ramss.ws/2013/program/): 2nd International Workshop on Real-Time Analysis and Mining of Social Streams WWW, Rio De Janeiro, 2013.
 
-## Javadoc API
+## Developer's documentation
 
-[api](http://yahoo.github.io/samoa/docs/api)
-
-## SAMOA Developer's Guide
+[Javadoc](http://yahoo.github.io/samoa/docs/api)
 
 <p><a href="http://yahoo.github.io/samoa/SAMOA-Developers-Guide-0-0-1.pdf"><img style="max-width:95%;border:3px solid black;" src="http://yahoo.github.io/samoa/Manual.png" alt="SAMOA Developer's guide" height="250"> </a></p>
 
