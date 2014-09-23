@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-Master (unreleased)
+Release v0.2.0
   NaiveBayes classitication algorithm.
   AMRules regression algorithm.
   Samza execution engine.
