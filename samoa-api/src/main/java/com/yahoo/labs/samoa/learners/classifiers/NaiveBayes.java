@@ -30,7 +30,6 @@ import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.AttributeClassObserver;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.GaussianNumericAttributeClassObserver;
-import com.yahoo.labs.samoa.moa.core.GaussianEstimator;
 
 /**
  * Implementation of a non-distributed Naive Bayes classifier.
@@ -55,7 +54,7 @@ public class NaiveBayes implements LocalLearner {
 	/**
 	 * The actual model.
 	 */
-	protected Map<Integer, GaussianNumericAttributeClassObserver> attributeObservers;
+	protected Map<Integer, AttributeClassObserver> attributeObservers;
 
 	/**
 	 * Class statistics
@@ -119,32 +118,23 @@ public class NaiveBayes implements LocalLearner {
 		for (int classIndex = 0; classIndex < votes.length; classIndex++) {
 			// Get the prior for this class
 			votes[classIndex] = Math.log(getPrior(classIndex));
-			// Get mass for the class
-			Double classMass = this.classInstances.get(classIndex);
-			for (Integer attributeID : attributeObservers.keySet()) { 
+			// Iterate over all the attributes of the instance
+			for (int attributePosition = 0; attributePosition < inst
+					.numAttributes(); attributePosition++) {
+				// Get the attribute index - Dense -> 1:1, Sparse is remapped
+				int attributeID = inst.index(attributePosition);
 				// Skip class attribute
 				if (attributeID == inst.classIndex())
 					continue;
 				// Get the observer for the given attribute
-				GaussianNumericAttributeClassObserver obs = attributeObservers.get(attributeID);
-				// Get the estimator
-				GaussianEstimator estimator = obs.getEstimator(classIndex);
-				// Get mass for the attribute
-				Double attrMass = estimator == null? 0 : estimator.getTotalWeightObserved();
-				// Compute the mass for zero attributes we must have seen
-				Double zeroMass = classMass - attrMass;
-				// Create a new empty Estimator
-				GaussianEstimator zeroEstimator = new GaussianEstimator();
-				// Add a zero value observation, but with the mass of all untracked zeros before
-				zeroEstimator.addObservation(0, zeroMass);
-				// Merge the existing estimator for the seen attribute for this class,
-				// with the one for the previously ignored zero observations
-				if (estimator != null)
-					zeroEstimator.addObservations(estimator);				
-				// Directly invoke probabilityDensity on the new estimator to get the value
-				double value = zeroEstimator.probabilityDensity(inst.value(attributeID));
-				// Back to adding to NB membership scores (in log space)
-				votes[classIndex] += Math.log(value);
+				AttributeClassObserver obs = attributeObservers
+						.get(attributeID);
+				// Sanity check - observer nor instance is missing
+				if ((obs != null) && !inst.isMissingSparse(attributePosition)) {
+					double value = obs.probabilityOfAttributeValueGivenClass(
+							inst.valueSparse(attributePosition), classIndex);
+					votes[classIndex] += Math.log(value);
+				}
 			}
 		}
 		return votes;
@@ -178,7 +168,7 @@ public class NaiveBayes implements LocalLearner {
 		this.instancesSeen = 0L;
 		this.classInstances = new HashMap<Integer, Double>();
 		// Init the attribute observers
-		this.attributeObservers = new HashMap<Integer, GaussianNumericAttributeClassObserver>();
+		this.attributeObservers = new HashMap<Integer, AttributeClassObserver>();
 	}
 
 	/**
@@ -204,7 +194,7 @@ public class NaiveBayes implements LocalLearner {
 			if (attributeID == inst.classIndex())
 				continue;
 			// Get the attribute observer for the current attribute
-			GaussianNumericAttributeClassObserver obs = this.attributeObservers
+			AttributeClassObserver obs = this.attributeObservers
 					.get(attributeID);
 			// Lazy init of observers, if null, instantiate a new one
 			if (obs == null) {
