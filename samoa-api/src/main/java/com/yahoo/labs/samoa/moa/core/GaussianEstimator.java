@@ -61,7 +61,7 @@ public class GaussianEstimator extends AbstractMOAObject {
         // Brian Babcock, Mayur Datar, Rajeev Motwani, Liadan O'Callaghan:
         // Maintaining variance and k-medians over data stream windows. PODS 2003: 234-243
         //
-        if ((this.weightSum > 0.0) && (obs.weightSum > 0.0)) {
+        if ((this.weightSum >= 0.0) && (obs.weightSum > 0.0)) {
             double oldMean = this.mean;
             this.mean = (this.mean * (this.weightSum / (this.weightSum + obs.weightSum)))
                     + (obs.mean * (obs.weightSum / (this.weightSum + obs.weightSum)));
