@@ -2,11 +2,11 @@ language: java
 
 install:
 - git clone https://github.com/apache/incubator-s4.git
-- mkdir incubator-s4/lib
-- cp bin/s4-build/gradlew incubator-s4/
-- cp bin/s4-build/gradle-wrapper-1.4.jar incubator-s4/lib/
-- cp bin/s4-build/gradle-wrapper-1.4.properties incubator-s4/lib/
 - cd incubator-s4
+- git checkout tags/0.6.0-Final
+- cp ../bin/s4-build/gradlew .
+- cp ../bin/s4-build/gradle-wrapper-1.4.jar ./lib/
+- cp ../bin/s4-build/gradle-wrapper-1.4.properties ./lib/
 - ./gradlew install
 - ./gradlew s4-tools::installApp
 - cd ..
