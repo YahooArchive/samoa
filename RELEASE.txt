@@ -21,6 +21,7 @@ Release v0.2.0
   AMRules regression algorithm.
   Samza execution engine.
   Multithread execution engine.
+  HDFS stream source.
 
 Release v0.1.0
   Initial release.
