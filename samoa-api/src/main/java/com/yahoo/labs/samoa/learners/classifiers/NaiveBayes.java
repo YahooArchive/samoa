@@ -26,9 +26,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.labs.samoa.instances.Attribute;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.AttributeClassObserver;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.GaussianNumericAttributeClassObserver;
 import com.yahoo.labs.samoa.moa.core.GaussianEstimator;
 
@@ -42,6 +42,8 @@ import com.yahoo.labs.samoa.moa.core.GaussianEstimator;
  */
 public class NaiveBayes implements LocalLearner {
 
+	private double additive_smoothing_factor = 1e-20;
+	
 	/**
 	 * serialVersionUID for serialization
 	 */
@@ -62,6 +64,11 @@ public class NaiveBayes implements LocalLearner {
 	 */
 	protected Map<Integer, Double> classInstances;
 
+	/**
+	 * Class zero-prototypes.
+	 */
+	protected Map<Integer, Double> classPrototypes;
+	
 	/**
 	 * Retrieve the number of classes currently known to this local model
 	 * 
@@ -118,38 +125,51 @@ public class NaiveBayes implements LocalLearner {
 		// Over all classes
 		for (int classIndex = 0; classIndex < votes.length; classIndex++) {
 			// Get the prior for this class
-			votes[classIndex] = Math.log(getPrior(classIndex));
-			// Get mass for the class
-			Double classMass = this.classInstances.get(classIndex);
-			for (Integer attributeID : attributeObservers.keySet()) { 
+			votes[classIndex] = Math.log(getPrior(classIndex));		
+			// Iterate over the instance attributes
+			for (int index = 0; index < inst.numAttributes(); index++) {
+				int attributeID = inst.index(index);
 				// Skip class attribute
 				if (attributeID == inst.classIndex())
 					continue;
+				Double value = inst.value(attributeID);
 				// Get the observer for the given attribute
 				GaussianNumericAttributeClassObserver obs = attributeObservers.get(attributeID);
-				// Get the estimator
-				GaussianEstimator estimator = obs.getEstimator(classIndex);
-				// Get mass for the attribute
-				Double attrMass = estimator == null? 0 : estimator.getTotalWeightObserved();
-				// Compute the mass for zero attributes we must have seen
-				Double zeroMass = classMass - attrMass;
-				// Create a new empty Estimator
-				GaussianEstimator zeroEstimator = new GaussianEstimator();
-				// Add a zero value observation, but with the mass of all untracked zeros before
-				zeroEstimator.addObservation(0, zeroMass);
-				// Merge the existing estimator for the seen attribute for this class,
-				// with the one for the previously ignored zero observations
-				if (estimator != null)
-					zeroEstimator.addObservations(estimator);				
-				// Directly invoke probabilityDensity on the new estimator to get the value
-				double value = zeroEstimator.probabilityDensity(inst.value(attributeID));
-				// Back to adding to NB membership scores (in log space)
-				votes[classIndex] += Math.log(value);
+				// Init the estimator to null by default
+				GaussianEstimator estimator = null;
+				if (obs != null && obs.getEstimator(classIndex) != null) {
+					// Get the estimator
+					estimator = obs.getEstimator(classIndex);
+				}
+				double valueNonZero;
+				double valueZero;
+				// The null case should be handled by smoothing!
+				if (estimator != null) {
+					// Get the score for a NON-ZERO attribute value
+					valueNonZero = estimator.probabilityDensity(value);
+					// Get the score for a ZERO attribute value
+					valueZero = estimator.probabilityDensity(0);
+					if (valueZero == 0) {
+						valueZero = additive_smoothing_factor;
+					}
+				}
+				// We don't have an estimator
+				else {
+					// Assign a very small probability that we do see this value
+					valueNonZero = additive_smoothing_factor;
+					// no estimator implies we have seen only zeros
+					valueZero = 1;
+				}
+				votes[classIndex] += Math.log(valueNonZero); //  - Math.log(valueZero);
 			}
+			// Check for null in the case of prequential evaluation
+			if (this.classPrototypes.get(classIndex) != null)
+				// Add the prototype for the class, already in log space
+				votes[classIndex] += Math.log(this.classPrototypes.get(classIndex));
 		}
 		return votes;
 	}
-
+		
 	/**
 	 * Compute the prior for the given classIndex.
 	 * 
@@ -177,6 +197,7 @@ public class NaiveBayes implements LocalLearner {
 		// Reset priors
 		this.instancesSeen = 0L;
 		this.classInstances = new HashMap<Integer, Double>();
+		this.classPrototypes = new HashMap<Integer, Double>();
 		// Init the attribute observers
 		this.attributeObservers = new HashMap<Integer, GaussianNumericAttributeClassObserver>();
 	}
@@ -195,6 +216,12 @@ public class NaiveBayes implements LocalLearner {
 		if (weight == null)
 			weight = 0.;
 		this.classInstances.put(classIndex, weight + inst.weight());
+		
+		// Get the class prototype
+		Double classPrototype = this.classPrototypes.get(classIndex);
+		if (classPrototype == null)
+			classPrototype = 1.;
+		
 		// Iterate over the attributes of the given instance
 		for (int attributePosition = 0; attributePosition < inst
 				.numAttributes(); attributePosition++) {
@@ -213,11 +240,29 @@ public class NaiveBayes implements LocalLearner {
 				obs = new GaussianNumericAttributeClassObserver();
 				this.attributeObservers.put(attributeID, obs);
 			}
+			
+			// Get the probability density function under the current model
+			GaussianEstimator obs_estimator = obs.getEstimator(classIndex);
+			if (obs_estimator != null) {
+				// Fetch the probability that the feature value is zero
+				double probDens_zero_current = obs_estimator.probabilityDensity(0);
+				classPrototype -= probDens_zero_current;
+			}
+			
 			// FIXME: Sanity check on data values, for now just learn
 			// Learn attribute value for given class
 			obs.observeAttributeClass(inst.valueSparse(attributePosition),
 					(int) inst.classValue(), inst.weight());
+			
+			// Update obs_estimator to fetch the pdf from the updated model
+			obs_estimator = obs.getEstimator(classIndex);
+			// Fetch the probability that the feature value is zero
+			double probDens_zero_updated = obs_estimator.probabilityDensity(0);
+			// Update the class prototype
+			classPrototype += probDens_zero_updated;
 		}
+		// Store the class prototype
+		this.classPrototypes.put(classIndex, classPrototype);
 		// Count another training instance
 		this.instancesSeen++;
 	}
