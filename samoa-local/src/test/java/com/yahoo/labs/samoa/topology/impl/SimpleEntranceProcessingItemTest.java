@@ -128,13 +128,9 @@ public class SimpleEntranceProcessingItemTest {
 					entranceProcessor.nextEvent(); result=event;
 					outputStream.put(event);
 				}
-				
-				entranceProcessor.isFinished();
-				result=true; times=1;
-				
-				// Send last event
-				entranceProcessor.nextEvent(); result=event;
-				outputStream.put(event);
+
+				entranceProcessor.isFinished(); result=true; times=1;
+				entranceProcessor.hasNext(); times=0;
 			}
 		};
 		entrancePi.startSendingEvents();

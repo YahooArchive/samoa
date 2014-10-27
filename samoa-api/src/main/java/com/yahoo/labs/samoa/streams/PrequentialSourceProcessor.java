@@ -36,7 +36,6 @@ import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
-import com.yahoo.labs.samoa.topology.Stream;
 
 /**
  * Prequential Source Processor is the processor for Prequential Evaluation Task.
@@ -68,6 +67,7 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
 	private int readyEventIndex = 1; // No waiting for the first event
 	private int delay = 0;
 	private int batchSize = 1;
+    private boolean finished = false;
 
     @Override
     public boolean process(ContentEvent event) {
@@ -78,7 +78,7 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
     
     @Override
     public boolean isFinished() {
-    	return (!streamSource.hasMoreInstances() || (numberInstances >= 0 && numInstanceSent >= numberInstances));
+    	return finished;
     }
 
     @Override
@@ -87,12 +87,18 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
     	return (delay <= 0 || numInstanceSent < readyEventIndex);
     }
 
+    private boolean isReachedEndOfStream() {
+        return (!streamSource.hasMoreInstances() || (numberInstances >= 0 && numInstanceSent >= numberInstances));
+    }
+
     @Override
     public ContentEvent nextEvent() {
         InstanceContentEvent contentEvent = null;
-        if (isFinished()) {
+        if (isReachedEndOfStream()) {
         	contentEvent = new InstanceContentEvent(-1, firstInstance, false, true);
             contentEvent.setLast(true);
+            // set finished status _after_ tagging last event
+            finished = true;
         }
         else if (hasNext()) {
             numInstanceSent++;
