@@ -295,6 +295,13 @@ final class ModelAggregatorProcessor implements Processor {
             if (this.numBatches == 1 || this.numBatches > 4){
                 this.processInstances(this.contentEventList.remove(0));
             }
+
+            if (instContentEvent.isLastEvent()) {
+                // drain remaining instances
+                while (!contentEventList.isEmpty()) {
+                    processInstances(contentEventList.remove(0));
+                }
+            }
                 
         }
         
