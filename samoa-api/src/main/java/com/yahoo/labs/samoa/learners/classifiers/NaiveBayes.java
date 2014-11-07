@@ -26,7 +26,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yahoo.labs.samoa.instances.Attribute;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.moa.classifiers.core.attributeclassobservers.GaussianNumericAttributeClassObserver;
@@ -41,7 +40,10 @@ import com.yahoo.labs.samoa.moa.core.GaussianEstimator;
  * @author Olivier Van Laere (vanlaere yahoo-inc dot com)
  */
 public class NaiveBayes implements LocalLearner {
-
+	
+	/**
+	 * Default smoothing factor. For now fixed to 1E-20.
+	 */
 	private double additive_smoothing_factor = 1e-20;
 	
 	/**
