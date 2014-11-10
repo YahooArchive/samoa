@@ -129,6 +129,7 @@
         <samza.version>0.7.0</samza.version>
         <slf4j-log4j12.version>1.7.2</slf4j-log4j12.version>
         <slf4j-simple.version>1.7.5</slf4j-simple.version>
+        <maven-surefire-plugin.version>2.18</maven-surefire-plugin.version>
         <storm.version>0.8.2</storm.version>
         <!-- storm 0.8.2 loads zookeeper classes with hardcoded names from 3.3 version-->
         <zookeeper.storm.version>3.3.6</zookeeper.storm.version>
