@@ -20,8 +20,8 @@
 package com.yahoo.labs.samoa.topology.impl;
 
 import static org.junit.Assert.*;
-import mockit.Expectations;
 import mockit.Mocked;
+import mockit.StrictExpectations;
 import mockit.Tested;
 import mockit.Verifications;
 
@@ -81,7 +81,7 @@ public class ThreadsEntranceProcessingItemTest {
 	@Test
 	public void testStartSendingEvents() {
 		entrancePi.setOutputStream(outputStream);
-		new Expectations() {
+		new StrictExpectations() {
 			{
 				for (int i=0; i<1; i++) {
 					entranceProcessor.isFinished(); result=false;
