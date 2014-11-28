@@ -13,6 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License. See accompanying LICENSE file.
 -->
+
+[![Build Status](https://travis-ci.org/yahoo/samoa.svg?branch=master)](https://travis-ci.org/yahoo/samoa)
+
 SAMOA: Scalable Advanced Massive Online Analysis.
 =================
 SAMOA is a platform for mining on big data streams.
