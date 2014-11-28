@@ -157,62 +157,62 @@ public class TestParams {
         private String taskClassName;
         private int inputDelayMs =0;
 
-        public Builder setTaskClassName(String taskClassName) {
+        public Builder taskClassName(String taskClassName) {
             this.taskClassName = taskClassName;
             return this;
         }
 
-        public Builder setInputInstances(long inputInstances) {
+        public Builder inputInstances(long inputInstances) {
             this.inputInstances = inputInstances;
             return this;
         }
 
-        public Builder setSamplingSize(long samplingSize) {
+        public Builder samplingSize(long samplingSize) {
             this.samplingSize = samplingSize;
             return this;
         }
 
-        public Builder setEvaluationInstances(long evaluationInstances) {
+        public Builder evaluationInstances(long evaluationInstances) {
             this.evaluationInstances = evaluationInstances;
             return this;
         }
 
-        public Builder setClassifiedInstances(long classifiedInstances) {
+        public Builder classifiedInstances(long classifiedInstances) {
             this.classifiedInstances = classifiedInstances;
             return this;
         }
 
-        public Builder setClassificationsCorrect(float classificationsCorrect) {
+        public Builder classificationsCorrect(float classificationsCorrect) {
             this.classificationsCorrect = classificationsCorrect;
             return this;
         }
 
-        public Builder setKappaStat(float kappaStat) {
+        public Builder kappaStat(float kappaStat) {
             this.kappaStat = kappaStat;
             return this;
         }
 
-        public Builder setKappaTempStat(float kappaTempStat) {
+        public Builder kappaTempStat(float kappaTempStat) {
             this.kappaTempStat = kappaTempStat;
             return this;
         }
 
-        public Builder setCLIStringTemplate(String cliStringTemplate) {
+        public Builder cliStringTemplate(String cliStringTemplate) {
             this.cliStringTemplate = cliStringTemplate;
             return this;
         }
 
-        public Builder setResultFilePollTimeout(int pollTimeoutSeconds) {
+        public Builder resultFilePollTimeout(int pollTimeoutSeconds) {
             this.pollTimeoutSeconds = pollTimeoutSeconds;
             return this;
         }
 
-        public Builder setInputDelayMs(int inputDelayMs) {
+        public Builder inputDelayMs(int inputDelayMs) {
             this.inputDelayMs = inputDelayMs;
             return this;
         }
 
-        public Builder setPrePollWait(int prePollWaitSeconds) {
+        public Builder prePollWait(int prePollWaitSeconds) {
             this.prePollWaitSeconds = prePollWaitSeconds;
             return this;
         }

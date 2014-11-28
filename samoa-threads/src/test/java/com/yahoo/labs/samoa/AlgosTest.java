@@ -20,12 +20,7 @@ package com.yahoo.labs.samoa;
  * #L%
  */
 
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.impl.SimpleLoggerFactory;
-import org.slf4j.impl.StaticLoggerBinder;
-import org.slf4j.spi.LoggerFactoryBinder;
 
 public class AlgosTest {
 
@@ -33,17 +28,17 @@ public class AlgosTest {
     public void testVHTWithThreads() throws Exception {
 
         TestParams vhtConfig = new TestParams.Builder()
-                .setInputInstances(200_000)
-                .setSamplingSize(20_000)
-                .setEvaluationInstances(200_000)
-                .setClassifiedInstances(200_000)
-                .setClassificationsCorrect(55f)
-                .setKappaStat(-0.1f)
-                .setKappaTempStat(-0.1f)
-                .setCLIStringTemplate(TestParams.Templates.PREQEVAL_VHT_RANDOMTREE + " -t 2")
-                .setResultFilePollTimeout(10)
-                .setPrePollWait(10)
-                .setTaskClassName(LocalThreadsDoTask.class.getName())
+                .inputInstances(200_000)
+                .samplingSize(20_000)
+                .evaluationInstances(200_000)
+                .classifiedInstances(200_000)
+                .classificationsCorrect(55f)
+                .kappaStat(-0.1f)
+                .kappaTempStat(-0.1f)
+                .cliStringTemplate(TestParams.Templates.PREQEVAL_VHT_RANDOMTREE + " -t 2")
+                .resultFilePollTimeout(10)
+                .prePollWait(10)
+                .taskClassName(LocalThreadsDoTask.class.getName())
                 .build();
         TestUtils.test(vhtConfig);
 
@@ -52,18 +47,18 @@ public class AlgosTest {
     @Test(timeout = 180000)
     public void testBaggingWithThreads() throws Exception {
         TestParams baggingConfig = new TestParams.Builder()
-                .setInputInstances(100_000)
-                .setSamplingSize(10_000)
-                .setInputDelayMs(0) // prevents saturating the system due to unbounded queues
-                .setEvaluationInstances(90_000)
-                .setClassifiedInstances(105_000)
-                .setClassificationsCorrect(55f)
-                .setKappaStat(0f)
-                .setKappaTempStat(0f)
-                .setCLIStringTemplate(TestParams.Templates.PREQEVAL_BAGGING_RANDOMTREE + " -t 2")
-                .setPrePollWait(10)
-                .setResultFilePollTimeout(30)
-                .setTaskClassName(LocalThreadsDoTask.class.getName())
+                .inputInstances(100_000)
+                .samplingSize(10_000)
+                .inputDelayMs(0) // prevents saturating the system due to unbounded queues
+                .evaluationInstances(90_000)
+                .classifiedInstances(105_000)
+                .classificationsCorrect(55f)
+                .kappaStat(0f)
+                .kappaTempStat(0f)
+                .cliStringTemplate(TestParams.Templates.PREQEVAL_BAGGING_RANDOMTREE + " -t 2")
+                .prePollWait(10)
+                .resultFilePollTimeout(30)
+                .taskClassName(LocalThreadsDoTask.class.getName())
                 .build();
         TestUtils.test(baggingConfig);
 

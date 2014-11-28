@@ -87,14 +87,14 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
     	return (delay <= 0 || numInstanceSent < readyEventIndex);
     }
 
-    private boolean isReachedEndOfStream() {
+    private boolean hasReachedEndOfStream() {
         return (!streamSource.hasMoreInstances() || (numberInstances >= 0 && numInstanceSent >= numberInstances));
     }
 
     @Override
     public ContentEvent nextEvent() {
         InstanceContentEvent contentEvent = null;
-        if (isReachedEndOfStream()) {
+        if (hasReachedEndOfStream()) {
         	contentEvent = new InstanceContentEvent(-1, firstInstance, false, true);
             contentEvent.setLast(true);
             // set finished status _after_ tagging last event

@@ -54,7 +54,7 @@ public class LocalEntranceProcessingItem extends AbstractEntranceProcessingItem 
 	 * and that the stream is not entirely consumed, it will wait by calling
      * {@link #waitForNewEvents()} before attempting to send again.
      * </p>
-     * When the stream is entirely consumed, the last event is tagged accordingly and a the processor gets the
+     * When the stream is entirely consumed, the last event is tagged accordingly and the processor gets the
      * finished status.
      *
 	 */

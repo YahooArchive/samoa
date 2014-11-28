@@ -20,9 +20,6 @@ package com.yahoo.labs.samoa;
  * #L%
  */
 
-import com.yahoo.labs.samoa.LocalStormDoTask;
-import com.yahoo.labs.samoa.TestParams;
-import com.yahoo.labs.samoa.TestUtils;
 import org.junit.Test;
 
 public class AlgosTest {
@@ -32,17 +29,17 @@ public class AlgosTest {
     public void testVHTWithStorm() throws Exception {
 
         TestParams vhtConfig = new TestParams.Builder()
-                .setInputInstances(200_000)
-                .setSamplingSize(20_000)
-                .setEvaluationInstances(200_000)
-                .setClassifiedInstances(200_000)
-                .setClassificationsCorrect(55f)
-                .setKappaStat(0f)
-                .setKappaTempStat(0f)
-                .setCLIStringTemplate(TestParams.Templates.PREQEVAL_VHT_RANDOMTREE)
-                .setResultFilePollTimeout(30)
-                .setPrePollWait(15)
-                .setTaskClassName(LocalStormDoTask.class.getName())
+                .inputInstances(200_000)
+                .samplingSize(20_000)
+                .evaluationInstances(200_000)
+                .classifiedInstances(200_000)
+                .classificationsCorrect(55f)
+                .kappaStat(0f)
+                .kappaTempStat(0f)
+                .cliStringTemplate(TestParams.Templates.PREQEVAL_VHT_RANDOMTREE)
+                .resultFilePollTimeout(30)
+                .prePollWait(15)
+                .taskClassName(LocalStormDoTask.class.getName())
                 .build();
         TestUtils.test(vhtConfig);
 
@@ -51,17 +48,17 @@ public class AlgosTest {
     @Test(timeout = 120000)
     public void testBaggingWithStorm() throws Exception {
         TestParams baggingConfig = new TestParams.Builder()
-                .setInputInstances(200_000)
-                .setSamplingSize(20_000)
-                .setEvaluationInstances(180_000)
-                .setClassifiedInstances(190_000)
-                .setClassificationsCorrect(64f)
-                .setKappaStat(0f)
-                .setKappaTempStat(0f)
-                .setCLIStringTemplate(TestParams.Templates.PREQEVAL_BAGGING_RANDOMTREE)
-                .setResultFilePollTimeout(40)
-                .setPrePollWait(20)
-                .setTaskClassName(LocalStormDoTask.class.getName())
+                .inputInstances(200_000)
+                .samplingSize(20_000)
+                .evaluationInstances(180_000)
+                .classifiedInstances(190_000)
+                .classificationsCorrect(64f)
+                .kappaStat(0f)
+                .kappaTempStat(0f)
+                .cliStringTemplate(TestParams.Templates.PREQEVAL_BAGGING_RANDOMTREE)
+                .resultFilePollTimeout(40)
+                .prePollWait(20)
+                .taskClassName(LocalStormDoTask.class.getName())
                 .build();
         TestUtils.test(baggingConfig);
 
