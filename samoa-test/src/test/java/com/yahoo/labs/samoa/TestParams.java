@@ -48,7 +48,7 @@ public class TestParams {
     private String cliStringTemplate;
     private int pollTimeoutSeconds;
     private final int prePollWait;
-    private int inputDelayMs;
+    private int inputDelayMicroSec;
     private String taskClassName;
 
     private TestParams(String taskClassName,
@@ -62,7 +62,7 @@ public class TestParams {
                        String cliStringTemplate,
                        int pollTimeoutSeconds,
                        int prePollWait,
-                       int inputDelayMs) {
+                       int inputDelayMicroSec) {
         this.taskClassName = taskClassName;
         this.inputInstances = inputInstances;
         this.samplingSize = samplingSize;
@@ -74,7 +74,7 @@ public class TestParams {
         this.cliStringTemplate = cliStringTemplate;
         this.pollTimeoutSeconds = pollTimeoutSeconds;
         this.prePollWait = prePollWait;
-        this.inputDelayMs = inputDelayMs;
+        this.inputDelayMicroSec = inputDelayMicroSec;
     }
 
     public String getTaskClassName() {
@@ -121,8 +121,8 @@ public class TestParams {
         return kappaTempStat;
     }
 
-    public int getInputDelayMs() {
-        return inputDelayMs;
+    public int getInputDelayMicroSec() {
+        return inputDelayMicroSec;
     }
 
     @Override
@@ -139,7 +139,7 @@ public class TestParams {
                 "pollTimeoutSeconds=" + pollTimeoutSeconds + "\n" +
                 "prePollWait=" + prePollWait + "\n" +
                 "taskClassName='" + taskClassName + '\'' + "\n" +
-                "inputDelayMs=" + inputDelayMs + "\n" +
+                "inputDelayMicroSec=" + inputDelayMicroSec + "\n" +
                 '}';
     }
 
@@ -155,7 +155,7 @@ public class TestParams {
         private int pollTimeoutSeconds = 10;
         private int prePollWaitSeconds = 10;
         private String taskClassName;
-        private int inputDelayMs =0;
+        private int inputDelayMicroSec = 0;
 
         public Builder taskClassName(String taskClassName) {
             this.taskClassName = taskClassName;
@@ -207,8 +207,8 @@ public class TestParams {
             return this;
         }
 
-        public Builder inputDelayMs(int inputDelayMs) {
-            this.inputDelayMs = inputDelayMs;
+        public Builder inputDelayMicroSec(int inputDelayMicroSec) {
+            this.inputDelayMicroSec = inputDelayMicroSec;
             return this;
         }
 
@@ -229,7 +229,7 @@ public class TestParams {
                     cliStringTemplate,
                     pollTimeoutSeconds,
                     prePollWaitSeconds,
-                    inputDelayMs);
+                    inputDelayMicroSec);
         }
     }
 }

@@ -106,7 +106,8 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
             
             // first call to this method will trigger the timer
             if (schedule == null && delay > 0) {
-            	schedule = timer.scheduleWithFixedDelay(new DelayTimeoutHandler(this), delay, delay, TimeUnit.MILLISECONDS);
+                schedule = timer.scheduleWithFixedDelay(new DelayTimeoutHandler(this), delay, delay,
+                        TimeUnit.MICROSECONDS);
             }
         }
         return contentEvent;

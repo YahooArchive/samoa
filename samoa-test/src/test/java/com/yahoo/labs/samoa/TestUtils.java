@@ -62,7 +62,7 @@ public class TestUtils {
                                     tempFile.getAbsolutePath(),
                                     testParams.getInputInstances(),
                                     testParams.getSamplingSize(),
-                                    testParams.getInputDelayMs()
+                                    testParams.getInputDelayMicroSec()
                                     ).split("[ ]"));
                 } catch (Exception e) {
                     LOG.error("Cannot execute test {} {}", e.getMessage(), e.getCause().getMessage());
