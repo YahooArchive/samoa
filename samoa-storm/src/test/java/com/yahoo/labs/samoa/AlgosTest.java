@@ -52,7 +52,7 @@ public class AlgosTest {
                 .samplingSize(20_000)
                 .evaluationInstances(180_000)
                 .classifiedInstances(190_000)
-                .classificationsCorrect(64f)
+                .classificationsCorrect(60f)
                 .kappaStat(0f)
                 .kappaTempStat(0f)
                 .cliStringTemplate(TestParams.Templates.PREQEVAL_BAGGING_RANDOMTREE)
