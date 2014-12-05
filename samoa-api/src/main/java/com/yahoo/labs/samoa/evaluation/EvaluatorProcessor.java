@@ -194,6 +194,11 @@ public class EvaluatorProcessor implements Processor {
 		long experimentEnd = System.nanoTime();
 		long totalExperimentTime = TimeUnit.SECONDS.convert(experimentEnd - experimentStart, TimeUnit.NANOSECONDS);
 		logger.info("total evaluation time: {} seconds for {} instances", totalExperimentTime, totalCount);
+
+		if (immediateResultStream!=null) {
+			immediateResultStream.println("# COMPLETED");
+			immediateResultStream.flush();
+		}
 		//logger.info("average throughput rate: {} instances/seconds", (totalCount/totalExperimentTime));
 	}
 		

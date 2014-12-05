@@ -51,24 +51,27 @@ public class LocalEntranceProcessingItem extends AbstractEntranceProcessingItem 
 
 	/**
 	 * Start sending events by calling {@link #injectNextEvent()}. If there are no available events, 
-	 * it will wait by calling {@link #waitForNewEvents()} before attempting to send again.
+	 * and that the stream is not entirely consumed, it will wait by calling
+     * {@link #waitForNewEvents()} before attempting to send again.
+     * </p>
+     * When the stream is entirely consumed, the last event is tagged accordingly and the processor gets the
+     * finished status.
+     *
 	 */
 	public void startSendingEvents () {
 		if (this.getOutputStream() == null) 
 			throw new IllegalStateException("Try sending events from EntrancePI while outputStream is not set.");
 		
-		while (!this.getProcessor().isFinished()) 
-			if (!this.injectNextEvent()) {
-				try {
-					waitForNewEvents();
-				} catch (Exception e) {
-					e.printStackTrace();
-					break;
-				}
-			}
-		// Inject the last event
-		ContentEvent event = this.getProcessor().nextEvent();
-		this.getOutputStream().put(event);
+		while (!this.getProcessor().isFinished()) {
+            if (!this.injectNextEvent()) {
+                try {
+                    waitForNewEvents();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        }
 	}
 	
 	/**

@@ -23,6 +23,9 @@
     <name>SAMOA</name>
     <description>Scalable Advanced Massive Online Analysis</description>
     <url>http://github.com/yahoo/samoa</url>
+    <modules>
+        <module>samoa-test</module>
+    </modules>
     <packaging>pom</packaging>
 
     <groupId>com.yahoo.labs.samoa</groupId>
@@ -51,6 +54,7 @@
                 <module>samoa-instances</module>
                 <module>samoa-api</module>
                 <module>samoa-local</module>
+                <module>samoa-test</module>
             </modules>
         </profile>
         <profile>
@@ -59,6 +63,7 @@
                 <module>samoa-instances</module>
                 <module>samoa-api</module>
                 <module>samoa-threads</module>
+                <module>samoa-test</module>
             </modules>
         </profile>
         <profile>
@@ -67,6 +72,7 @@
                 <module>samoa-instances</module>
                 <module>samoa-api</module>
                 <module>samoa-storm</module>
+                <module>samoa-test</module>
             </modules>
         </profile>
         <profile>
@@ -75,6 +81,7 @@
                 <module>samoa-instances</module>
                 <module>samoa-api</module>
                 <module>samoa-s4</module>
+                <module>samoa-test</module>
             </modules>
         </profile>
         <profile>
@@ -83,6 +90,7 @@
                 <module>samoa-instances</module>
                 <module>samoa-api</module>
                 <module>samoa-samza</module>
+                <module>samoa-test</module>
             </modules>
         </profile>
         <profile>
@@ -95,6 +103,7 @@
                 <module>samoa-storm</module>
                 <module>samoa-s4</module>
                 <module>samoa-samza</module>
+                <module>samoa-test</module>
             </modules>
         </profile>
     </profiles>
@@ -110,7 +119,7 @@
         <hadoop.version>2.2.0</hadoop.version>
         <javacliparser.version>0.5.0</javacliparser.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jmockit.version>1.5</jmockit.version>
+        <jmockit.version>1.13</jmockit.version>
         <junit.version>4.10</junit.version>
         <kafka.version>0.8.1</kafka.version>
         <kryo.version>2.17</kryo.version>
@@ -120,12 +129,15 @@
         <samza.version>0.7.0</samza.version>
         <slf4j-log4j12.version>1.7.2</slf4j-log4j12.version>
         <slf4j-simple.version>1.7.5</slf4j-simple.version>
+        <maven-surefire-plugin.version>2.18</maven-surefire-plugin.version>
         <storm.version>0.8.2</storm.version>
+        <!-- storm 0.8.2 loads zookeeper classes with hardcoded names from 3.3 version-->
+        <zookeeper.storm.version>3.3.6</zookeeper.storm.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.googlecode.jmockit</groupId>
+            <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>${jmockit.version}</version>
             <scope>test</scope>
