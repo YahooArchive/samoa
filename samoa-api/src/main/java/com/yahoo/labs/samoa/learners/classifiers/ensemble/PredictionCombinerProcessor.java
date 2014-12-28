@@ -26,7 +26,6 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.learners.ResultContentEvent;
-import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.topology.Stream;
 import java.util.HashMap;
@@ -145,8 +144,8 @@ public class PredictionCombinerProcessor implements Processor {
 
     protected void addStatisticsforInstanceReceived(int instanceIndex, int classifierIndex, double[] prediction, int add) {
         if (this.mapCountsforInstanceReceived == null) {
-            this.mapCountsforInstanceReceived = new HashMap<Integer, Integer>();
-            this.mapVotesforInstanceReceived = new HashMap<Integer, DoubleVector>();
+            this.mapCountsforInstanceReceived = new HashMap<>();
+            this.mapVotesforInstanceReceived = new HashMap<>();
         }
         DoubleVector vote = new DoubleVector(prediction);
         if (vote.sumOfValues() > 0.0) {

@@ -198,10 +198,10 @@ public class NaiveBayes implements LocalLearner {
 	public void resetLearning() {
 		// Reset priors
 		this.instancesSeen = 0L;
-		this.classInstances = new HashMap<Integer, Double>();
-		this.classPrototypes = new HashMap<Integer, Double>();
+		this.classInstances = new HashMap<>();
+		this.classPrototypes = new HashMap<>();
 		// Init the attribute observers
-		this.attributeObservers = new HashMap<Integer, GaussianNumericAttributeClassObserver>();
+		this.attributeObservers = new HashMap<>();
 	}
 
 	/**

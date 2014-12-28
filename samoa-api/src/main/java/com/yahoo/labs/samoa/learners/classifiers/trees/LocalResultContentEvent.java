@@ -20,7 +20,6 @@ package com.yahoo.labs.samoa.learners.classifiers.trees;
  * #L%
  */
 
-import com.esotericsoftware.kryo.Kryo;
 import com.yahoo.labs.samoa.moa.classifiers.core.AttributeSplitSuggestion;
 import com.yahoo.labs.samoa.core.ContentEvent;
 

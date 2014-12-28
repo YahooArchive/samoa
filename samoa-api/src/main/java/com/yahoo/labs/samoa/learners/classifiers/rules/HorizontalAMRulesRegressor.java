@@ -145,19 +145,11 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 
 	// Processor
 	private AMRRuleSetProcessor model;
-	private AMRDefaultRuleProcessor root;
-	private AMRLearnerProcessor learner;
 
-	// Stream
-	private Stream forwardToRootStream;
-	private Stream forwardToLearnerStream;
 	private Stream modelResultStream;
-	
-	private Stream newRuleStream;
+
 	private Stream rootResultStream;
-	
-	private Stream predicateStream;
-	
+
 	// private Stream resultStream;
 
 	@Override
@@ -176,62 +168,62 @@ public class HorizontalAMRulesRegressor implements RegressionLearner, Configurab
 		topologyBuilder.addProcessor(model, this.ruleSetParallelismOption.getValue());
 		
 		// MODEL PIs streams
-		this.forwardToRootStream = topologyBuilder.createStream(this.model);
-		this.forwardToLearnerStream = topologyBuilder.createStream(this.model);
+		Stream forwardToRootStream = topologyBuilder.createStream(this.model);
+		Stream forwardToLearnerStream = topologyBuilder.createStream(this.model);
 		this.modelResultStream = topologyBuilder.createStream(this.model);
 		
-		this.model.setDefaultRuleStream(this.forwardToRootStream);
-		this.model.setStatisticsStream(this.forwardToLearnerStream);
+		this.model.setDefaultRuleStream(forwardToRootStream);
+		this.model.setStatisticsStream(forwardToLearnerStream);
 		this.model.setResultStream(this.modelResultStream);
 		
 		// Create DefaultRule PI
-		this.root = new AMRDefaultRuleProcessor.Builder(dataset)
-		.threshold(pageHinckleyThresholdOption.getValue())
-		.alpha(pageHinckleyAlphaOption.getValue())
-		.changeDetection(this.DriftDetectionOption.isSet())
-		.predictionFunction(predictionFunctionOption.getChosenIndex())
-		.constantLearningRatioDecay(constantLearningRatioDecayOption.isSet())
-		.learningRatio(learningRatioOption.getValue())
-		.splitConfidence(splitConfidenceOption.getValue())
-		.tieThreshold(tieThresholdOption.getValue())
-		.gracePeriod(gracePeriodOption.getValue())
-		.numericObserver((FIMTDDNumericAttributeClassLimitObserver)numericObserverOption.getValue())
-		.build();
+		AMRDefaultRuleProcessor root = new AMRDefaultRuleProcessor.Builder(dataset)
+				.threshold(pageHinckleyThresholdOption.getValue())
+				.alpha(pageHinckleyAlphaOption.getValue())
+				.changeDetection(this.DriftDetectionOption.isSet())
+				.predictionFunction(predictionFunctionOption.getChosenIndex())
+				.constantLearningRatioDecay(constantLearningRatioDecayOption.isSet())
+				.learningRatio(learningRatioOption.getValue())
+				.splitConfidence(splitConfidenceOption.getValue())
+				.tieThreshold(tieThresholdOption.getValue())
+				.gracePeriod(gracePeriodOption.getValue())
+				.numericObserver((FIMTDDNumericAttributeClassLimitObserver) numericObserverOption.getValue())
+				.build();
 		
-		topologyBuilder.addProcessor(this.root);
+		topologyBuilder.addProcessor(root);
 		
 		// Default Rule PI streams
-		this.newRuleStream = topologyBuilder.createStream(this.root);
-		this.rootResultStream = topologyBuilder.createStream(this.root);
+		Stream newRuleStream = topologyBuilder.createStream(root);
+		this.rootResultStream = topologyBuilder.createStream(root);
 		
-		this.root.setRuleStream(this.newRuleStream);
-		this.root.setResultStream(this.rootResultStream);
+		root.setRuleStream(newRuleStream);
+		root.setResultStream(this.rootResultStream);
 		
 		// Create Learner PIs
-		this.learner = new AMRLearnerProcessor.Builder(dataset)
-    	.splitConfidence(splitConfidenceOption.getValue())
-    	.tieThreshold(tieThresholdOption.getValue())
-    	.gracePeriod(gracePeriodOption.getValue())
-    	.noAnomalyDetection(noAnomalyDetectionOption.isSet())
-		.multivariateAnomalyProbabilityThreshold(multivariateAnomalyProbabilityThresholdOption.getValue())
-		.univariateAnomalyProbabilityThreshold(univariateAnomalyProbabilityThresholdOption.getValue())
-		.anomalyNumberOfInstancesThreshold(anomalyNumInstThresholdOption.getValue())
-    	.build();
+		AMRLearnerProcessor learner = new AMRLearnerProcessor.Builder(dataset)
+				.splitConfidence(splitConfidenceOption.getValue())
+				.tieThreshold(tieThresholdOption.getValue())
+				.gracePeriod(gracePeriodOption.getValue())
+				.noAnomalyDetection(noAnomalyDetectionOption.isSet())
+				.multivariateAnomalyProbabilityThreshold(multivariateAnomalyProbabilityThresholdOption.getValue())
+				.univariateAnomalyProbabilityThreshold(univariateAnomalyProbabilityThresholdOption.getValue())
+				.anomalyNumberOfInstancesThreshold(anomalyNumInstThresholdOption.getValue())
+				.build();
     
 		topologyBuilder.addProcessor(learner, this.learnerParallelismOption.getValue());
-    
-		this.predicateStream = topologyBuilder.createStream(learner);
-		this.learner.setOutputStream(predicateStream);
+
+		Stream predicateStream = topologyBuilder.createStream(learner);
+		learner.setOutputStream(predicateStream);
 		
 		// Connect streams
 		// to MODEL
-		topologyBuilder.connectInputAllStream(this.newRuleStream, this.model);
-		topologyBuilder.connectInputAllStream(this.predicateStream, this.model);
+		topologyBuilder.connectInputAllStream(newRuleStream, this.model);
+		topologyBuilder.connectInputAllStream(predicateStream, this.model);
 		// to ROOT
-		topologyBuilder.connectInputShuffleStream(this.forwardToRootStream, this.root);
+		topologyBuilder.connectInputShuffleStream(forwardToRootStream, root);
 		// to LEARNER
-		topologyBuilder.connectInputKeyStream(this.forwardToLearnerStream, this.learner);
-		topologyBuilder.connectInputAllStream(this.newRuleStream, this.learner);
+		topologyBuilder.connectInputKeyStream(forwardToLearnerStream, learner);
+		topologyBuilder.connectInputAllStream(newRuleStream, learner);
 	}
 
 	@Override

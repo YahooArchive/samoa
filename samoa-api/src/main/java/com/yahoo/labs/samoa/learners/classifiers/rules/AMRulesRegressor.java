@@ -171,7 +171,6 @@ public class AMRulesRegressor implements RegressionLearner, Configurable {
 
 	@Override
 	public Set<Stream> getResultStreams() {
-		Set<Stream> streams = ImmutableSet.of(this.resultStream);
-		return streams;
+		return ImmutableSet.of(this.resultStream);
 	}
 }

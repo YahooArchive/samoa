@@ -38,8 +38,7 @@ public class Separation extends MeasureCollection {
 
     @Override
     protected String[] getNames() {
-        String[] names = {"BSS", "BSS-GT", "BSS-Ratio"};
-        return names;
+        return new String[]{"BSS", "BSS-GT", "BSS-Ratio"};
     }
 
     //@Override
@@ -48,7 +47,7 @@ public class Separation extends MeasureCollection {
             throws Exception {
 
         double BSS_GT = 1.0;
-        double BSS = 0.0;
+        double BSS;
         int dimension = points.get(0).numAttributes() - 1;
         SphereCluster sc = new SphereCluster(points, dimension);
 
@@ -97,7 +96,7 @@ public class Separation extends MeasureCollection {
             throws Exception {
         // TODO Auto-generated method stub
         double BSS_GT = 1.0;
-        double BSS = 0.0;
+        double BSS;
         int dimension = points.get(0).numAttributes() - 1;
         SphereCluster sc = new SphereCluster(points, dimension);
 

@@ -161,7 +161,7 @@ final class ModelAggregatorProcessor implements Processor {
                                 leafNode.setAttributeBatchContentEvent(null);
                             //this.sendToControlStream(event); //split information
                             //See if we can ask for splits
-                                if(leafNode.isSpliting() == false){ 
+                                if(leafNode.isSplitting() == false){
                                     double weightSeen = leafNode.getWeightSeen();
                                     //check whether it is the time for splitting
                                     if(weightSeen - leafNode.getWeightSeenAtLastSplitEvaluation() >= this.gracePeriod){
@@ -461,7 +461,7 @@ final class ModelAggregatorProcessor implements Processor {
 			/*if(this.growthAllowed && (learningNode instanceof ActiveLearningNode)){
 				ActiveLearningNode activeLearningNode = (ActiveLearningNode) learningNode;
 				//at the moment, throw away the instances when the node is splitting
-				if(activeLearningNode.isSpliting()){ 
+				if(activeLearningNode.isSplitting()){
 					return;
 				}
 				double weightSeen = activeLearningNode.getWeightSeen();

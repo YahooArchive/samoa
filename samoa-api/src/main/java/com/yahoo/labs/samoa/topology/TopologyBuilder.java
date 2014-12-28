@@ -106,22 +106,19 @@ public class TopologyBuilder {
     public ProcessingItem connectInputShuffleStream(Stream inputStream, Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         Preconditions.checkNotNull(pi, "Trying to connect to null PI");
-        ProcessingItem ret = pi.connectInputShuffleStream(inputStream);
-        return ret;
+        return pi.connectInputShuffleStream(inputStream);
     }
 
     public ProcessingItem connectInputKeyStream(Stream inputStream, Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         Preconditions.checkNotNull(pi, "Trying to connect to null PI");
-        ProcessingItem ret = pi.connectInputKeyStream(inputStream);
-        return ret;
+        return pi.connectInputKeyStream(inputStream);
     }
 
     public ProcessingItem connectInputAllStream(Stream inputStream, Processor processor) {
         ProcessingItem pi = (ProcessingItem) mapProcessorToProcessingItem.get(processor);
         Preconditions.checkNotNull(pi, "Trying to connect to null PI");
-        ProcessingItem ret = pi.connectInputAllStream(inputStream);
-        return ret;
+        return pi.connectInputAllStream(inputStream);
     }
 
     public Stream createInputShuffleStream(Processor processor, Processor dest) {
@@ -187,7 +184,7 @@ public class TopologyBuilder {
      * Creates a processing item with a specific processor and paralellism level.
      * 
      * @param processor
-     * @param paralellism
+     * @param parallelism
      * @return ProcessingItem
      */
     private ProcessingItem createPi(Processor processor, int parallelism) {

@@ -21,7 +21,6 @@ package com.yahoo.labs.samoa.streams;
  */
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.evaluation.ClusteringEvaluationContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.learners.clusterers.ClusteringContentEvent;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
 import com.yahoo.labs.samoa.moa.core.DataPoint;
@@ -40,7 +38,6 @@ import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.moa.streams.clustering.ClusteringStream;
 import com.yahoo.labs.samoa.moa.streams.clustering.RandomRBFGeneratorEvents;
-import com.yahoo.labs.samoa.topology.Stream;
 
 /**
  * EntranceProcessor for Clustering Evaluation Task.
@@ -56,7 +53,6 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
     private Instance firstInstance;
     private boolean isInited = false;
     private Random random = new Random();
-    private int id;
     private double samplingThreshold;
     private int numberInstances;
     private int numInstanceSent = 0;
@@ -72,8 +68,7 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
 
     @Override
     public void onCreate(int id) {
-        this.id = id;
-        logger.debug("Creating ClusteringSourceProcessor with id {}", this.id);
+        logger.debug("Creating ClusteringSourceProcessor with id {}", id);
     }
 
     @Override
@@ -232,8 +227,7 @@ public final class ClusteringEntranceProcessor implements EntranceProcessor {
                 // TODO implement an interface ClusteringGroundTruth with a getGeneratingClusters() method, check if the source implements the interface
                 // send a clustering evaluation event for external measures (distance from the gt clusters)
                 Clustering gtClustering = ((RandomRBFGeneratorEvents) streamSource.getStream()).getGeneratingClusters();
-                ClusteringEvaluationContentEvent evaluationEvent = new ClusteringEvaluationContentEvent(gtClustering, nextDataPoint, false);
-                return evaluationEvent;
+                return new ClusteringEvaluationContentEvent(gtClustering, nextDataPoint, false);
             } else {
                 ClusteringContentEvent contentEvent = new ClusteringContentEvent(numInstanceSent, nextDataPoint);
                 if (random.nextDouble() < samplingThreshold) {

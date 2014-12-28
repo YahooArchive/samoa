@@ -25,17 +25,17 @@ package com.yahoo.labs.samoa.learners.classifiers;
  */
 
 
+import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.core.Processor;
+import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.learners.InstanceContentEvent;
+import com.yahoo.labs.samoa.learners.ResultContentEvent;
+import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
+import com.yahoo.labs.samoa.topology.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.learners.InstanceContentEvent;
-import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.learners.ResultContentEvent;
-import com.yahoo.labs.samoa.instances.Instance;
-import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
 import static com.yahoo.labs.samoa.moa.core.Utils.maxIndex;
-import com.yahoo.labs.samoa.topology.Stream;
 //import weka.core.Instance;
 
 /**
@@ -77,7 +77,6 @@ final public class LocalLearnerProcessor implements Processor {
 	 * Set the output streams.
 	 *
 	 * @param outputStream the new output stream
-	 * {@link PredictionCombinerPE}.
 	 */
 	public void setOutputStream(Stream outputStream) {
 		this.outputStream = outputStream;

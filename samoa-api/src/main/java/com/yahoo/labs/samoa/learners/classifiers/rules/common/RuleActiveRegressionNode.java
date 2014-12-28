@@ -61,7 +61,7 @@ public class RuleActiveRegressionNode extends RuleRegressionNode implements Rule
 	
 	protected AttributeSplitSuggestion bestSuggestion = null;
 	
-	protected AutoExpandVector<AttributeClassObserver> attributeObservers = new AutoExpandVector<AttributeClassObserver>();
+	protected AutoExpandVector<AttributeClassObserver> attributeObservers = new AutoExpandVector<>();
 	private FIMTDDNumericAttributeClassLimitObserver numericObserver;
 	
 	/*
@@ -117,7 +117,7 @@ public class RuleActiveRegressionNode extends RuleRegressionNode implements Rule
 	public RuleActiveRegressionNode(ActiveRule.Builder builder) {
 		super(builder.statistics);
         this.changeDetection = builder.changeDetection;
-        if (builder.changeDetection == false) { 
+        if (!builder.changeDetection) {
         	this.pageHinckleyTest = new PageHinkleyFading(builder.threshold, builder.alpha);
         }
         this.predictionFunction = builder.predictionFunction;
@@ -147,18 +147,14 @@ public class RuleActiveRegressionNode extends RuleRegressionNode implements Rule
 	 */
 	public boolean updatePageHinckleyTest(double error) {
 		boolean changeDetected = false;
-		if (this.changeDetection == false) { 
+		if (!this.changeDetection) {
 			changeDetected = pageHinckleyTest.update(error);
 		}
 		return changeDetected;
 	}
 	
 	public boolean updateChangeDetection(double error) {
-		if(changeDetection==false){
-			return  pageHinckleyTest.update(error);
-		}
-		else
-			return false;
+		return !changeDetection && pageHinckleyTest.update(error);
 	}
 	
 	@Override
@@ -271,7 +267,7 @@ public class RuleActiveRegressionNode extends RuleRegressionNode implements Rule
 			}
 		}
 
-		if (shouldSplit == true) {
+		if (shouldSplit) {
 			AttributeSplitSuggestion splitDecision = bestSplitSuggestions[bestSplitSuggestions.length - 1];
 			double minValue = Double.MAX_VALUE;
 			double[] branchMerits = SDRSplitCriterionAMRules.computeBranchSplitMerits(bestSuggestion.resultingClassDistributions);

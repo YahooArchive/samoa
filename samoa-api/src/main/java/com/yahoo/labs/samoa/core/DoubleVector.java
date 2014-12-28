@@ -114,8 +114,6 @@ public class DoubleVector implements java.io.Serializable {
         if (!(obj instanceof DoubleVector))
             return false;
         DoubleVector other = (DoubleVector) obj;
-        if (!Arrays.equals(doubleArray, other.doubleArray))
-            return false;
-        return true;
+        return Arrays.equals(doubleArray, other.doubleArray);
     }
 }

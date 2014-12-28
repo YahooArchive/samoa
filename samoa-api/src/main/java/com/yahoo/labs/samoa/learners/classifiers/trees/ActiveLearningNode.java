@@ -55,7 +55,7 @@ final class ActiveLearningNode extends LearningNode {
 		super(classObservation);
 		this.weightSeenAtLastSplitEvaluation = this.getWeightSeen();
 		this.id = VerticalHoeffdingTree.LearningNodeIdGenerator.generate();
-		this.attributeContentEventKeys = new HashMap<Integer, String>();
+		this.attributeContentEventKeys = new HashMap<>();
 		this.isSplitting = false;
 		this.parallelismHint = parallelismHint;
 	}
@@ -89,7 +89,7 @@ final class ActiveLearningNode extends LearningNode {
 		//chunk instead of send the attribute one by one
 		for(int i = 0; i < inst.numAttributes() - 1; i++){
 			int instAttIndex = modelAttIndexToInstanceAttIndex(i, inst);
-			Integer obsIndex = Integer.valueOf(i);
+			Integer obsIndex = i;
 			String key = attributeContentEventKeys.get(obsIndex);
 			
 			if(key == null){
@@ -171,7 +171,7 @@ final class ActiveLearningNode extends LearningNode {
 		this.suggestionCtr++;
 	}
 
-	boolean isSpliting(){
+	boolean isSplitting(){
 		return this.isSplitting;
 	}
 	

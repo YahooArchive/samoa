@@ -78,13 +78,10 @@ public class SimpleClassifierAdapter implements LocalLearner, Configurable {
     /**
      * Instantiates a new learner.
      *
-     * @param learner the learner
-     * @param dataset the dataset
      */
     public SimpleClassifierAdapter() {
         this.learner = ((com.yahoo.labs.samoa.moa.classifiers.Classifier) this.learnerOption.getValue()).copy();
         this.isInit = false;
-        //this.dataset = dataset;
     }
 
     /**
@@ -108,7 +105,7 @@ public class SimpleClassifierAdapter implements LocalLearner, Configurable {
      */
     @Override
     public void trainOnInstance(Instance inst) {
-        if (this.isInit == false) {
+        if (!this.isInit) {
             this.isInit = true;
             InstancesHeader instances = new InstancesHeader(dataset);
             this.learner.setModelContext(instances);
@@ -132,7 +129,7 @@ public class SimpleClassifierAdapter implements LocalLearner, Configurable {
     public double[] getVotesForInstance(Instance inst) {
         double[] ret;
         inst.setDataset(dataset);
-        if (this.isInit == false) {
+        if (!this.isInit) {
            ret = new double[dataset.numClasses()];
         } else {
             ret = learner.getVotesForInstance(inst);

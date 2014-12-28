@@ -24,11 +24,10 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
  * License
  */
 import com.yahoo.labs.samoa.core.ContentEvent;
+import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.learners.ResultContentEvent;
-import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
-import com.yahoo.labs.samoa.moa.core.MiscUtils;
 import com.yahoo.labs.samoa.moa.core.Utils;
 import com.yahoo.labs.samoa.topology.Stream;
 import java.util.HashMap;
@@ -130,7 +129,7 @@ public class BoostingPredictionCombinerProcessor extends PredictionCombinerProce
         //Send instances to train
         double lambda_d = 1.0;
         for (int i = 0; i < this.ensembleSize; i++) {
-            double k = true ? lambda_d : MiscUtils.poisson(lambda_d, this.random);
+            double k = lambda_d;
             Instance inst = inEvent.getInstance();
             if (k > 0.0) {
                 Instance weightedInst = (Instance) inst.copy();
@@ -144,7 +143,7 @@ public class BoostingPredictionCombinerProcessor extends PredictionCombinerProce
                 instanceContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());	
                 trainingStream.put(instanceContentEvent);
             }
-            if (this.correctlyClassifies(i, inst, instanceIndex) == true){
+            if (this.correctlyClassifies(i, inst, instanceIndex)){
                 this.scms[i] += lambda_d;
                 lambda_d *= this.trainingWeightSeenByModel / (2 * this.scms[i]);
             } else {

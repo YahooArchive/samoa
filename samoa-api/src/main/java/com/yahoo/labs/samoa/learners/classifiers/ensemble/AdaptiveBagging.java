@@ -67,13 +67,7 @@ public class AdaptiveBagging implements Learner , Configurable {
 
 	/** The distributor processor. */
 	private BaggingDistributorProcessor distributorP;
-	
-	/** The training stream. */
-	private Stream testingStream;
-	
-	/** The prediction stream. */
-	private Stream predictionStream;
-	
+
 	/** The result stream. */
 	protected Stream resultStream;
 	
@@ -96,7 +90,7 @@ public class AdaptiveBagging implements Learner , Configurable {
                 this.builder.addProcessor(distributorP, 1);
 		        
                 //instantiate classifier 
-                classifier = (Learner) this.baseLearnerOption.getValue();
+                classifier = this.baseLearnerOption.getValue();
                 if (classifier instanceof AdaptiveLearner) {
                     // logger.info("Building an AdaptiveLearner {}", classifier.getClass().getName());
                     AdaptiveLearner ada = (AdaptiveLearner) classifier;
@@ -116,10 +110,12 @@ public class AdaptiveBagging implements Learner , Configurable {
 			this.builder.connectInputKeyStream(subResultStream, predictionCombinerP);
 		}
 		
-		testingStream = this.builder.createStream(distributorP);
+		/* The training stream. */
+		Stream testingStream = this.builder.createStream(distributorP);
                 this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
 	
-		predictionStream = this.builder.createStream(distributorP);		
+		/* The prediction stream. */
+		Stream predictionStream = this.builder.createStream(distributorP);
                 this.builder.connectInputKeyStream(predictionStream, classifier.getInputProcessor());
 		
 		distributorP.setOutputStream(testingStream);
@@ -148,7 +144,6 @@ public class AdaptiveBagging implements Learner , Configurable {
 	 */
 	@Override
 	public Set<Stream> getResultStreams() {
-		Set<Stream> streams = ImmutableSet.of(this.resultStream);
-		return streams;
+		return ImmutableSet.of(this.resultStream);
 	}
 }

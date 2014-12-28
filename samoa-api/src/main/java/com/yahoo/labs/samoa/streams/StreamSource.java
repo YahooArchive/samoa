@@ -27,7 +27,6 @@ package com.yahoo.labs.samoa.streams;
 import com.yahoo.labs.samoa.moa.core.Example;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.instances.Instance;
-//import weka.core.Instance;
 
 /**
  * The Class StreamSource.

@@ -63,8 +63,6 @@ public class ClusteringEvaluatorProcessor implements Processor {
     private long totalCount = 0;
     private long experimentStart = 0;
 
-    private long sampleStart = 0;
-
     private LearningCurve learningCurve;
 
     private MeasureCollection[] measures;
@@ -78,7 +76,7 @@ public class ClusteringEvaluatorProcessor implements Processor {
     private ClusteringEvaluatorProcessor(Builder builder) {
         this.samplingFrequency = builder.samplingFrequency;
         this.dumpFile = builder.dumpFile;
-        this.points = new ArrayList<DataPoint>();
+        this.points = new ArrayList<>();
         this.decayHorizon = builder.decayHorizon;
     }
 
@@ -97,9 +95,9 @@ public class ClusteringEvaluatorProcessor implements Processor {
     private boolean process(ClusteringResultContentEvent result) {
         // evaluate
         Clustering clustering = KMeans.gaussianMeans(gtClustering, result.getClustering());
-        for (int i = 0; i < measures.length; i++) {
+        for (MeasureCollection measure : measures) {
             try {
-                measures[i].evaluateClusteringPerformance(clustering, gtClustering, points);
+                measure.evaluateClusteringPerformance(clustering, gtClustering, points);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -115,8 +113,7 @@ public class ClusteringEvaluatorProcessor implements Processor {
         totalCount += 1;
 
         if (totalCount == 1) {
-            sampleStart = System.nanoTime();
-            experimentStart = sampleStart;
+            experimentStart = System.nanoTime();
         }
 
         return false;
@@ -167,7 +164,7 @@ public class ClusteringEvaluatorProcessor implements Processor {
     }
 
     private static ArrayList<Class> getMeasureSelection() {
-        ArrayList<Class> mclasses = new ArrayList<Class>();
+        ArrayList<Class> mclasses = new ArrayList<>();
         // mclasses.add(EntropyCollection.class);
         // mclasses.add(F1.class);
         // mclasses.add(General.class);
@@ -212,7 +209,7 @@ public class ClusteringEvaluatorProcessor implements Processor {
         StringBuilder report = new StringBuilder();
 
         report.append(EvaluatorProcessor.class.getCanonicalName());
-        report.append("id = " + this.id);
+        report.append("id = ").append(this.id);
         report.append('\n');
 
         if (learningCurve.numEntries() > 0) {
@@ -224,7 +221,7 @@ public class ClusteringEvaluatorProcessor implements Processor {
 
     private void addMeasurement() {
         // printMeasures();
-        List<Measurement> measurements = new ArrayList<Measurement>();
+        List<Measurement> measurements = new ArrayList<>();
         measurements.add(new Measurement(ORDERING_MEASUREMENT_NAME, totalCount * this.samplingFrequency));
 
         addClusteringPerformanceMeasurements(measurements);
@@ -247,9 +244,9 @@ public class ClusteringEvaluatorProcessor implements Processor {
     }
 
     private void addClusteringPerformanceMeasurements(List<Measurement> measurements) {
-        for (int i = 0; i < measures.length; i++) {
-            for (int j = 0; j < measures[i].getNumMeasures(); j++) {
-                Measurement measurement = new Measurement(measures[i].getName(j), measures[i].getLastValue(j));
+        for (MeasureCollection measure : measures) {
+            for (int j = 0; j < measure.getNumMeasures(); j++) {
+                Measurement measurement = new Measurement(measure.getName(j), measure.getLastValue(j));
                 measurements.add(measurement);
             }
         }
@@ -270,11 +267,11 @@ public class ClusteringEvaluatorProcessor implements Processor {
 
     private void printMeasures() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < measures.length; i++) {
+        for (MeasureCollection measure : measures) {
 
-            sb.append("Mean ").append(measures[i].getClass().getSimpleName() + ":" + measures[i].getNumMeasures()).append("\n");
-            for (int j = 0; j < measures[i].getNumMeasures(); j++) {
-                sb.append("[" + measures[i].getName(j) + "=" + measures[i].getLastValue(j)).append("] \n");
+            sb.append("Mean ").append(measure.getClass().getSimpleName()).append(":").append(measure.getNumMeasures()).append("\n");
+            for (int j = 0; j < measure.getNumMeasures(); j++) {
+                sb.append("[").append(measure.getName(j)).append("=").append(measure.getLastValue(j)).append("] \n");
 
             }
             sb.append("\n");

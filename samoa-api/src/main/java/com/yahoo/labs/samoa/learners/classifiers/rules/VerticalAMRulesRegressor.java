@@ -20,24 +20,22 @@ package com.yahoo.labs.samoa.learners.classifiers.rules;
  * #L%
  */
 
-import com.google.common.collect.ImmutableSet;
-import java.util.Set;
-
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
 import com.github.javacliparser.FlagOption;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.github.javacliparser.MultiChoiceOption;
+import com.google.common.collect.ImmutableSet;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.learners.RegressionLearner;
 import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRulesAggregatorProcessor;
 import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRulesStatisticsProcessor;
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.attributeclassobservers.FIMTDDNumericAttributeClassLimitObserver;
-import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.ErrorWeightedVote;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
+import java.util.Set;
 
 /**
  * Vertical  AMRules Regressor
@@ -140,19 +138,13 @@ public class VerticalAMRulesRegressor implements RegressionLearner, Configurable
 	
 	// Processor
 	private AMRulesAggregatorProcessor aggregator;
-	private AMRulesStatisticsProcessor learner;
 
 	// Stream
 	private Stream resultStream;
-	private Stream statisticsStream;
-	private Stream predicateStream;
-	
-	private int parallelism;
 
 	@Override
 	public void init(TopologyBuilder topologyBuilder, Instances dataset, int parallelism) {
-		this.parallelism = parallelism;
-		
+
 		this.aggregator = new AMRulesAggregatorProcessor.Builder(dataset)
 		.threshold(pageHinckleyThresholdOption.getValue())
 		.alpha(pageHinckleyAlphaOption.getValue())
@@ -174,26 +166,26 @@ public class VerticalAMRulesRegressor implements RegressionLearner, Configurable
 
 		topologyBuilder.addProcessor(aggregator);
 
-		this.statisticsStream = topologyBuilder.createStream(aggregator);
+		Stream statisticsStream = topologyBuilder.createStream(aggregator);
 		this.resultStream = topologyBuilder.createStream(aggregator);
 		
 		this.aggregator.setResultStream(resultStream);
 		this.aggregator.setStatisticsStream(statisticsStream);
-		
-		this.learner = new AMRulesStatisticsProcessor.Builder(dataset)
-    	.splitConfidence(splitConfidenceOption.getValue())
-    	.tieThreshold(tieThresholdOption.getValue())
-    	.gracePeriod(gracePeriodOption.getValue())
-    	.build();
+
+		AMRulesStatisticsProcessor learner = new AMRulesStatisticsProcessor.Builder(dataset)
+				.splitConfidence(splitConfidenceOption.getValue())
+				.tieThreshold(tieThresholdOption.getValue())
+				.gracePeriod(gracePeriodOption.getValue())
+				.build();
     
 		topologyBuilder.addProcessor(learner, this.parallelismHintOption.getValue());
     
-		topologyBuilder.connectInputKeyStream(this.statisticsStream, learner);
+		topologyBuilder.connectInputKeyStream(statisticsStream, learner);
+
+		Stream predicateStream = topologyBuilder.createStream(learner);
+		learner.setOutputStream(predicateStream);
     
-		this.predicateStream = topologyBuilder.createStream(learner);
-		this.learner.setOutputStream(predicateStream);
-    
-		topologyBuilder.connectInputShuffleStream(this.predicateStream, aggregator);
+		topologyBuilder.connectInputShuffleStream(predicateStream, aggregator);
 	}
 
 	@Override
@@ -203,7 +195,6 @@ public class VerticalAMRulesRegressor implements RegressionLearner, Configurable
 
 	@Override
 	public Set<Stream> getResultStreams() {
-		Set<Stream> streams = ImmutableSet.of(this.resultStream);
-		return streams;
+		return ImmutableSet.of(this.resultStream);
 	}
 }
