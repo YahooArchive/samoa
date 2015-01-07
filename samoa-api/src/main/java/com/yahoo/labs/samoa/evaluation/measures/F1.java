@@ -31,16 +31,9 @@ public class F1 extends MeasureCollection{
 
     @Override
     protected String[] getNames() {
-        String[] names = {"F1-P","F1-R","Purity"};
-        return names;
+        return new String[]{"F1-P","F1-R","Purity"};
     }
 
-//    @Override
-//    protected boolean[] getDefaultEnabled() {
-//        boolean [] defaults = {false, false, false};
-//        return defaults;
-//    }
-    
     public void evaluateClustering(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) {
 
         if (clustering.size()<0){

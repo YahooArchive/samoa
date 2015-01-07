@@ -20,6 +20,10 @@ package com.yahoo.labs.samoa.learners.classifiers.trees;
  * #L%
  */
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,28 +33,24 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.yahoo.labs.samoa.moa.classifiers.core.AttributeSplitSuggestion;
-import com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria.InfoGainSplitCriterion;
-import com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria.SplitCriterion;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
-import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
 import com.yahoo.labs.samoa.instances.InstancesHeader;
-import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
-import static com.yahoo.labs.samoa.moa.core.Utils.maxIndex;
+import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.learners.InstancesContentEvent;
+import com.yahoo.labs.samoa.learners.ResultContentEvent;
+import com.yahoo.labs.samoa.moa.classifiers.core.AttributeSplitSuggestion;
+import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
+import com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria.InfoGainSplitCriterion;
+import com.yahoo.labs.samoa.moa.classifiers.core.splitcriteria.SplitCriterion;
 import com.yahoo.labs.samoa.topology.Stream;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+
+import static com.yahoo.labs.samoa.moa.core.Utils.maxIndex;
 
 /**
  * Model Aggegator Processor consists of the decision tree model. It connects 
@@ -82,8 +82,7 @@ final class ModelAggregatorProcessor implements Processor {
 	private boolean growthAllowed;
 	
 	private final Instances dataset;
-	private InstancesHeader modelContext;
-	
+
 	//to support concurrent split
 	private long splitId;
 	private ConcurrentMap<Long, SplittingNodeInfo> splittingNodes;
@@ -112,20 +111,12 @@ final class ModelAggregatorProcessor implements Processor {
 		this.gracePeriod = builder.gracePeriod;
 		this.parallelismHint = builder.parallelismHint;
 		this.timeOut = builder.timeOut;
-        this.changeDetector = builder.changeDetector;
+		this.changeDetector = builder.changeDetector;
 
 		InstancesHeader ih = new InstancesHeader(dataset);
 		this.setModelContext(ih);
-	}	
-	
-        private boolean waitingForSpliStatistics = false;
-                
-        private int waitingInstances = 0;
-        
-        private ActiveLearningNode splittingNode;
-        private FoundNode foundNode;
-       
-        
+	}
+
 	@Override
 	public boolean process(ContentEvent event) {
 		
@@ -133,7 +124,6 @@ final class ModelAggregatorProcessor implements Processor {
 		Long timedOutSplitId = timedOutSplittingNodes.poll();
 		if(timedOutSplitId != null){ //time out has been reached!
 			SplittingNodeInfo splittingNode = splittingNodes.get(timedOutSplitId);
-                        this.waitingForSpliStatistics = false;
 			if (splittingNode != null) {
 				this.splittingNodes.remove(timedOutSplitId);
 				this.continueAttemptToSplit(splittingNode.activeLearningNode,
@@ -161,7 +151,7 @@ final class ModelAggregatorProcessor implements Processor {
                                 leafNode.setAttributeBatchContentEvent(null);
                             //this.sendToControlStream(event); //split information
                             //See if we can ask for splits
-                                if(leafNode.isSplitting() == false){
+                                if(!leafNode.isSplitting()){
                                     double weightSeen = leafNode.getWeightSeen();
                                     //check whether it is the time for splitting
                                     if(weightSeen - leafNode.getWeightSeenAtLastSplitEvaluation() >= this.gracePeriod){
@@ -173,7 +163,7 @@ final class ModelAggregatorProcessor implements Processor {
                         this.foundNodeSet = null;
 		} else if(event instanceof LocalResultContentEvent){
 			LocalResultContentEvent lrce = (LocalResultContentEvent) event;
-			Long lrceSplitId = Long.valueOf(lrce.getSplitId());
+			Long lrceSplitId = lrce.getSplitId();
 			SplittingNodeInfo splittingNodeInfo = splittingNodes.get(lrceSplitId);
 			
 			if (splittingNodeInfo != null) { // if null, that means
@@ -186,7 +176,6 @@ final class ModelAggregatorProcessor implements Processor {
 						lrce.getSecondBestSuggestion());
 
 				if (activeLearningNode.isAllSuggestionsCollected()) {
-                                        this.waitingForSpliStatistics = false;
 					splittingNodeInfo.scheduledFuture.cancel(false);
 					this.splittingNodes.remove(lrceSplitId);
 					this.continueAttemptToSplit(activeLearningNode,
@@ -208,8 +197,8 @@ final class ModelAggregatorProcessor implements Processor {
 		this.decisionNodeCount = 0; 
 		this.growthAllowed = true;
 		
-		this.splittingNodes = new ConcurrentHashMap<Long, SplittingNodeInfo>();
-		this.timedOutSplittingNodes = new LinkedBlockingQueue<Long>();
+		this.splittingNodes = new ConcurrentHashMap<>();
+		this.timedOutSplittingNodes = new LinkedBlockingQueue<>();
 		this.splitId = 0;
 		
 		//Executor for scheduling time-out threads
@@ -232,11 +221,11 @@ final class ModelAggregatorProcessor implements Processor {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
-		
-		sb.append("ActiveLeafNodeCount: " + activeLeafNodeCount);
-		sb.append("InactiveLeafNodeCount: " + inactiveLeafNodeCount);
-		sb.append("DecisionNodeCount: " + decisionNodeCount);
-		sb.append("Growth allowed: " + growthAllowed);
+
+		sb.append("ActiveLeafNodeCount: ").append(activeLeafNodeCount);
+		sb.append("InactiveLeafNodeCount: ").append(inactiveLeafNodeCount);
+		sb.append("DecisionNodeCount: ").append(decisionNodeCount);
+		sb.append("Growth allowed: ").append(growthAllowed);
 		return sb.toString();
 	}
 	
@@ -257,7 +246,6 @@ final class ModelAggregatorProcessor implements Processor {
 	}
 	
 	void sendToControlStream(ContentEvent event){
-                this.waitingForSpliStatistics = true;
 		this.controlStream.put(event);
 	}
 	
@@ -269,20 +257,21 @@ final class ModelAggregatorProcessor implements Processor {
 	 * @return ResultContentEvent to be sent into Evaluator PI or other destination PI.
 	 */
 	private ResultContentEvent newResultContentEvent(double[] prediction, InstanceContentEvent inEvent){
-		ResultContentEvent rce = new ResultContentEvent(inEvent.getInstanceIndex(), inEvent.getInstance(), inEvent.getClassId(), prediction, inEvent.isLastEvent());
+		ResultContentEvent rce = new ResultContentEvent(inEvent.getInstanceIndex(), inEvent.getInstance(),
+				inEvent.getClassId(), prediction, inEvent.isLastEvent());
 		rce.setClassifierIndex(this.processorId);
 		rce.setEvaluationIndex(inEvent.getEvaluationIndex());
 		return rce;
 	}
 			
-        private ResultContentEvent newResultContentEvent(double[] prediction, Instance inst, InstancesContentEvent inEvent){
+	private ResultContentEvent newResultContentEvent(double[] prediction, Instance inst, InstancesContentEvent inEvent){
 		ResultContentEvent rce = new ResultContentEvent(inEvent.getInstanceIndex(), inst, (int) inst.classValue(), prediction, inEvent.isLastEvent());
 		rce.setClassifierIndex(this.processorId);
 		rce.setEvaluationIndex(inEvent.getEvaluationIndex());
 		return rce;
 	}
 			
-        private List<InstancesContentEvent> contentEventList = new LinkedList<InstancesContentEvent>();
+	private List<InstancesContentEvent> contentEventList = new LinkedList<>();
 
         
 	/**
@@ -321,15 +310,14 @@ final class ModelAggregatorProcessor implements Processor {
                 inst.setDataset(this.dataset);
 		//Check the instance whether it is used for testing or training
                 //boolean testAndTrain = isTraining; //Train after testing
-                boolean testAndTrain = false;
 		double[] prediction = null;
 		if (isTesting) {
-                        prediction = getVotesForInstance(inst, testAndTrain);
+                        prediction = getVotesForInstance(inst, false);
 			this.resultStream.put(newResultContentEvent(prediction, inst,
 					instContentEvent));
 		}
 
-		if (isTraining && testAndTrain == false) {
+		if (isTraining) {
 			trainOnInstanceImpl(inst);
                         if (this.changeDetector != null) {
                             if (prediction == null) {
@@ -399,9 +387,9 @@ final class ModelAggregatorProcessor implements Processor {
             return getVotesForInstance(inst, false);
         }
             
-        private double[] getVotesForInstance(Instance inst, boolean isTraining){ 
-                double[] ret = null;
-                FoundNode foundNode = null;      
+	private double[] getVotesForInstance(Instance inst, boolean isTraining){
+		double[] ret;
+		FoundNode foundNode = null;
 		if(this.treeRoot != null){
 			foundNode = this.treeRoot.filterInstanceToLeaf(inst, null, -1);
 			Node leafNode = foundNode.getNode();
@@ -416,16 +404,16 @@ final class ModelAggregatorProcessor implements Processor {
                         
 		}
                 
-                //Training after testing to speed up the process
-                if (isTraining == true){
-                    if(this.treeRoot == null){
-                        this.treeRoot = newLearningNode(this.parallelismHint);
-                        this.activeLeafNodeCount = 1;
-                        foundNode = this.treeRoot.filterInstanceToLeaf(inst, null, -1);
-	}
-                    trainOnInstanceImpl(foundNode, inst);
-                }
-                return ret;
+    //Training after testing to speed up the process
+		if (isTraining){
+			if(this.treeRoot == null){
+				this.treeRoot = newLearningNode(this.parallelismHint);
+        this.activeLeafNodeCount = 1;
+        foundNode = this.treeRoot.filterInstanceToLeaf(inst, null, -1);
+			}
+			trainOnInstanceImpl(foundNode, inst);
+		}
+		return ret;
 	}
 	
 	/**
@@ -457,22 +445,9 @@ final class ModelAggregatorProcessor implements Processor {
 		if(leafNode instanceof LearningNode){
 			LearningNode learningNode = (LearningNode) leafNode;
 			learningNode.learnFromInstance(inst, this);
-			
-			/*if(this.growthAllowed && (learningNode instanceof ActiveLearningNode)){
-				ActiveLearningNode activeLearningNode = (ActiveLearningNode) learningNode;
-				//at the moment, throw away the instances when the node is splitting
-				if(activeLearningNode.isSplitting()){
-					return;
-				}
-				double weightSeen = activeLearningNode.getWeightSeen();
-				//check whether it is the time for splitting
-				if(weightSeen - activeLearningNode.getWeightSeenAtLastSplitEvaluation() >= this.gracePeriod){
-					attemptToSplit(activeLearningNode, foundNode);
-				}
-			}*/
-			}
-                if (this.foundNodeSet == null){
-                    this.foundNodeSet = new HashSet<FoundNode>();
+		}
+					 if (this.foundNodeSet == null){
+                    this.foundNodeSet = new HashSet<>();
 		}
                 this.foundNodeSet.add(foundNode);
 	}
@@ -494,12 +469,10 @@ final class ModelAggregatorProcessor implements Processor {
 		//Keep track of the splitting node information, so that we can continue the split
 		//once we receive all local statistic calculation from Local Statistic PI
 		//this.splittingNodes.put(Long.valueOf(this.splitId), new SplittingNodeInfo(activeLearningNode, foundNode, null)); 
-		this.splittingNodes.put(Long.valueOf(this.splitId), new SplittingNodeInfo(activeLearningNode, foundNode, timeOutHandler));
+		this.splittingNodes.put(this.splitId, new SplittingNodeInfo(activeLearningNode, foundNode, timeOutHandler));
 		
 		//Inform Local Statistic PI to perform local statistic calculation
 		activeLearningNode.requestDistributedSuggestions(this.splitId, this);
-                this.splittingNode = activeLearningNode;
-                this.foundNode = foundNode;
 	}
 	
 	
@@ -545,30 +518,25 @@ final class ModelAggregatorProcessor implements Processor {
 			}
 			//TODO: add poor attributes removal 
 		}
-		
-		ActiveLearningNode node = activeLearningNode;
+
 		SplitNode parent = foundNode.getParent();
 		int parentBranch = foundNode.getParentBranch();
 		
 		//split if the Hoeffding bound condition is satisfied
 		if(shouldSplit){
-			AttributeSplitSuggestion splitDecision = bestSuggestion;
-			
-			if(splitDecision.splitTest == null){
-				// null attribute wins
-				//deactivateLearningNode(node, parent, parentBranch);
-			}else{
-				SplitNode newSplit = new SplitNode(splitDecision.splitTest, node.getObservedClassDistribution());
-				
-				for(int i = 0; i < splitDecision.numSplits(); i++){
-					Node newChild = newLearningNode(splitDecision.resultingClassDistributionFromSplit(i), this.parallelismHint);
+
+			if (bestSuggestion.splitTest != null) {
+				SplitNode newSplit = new SplitNode(bestSuggestion.splitTest, activeLearningNode.getObservedClassDistribution());
+
+				for(int i = 0; i < bestSuggestion.numSplits(); i++){
+					Node newChild = newLearningNode(bestSuggestion.resultingClassDistributionFromSplit(i), this.parallelismHint);
 					newSplit.setChild(i, newChild);
 				}
-				
+
 				this.activeLeafNodeCount--;
 				this.decisionNodeCount++;
-				this.activeLeafNodeCount += splitDecision.numSplits();
-				
+				this.activeLeafNodeCount += bestSuggestion.numSplits();
+
 				if(parent == null){
 					this.treeRoot = newSplit;
 				}else{
@@ -579,8 +547,8 @@ final class ModelAggregatorProcessor implements Processor {
 		}
 		
 		//housekeeping
-		node.endSplitting();
-		node.setWeightSeenAtLastSplitEvaluation(node.getWeightSeen());
+		activeLearningNode.endSplitting();
+		activeLearningNode.setWeightSeenAtLastSplitEvaluation(activeLearningNode.getWeightSeen());
 	}
 
 	/**
@@ -624,8 +592,7 @@ final class ModelAggregatorProcessor implements Processor {
         //TODO: check flag for checking whether training has started or not
         
         //model context is used to describe the model
-        this.modelContext = ih;
-        logger.trace("Model context: {}", this.modelContext.toString());
+		logger.trace("Model context: {}", ih.toString());
 	}
 
 	private static double computeHoeffdingBound(double range, double confidence, double n){
@@ -679,15 +646,15 @@ final class ModelAggregatorProcessor implements Processor {
 		}
 	}
         
-        protected ChangeDetector changeDetector;    
+		protected ChangeDetector changeDetector;
 
-        public ChangeDetector getChangeDetector() {
-            return this.changeDetector;
-        }
+		public ChangeDetector getChangeDetector() {
+				return this.changeDetector;
+		}
 
-        public void setChangeDetector(ChangeDetector cd) {
-            this.changeDetector = cd;
-        }
+		public void setChangeDetector(ChangeDetector cd) {
+				this.changeDetector = cd;
+		}
 	
 	/**
 	 * Builder class to replace constructors with many parameters
@@ -706,7 +673,7 @@ final class ModelAggregatorProcessor implements Processor {
 		private int gracePeriod = 200;
 		private int parallelismHint = 1;
 		private long timeOut = 30;
-                private ChangeDetector changeDetector = null;
+		private ChangeDetector changeDetector = null;
 
 		Builder(Instances dataset){
 			this.dataset = dataset;
@@ -752,10 +719,10 @@ final class ModelAggregatorProcessor implements Processor {
 			return this;
 		}
 		
-                Builder changeDetector(ChangeDetector changeDetector){
-                        this.changeDetector = changeDetector;
-                        return this;
-                }
+		Builder changeDetector(ChangeDetector changeDetector){
+			this.changeDetector = changeDetector;
+			return this;
+		}
 		ModelAggregatorProcessor build(){
 			return new ModelAggregatorProcessor(this);
 		}

@@ -40,7 +40,7 @@ public final class StormComponentFactory implements ComponentFactory {
     private final Map<String, Integer> processorList;
 
     public StormComponentFactory() {
-        processorList = new HashMap<String, Integer>();
+        processorList = new HashMap<>();
     }
 
     @Override
@@ -61,17 +61,16 @@ public final class StormComponentFactory implements ComponentFactory {
 
     @Override
     public Topology createTopology(String topoName) {
-        StormTopology topology = new StormTopology(topoName);
-        return topology;
+        return new StormTopology(topoName);
     }
 
     private String getComponentName(Class<? extends Processor> clazz) {
         StringBuilder componentName = new StringBuilder(clazz.getCanonicalName());
         String key = componentName.toString();
-        Integer index = 0;
+        Integer index;
 
         if (!processorList.containsKey(key)) {
-            index = Integer.valueOf(1);
+            index = 1;
         } else {
             index = processorList.get(key) + 1;
         }

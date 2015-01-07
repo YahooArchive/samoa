@@ -19,11 +19,10 @@ package com.yahoo.labs.samoa.moa.clusterers.clustream;
  * limitations under the License.
  * #L%
  */
+import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Random;
-import com.yahoo.labs.samoa.moa.cluster.CFCluster;
 import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.moa.cluster.CFCluster;
 
 public class ClustreamKernel extends CFCluster {
 	private static final long serialVersionUID = 1L;
@@ -118,8 +117,8 @@ public class ClustreamKernel extends CFCluster {
     private double getDeviation(){
         double[] variance = getVarianceVector();
         double sumOfDeviation = 0.0;
-        for (int i = 0; i < variance.length; i++) {
-            double d = Math.sqrt(variance[i]);
+        for (double aVariance : variance) {
+            double d = Math.sqrt(aVariance);
             sumOfDeviation += d;
         }
         return sumOfDeviation / variance.length;
@@ -140,8 +139,8 @@ public class ClustreamKernel extends CFCluster {
 
     /**
      * See interface <code>Cluster</code>
-     * @param point
-     * @return
+     * @param instance
+     * @return double value
      */
     @Override
     public double getInclusionProbability(Instance instance) {
@@ -188,9 +187,6 @@ public class ClustreamKernel extends CFCluster {
                     res[i] = MIN_VARIANCE;
                 }
             }
-            else{
-                
-            }
         }
         return res;
     }
@@ -207,14 +203,13 @@ public class ClustreamKernel extends CFCluster {
     /**
      * Calculate the normalized euclidean distance (Mahalanobis distance for
      * distribution w/o covariances) to a point.
-     * @param other The point to which the distance is calculated.
+     * @param point The point to which the distance is calculated.
      * @return The normalized distance to the cluster center.
      *
      * TODO: check whether WEIGHTING is correctly applied to variances
      */
     //???????
     private double calcNormalizedDistance(double[] point) {
-        double[] variance = getVarianceVector();
         double[] center = getCenter();
         double res = 0.0;
 
@@ -227,7 +222,7 @@ public class ClustreamKernel extends CFCluster {
 
         /**
      * Approximates the inverse error function. Clustream needs this.
-     * @param z
+     * @param x
      */
     public static double inverseError(double x) {
         double z = Math.sqrt(Math.PI) * x;
@@ -256,14 +251,14 @@ public class ClustreamKernel extends CFCluster {
     }
 
     @Override
-    protected void getClusterSpecificInfo(ArrayList<String> infoTitle, ArrayList<String> infoValue) {
+    protected void getClusterSpecificInfo(List<String> infoTitle, List<String> infoValue) {
         super.getClusterSpecificInfo(infoTitle, infoValue);
         infoTitle.add("Deviation");
 
         double[] variance = getVarianceVector();
         double sumOfDeviation = 0.0;
-        for (int i = 0; i < variance.length; i++) {
-            double d = Math.sqrt(variance[i]);
+        for (double aVariance : variance) {
+            double d = Math.sqrt(aVariance);
             sumOfDeviation += d;
         }
 

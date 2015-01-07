@@ -49,30 +49,31 @@ public class HelloWorldTask implements Task, Configurable {
 
     /** The topology builder for the task. */
     private TopologyBuilder builder;
-    /** The tolopogy that will be created for the task */
+    /** The topology that will be created for the task */
     private Topology helloWorldTopology;
-    /** The event source for the topology. Implements EntranceProcessor */
-    private HelloWorldSourceProcessor sourceProcessor;
-    /** The event sink for the topology. Implements Processor */
-    private HelloWorldDestinationProcessor destProcessor;
 
-    public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i', "Maximum number of instances to generate (-1 = no limit).", 1000000, -1,
-            Integer.MAX_VALUE);
-    public IntOption helloWorldParallelismOption = new IntOption("parallelismOption", 'p', "Number of destination Processors", 1, 1, Integer.MAX_VALUE);
-    public StringOption evaluationNameOption = new StringOption("evalutionName", 'n', "Identifier of the evaluation", "HelloWorldTask"
-            + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+    public IntOption instanceLimitOption = new IntOption("instanceLimit", 'i',
+        "Maximum number of instances to generate (-1 = no limit).", 1000000, -1, Integer.MAX_VALUE);
+
+    public IntOption helloWorldParallelismOption = new IntOption("parallelismOption", 'p',
+        "Number of destination Processors", 1, 1, Integer.MAX_VALUE);
+
+    public StringOption evaluationNameOption = new StringOption("evaluationName", 'n',
+        "Identifier of the evaluation", "HelloWorldTask" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 
     @Override
     public void init() {
-        // create source EntranceProcesor
-        sourceProcessor = new HelloWorldSourceProcessor(instanceLimitOption.getValue());
+        // create source EntranceProcessor
+        /* The event source for the topology. Implements EntranceProcessor */
+        HelloWorldSourceProcessor sourceProcessor = new HelloWorldSourceProcessor(instanceLimitOption.getValue());
         builder.addEntranceProcessor(sourceProcessor);
 
         // create Stream
         Stream stream = builder.createStream(sourceProcessor);
 
         // create destination Processor
-        destProcessor = new HelloWorldDestinationProcessor();
+        /* The event sink for the topology. Implements Processor */
+        HelloWorldDestinationProcessor destProcessor = new HelloWorldDestinationProcessor();
         builder.addProcessor(destProcessor, helloWorldParallelismOption.getValue());
         builder.connectInputShuffleStream(stream, destProcessor);
 
@@ -90,8 +91,8 @@ public class HelloWorldTask implements Task, Configurable {
     public void setFactory(ComponentFactory factory) {
         // will be removed when dynamic binding is implemented
         builder = new TopologyBuilder(factory);
-        logger.debug("Sucessfully instantiating TopologyBuilder");
+        logger.debug("Successfully instantiating TopologyBuilder");
         builder.initTopology(evaluationNameOption.getValue());
-        logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
+        logger.debug("Successfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
     }
 }

@@ -23,13 +23,14 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 /**
  * License
  */
+import java.util.HashMap;
+import java.util.Map;
+
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.topology.Stream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The Class PredictionCombinerProcessor.
@@ -100,7 +101,7 @@ public class PredictionCombinerProcessor implements Processor {
         double[] prediction = inEvent.getClassVotes();
         int instanceIndex = (int) inEvent.getInstanceIndex();
         
-        addStatisticsforInstanceReceived(instanceIndex, inEvent.getClassifierIndex(), prediction, 1);
+        addStatisticsForInstanceReceived(instanceIndex, inEvent.getClassifierIndex(), prediction, 1);
 
         if (inEvent.isLastEvent() || hasAllVotesArrivedInstance(instanceIndex)) {
             DoubleVector combinedVote = this.mapVotesforInstanceReceived.get(instanceIndex);
@@ -142,7 +143,7 @@ public class PredictionCombinerProcessor implements Processor {
         return newProcessor;
     }
 
-    protected void addStatisticsforInstanceReceived(int instanceIndex, int classifierIndex, double[] prediction, int add) {
+    protected void addStatisticsForInstanceReceived(int instanceIndex, int classifierIndex, double[] prediction, int add) {
         if (this.mapCountsforInstanceReceived == null) {
             this.mapCountsforInstanceReceived = new HashMap<>();
             this.mapVotesforInstanceReceived = new HashMap<>();

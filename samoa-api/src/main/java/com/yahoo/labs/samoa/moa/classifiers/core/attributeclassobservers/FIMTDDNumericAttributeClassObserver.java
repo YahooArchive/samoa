@@ -113,8 +113,7 @@ public class FIMTDDNumericAttributeClassObserver extends BinaryTreeNumericAttrib
     double countLeftTotal;
 
     public void observeAttributeClass(double attVal, double classVal, double weight) {
-        if (Double.isNaN(attVal)) { //Instance.isMissingValue(attVal)
-        } else {
+        if (!Double.isNaN(attVal)) {
             if (this.root == null) {
                 this.root = new Node(attVal, classVal, weight);
             } else {

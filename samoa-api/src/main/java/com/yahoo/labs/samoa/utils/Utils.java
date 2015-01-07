@@ -34,7 +34,7 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
 /**
- * Utils class for building and deploying applications programaticaly.
+ * Utils class for building and deploying applications programmatically.
  * @author severien
  *
  */
@@ -136,8 +136,7 @@ public class Utils {
 	
 	private static void addEntry(JarOutputStream jo, File file, String baseDir, String rootDir) {
 		try {
-			BufferedInputStream bi = new BufferedInputStream(
-					new FileInputStream(file));
+			BufferedInputStream bi = new BufferedInputStream(new FileInputStream(file));
 
 			String path = file.getAbsolutePath().replaceFirst(baseDir, rootDir);
 			jo.putNextEntry(new ZipEntry(path));
@@ -155,16 +154,11 @@ public class Utils {
 
 	public static Manifest createManifest() {
 		Manifest manifest = new Manifest();
-		manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION,
-				"1.0");
-		manifest.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_URL,
-				"http://samoa.yahoo.com");
-		manifest.getMainAttributes().put(
-				Attributes.Name.IMPLEMENTATION_VERSION, "0.1");
-		manifest.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_VENDOR,
-				"Yahoo");
-		manifest.getMainAttributes().put(
-				Attributes.Name.IMPLEMENTATION_VENDOR_ID, "SAMOA");
+		manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+		manifest.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_URL, "http://samoa.yahoo.com");
+		manifest.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_VERSION, "0.1");
+		manifest.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_VENDOR, "Yahoo");
+		manifest.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_VENDOR_ID, "SAMOA");
 		Attributes s4Attributes = new Attributes();
 		s4Attributes.putValue("S4-App-Class", "path.to.Class");
 		Attributes.Name name = new Attributes.Name("S4-App-Class");
@@ -175,7 +169,7 @@ public class Utils {
 	}
 	
 	public static Object getInstance(String className) {
-    	Class<?> cls;
+    Class<?> cls;
 		Object obj = null;
 		try {
 			cls = Class.forName(className); 
@@ -184,5 +178,5 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return obj;
-    }
+	}
 }

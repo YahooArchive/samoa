@@ -70,9 +70,9 @@ public final class SingleClassifier implements Learner, AdaptiveLearner, Configu
 
 	protected void setLayout() {		
 		learnerP = new LocalLearnerProcessor();
-                learnerP.setChangeDetector(this.getChangeDetector());
-                LocalLearner learner = (LocalLearner) this.learnerOption.getValue();
-                learner.setDataset(this.dataset);
+		learnerP.setChangeDetector(this.getChangeDetector());
+		LocalLearner learner = this.learnerOption.getValue();
+		learner.setDataset(this.dataset);
 		learnerP.setLearner(learner);
                 
 		//learnerPI = this.builder.createPi(learnerP, 1);
@@ -92,8 +92,7 @@ public final class SingleClassifier implements Learner, AdaptiveLearner, Configu
 	 */
 	@Override
 	public Set<Stream> getResultStreams() {
-		Set<Stream> streams = ImmutableSet.of(this.resultStream);
-		return streams;
+		return ImmutableSet.of(this.resultStream);
 	}
 
 	protected ChangeDetector changeDetector;    

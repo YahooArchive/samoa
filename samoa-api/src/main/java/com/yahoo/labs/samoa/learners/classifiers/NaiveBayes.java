@@ -40,12 +40,12 @@ import com.yahoo.labs.samoa.moa.core.GaussianEstimator;
  * @author Olivier Van Laere (vanlaere yahoo-inc dot com)
  */
 public class NaiveBayes implements LocalLearner {
-	
+
 	/**
 	 * Default smoothing factor. For now fixed to 1E-20.
 	 */
-	private double additive_smoothing_factor = 1e-20;
-	
+	private static final double ADDITIVE_SMOOTHING_FACTOR = 1e-20;
+
 	/**
 	 * serialVersionUID for serialization
 	 */
@@ -54,7 +54,7 @@ public class NaiveBayes implements LocalLearner {
 	/**
 	 * Instance of a logger for use in this class.
 	 */
-	private static Logger log = LoggerFactory.getLogger(NaiveBayes.class);
+	private static final Logger logger = LoggerFactory.getLogger(NaiveBayes.class);
 
 	/**
 	 * The actual model.
@@ -144,30 +144,23 @@ public class NaiveBayes implements LocalLearner {
 					estimator = obs.getEstimator(classIndex);
 				}
 				double valueNonZero;
-				double valueZero;
 				// The null case should be handled by smoothing!
 				if (estimator != null) {
 					// Get the score for a NON-ZERO attribute value
 					valueNonZero = estimator.probabilityDensity(value);
-					// Get the score for a ZERO attribute value
-					valueZero = estimator.probabilityDensity(0);
-					if (valueZero == 0) {
-						valueZero = additive_smoothing_factor;
-					}
 				}
 				// We don't have an estimator
 				else {
 					// Assign a very small probability that we do see this value
-					valueNonZero = additive_smoothing_factor;
-					// no estimator implies we have seen only zeros
-					valueZero = 1;
+					valueNonZero = ADDITIVE_SMOOTHING_FACTOR;
 				}
 				votes[classIndex] += Math.log(valueNonZero); //  - Math.log(valueZero);
 			}
 			// Check for null in the case of prequential evaluation
-			if (this.classPrototypes.get(classIndex) != null)
+			if (this.classPrototypes.get(classIndex) != null) {
 				// Add the prototype for the class, already in log space
 				votes[classIndex] += Math.log(this.classPrototypes.get(classIndex));
+			}
 		}
 		return votes;
 	}

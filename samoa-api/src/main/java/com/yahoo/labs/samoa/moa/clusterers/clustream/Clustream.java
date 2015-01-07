@@ -70,7 +70,7 @@ public class Clustream extends AbstractClusterer{
 		this.kernels = new ClustreamKernel[maxNumKernelsOption.getValue()];
 		this.timeWindow = timeWindowOption.getValue();
 		this.initialized = false;
-		this.buffer = new LinkedList<ClustreamKernel>();
+		this.buffer = new LinkedList<>();
 		this.bufferSize = maxNumKernelsOption.getValue();
 		t = kernelRadiFactorOption.getValue();
 		m = maxNumKernelsOption.getValue();
@@ -111,29 +111,29 @@ public class Clustream extends AbstractClusterer{
 		// 1. Determine closest kernel
 		ClustreamKernel closestKernel = null;
 		double minDistance = Double.MAX_VALUE;
-		for ( int i = 0; i < kernels.length; i++ ) {
+		for (ClustreamKernel kernel : kernels) {
 			//System.out.println(i+" "+kernels[i].getWeight()+" "+kernels[i].getDeviation());
-			double distance = distance(instance.toDoubleArray(), kernels[i].getCenter() );
-			if ( distance < minDistance ) {
-				closestKernel = kernels[i];
+			double distance = distance(instance.toDoubleArray(), kernel.getCenter());
+			if (distance < minDistance) {
+				closestKernel = kernel;
 				minDistance = distance;
 			}
 		}
 
 		// 2. Check whether instance fits into closestKernel
-		double radius = 0.0;
-		if ( closestKernel.getWeight() == 1 ) {
+		double radius;
+		if (closestKernel != null && closestKernel.getWeight() == 1) {
 			// Special case: estimate radius by determining the distance to the
 			// next closest cluster
 			radius = Double.MAX_VALUE;
 			double[] center = closestKernel.getCenter();
-			for ( int i = 0; i < kernels.length; i++ ) {
-				if ( kernels[i] == closestKernel ) {
+			for (ClustreamKernel kernel : kernels) {
+				if (kernel == closestKernel) {
 					continue;
 				}
 
-				double distance = distance(kernels[i].getCenter(), center );
-				radius = Math.min( distance, radius );
+				double distance = distance(kernel.getCenter(), center);
+				radius = Math.min(distance, radius);
 			}
 		} else {
 			radius = closestKernel.getRadius();
@@ -232,8 +232,7 @@ public class Clustream extends AbstractClusterer{
 			int rid = random.nextInt(k);
 			centers[i] = new SphereCluster(data.get(rid).getCenter(),0);
 		}
-		Clustering clustering = kMeans(k, centers, data);
-		return clustering;
+		return kMeans(k, centers, data);
 	}
 
 
@@ -246,7 +245,7 @@ public class Clustream extends AbstractClusterer{
 
 		int dimensions = centers[0].getCenter().length;
 
-		ArrayList<ArrayList<Cluster>> clustering = new ArrayList<ArrayList<Cluster>>();
+		ArrayList<ArrayList<Cluster>> clustering = new ArrayList<>();
 		for ( int i = 0; i < k; i++ ) {
 			clustering.add( new ArrayList<Cluster>() );
 		}

@@ -19,6 +19,7 @@ package com.yahoo.labs.samoa.learners.classifiers.rules;
  * limitations under the License.
  * #L%
  */
+import java.util.Set;
 
 import com.github.javacliparser.ClassOption;
 import com.github.javacliparser.Configurable;
@@ -35,7 +36,6 @@ import com.yahoo.labs.samoa.learners.classifiers.rules.distributed.AMRulesStatis
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.attributeclassobservers.FIMTDDNumericAttributeClassLimitObserver;
 import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.topology.TopologyBuilder;
-import java.util.Set;
 
 /**
  * Vertical  AMRules Regressor

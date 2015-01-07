@@ -82,8 +82,8 @@ final class LocalStatisticsProcessor implements Processor {
                         List<ContentEvent> contentEventList = abce.getContentEventList();
                             for (ContentEvent contentEvent: contentEventList ){
                             AttributeContentEvent ace = (AttributeContentEvent) contentEvent;
-                            Long learningNodeId = Long.valueOf(ace.getLearningNodeId());
-                            Integer obsIndex = Integer.valueOf(ace.getObsIndex());
+                            Long learningNodeId = ace.getLearningNodeId();
+                            Integer obsIndex = ace.getObsIndex();
 
                             AttributeClassObserver obs = localStats.get(
                                             learningNodeId, obsIndex);
@@ -118,18 +118,18 @@ final class LocalStatisticsProcessor implements Processor {
 			//process ComputeContentEvent by calculating the local statistic
 			//and send back the calculation results via computation result stream.
 			ComputeContentEvent cce = (ComputeContentEvent) event;
-			Long learningNodeId = Long.valueOf(cce.getLearningNodeId());
+			Long learningNodeId = cce.getLearningNodeId();
 			double[] preSplitDist = cce.getPreSplitDist();
 			
 			Map<Integer, AttributeClassObserver> learningNodeRowMap = localStats
 					.row(learningNodeId);
-			List<AttributeSplitSuggestion> suggestions = new Vector<AttributeSplitSuggestion>();
+			List<AttributeSplitSuggestion> suggestions = new Vector<>();
 
 			for (Entry<Integer, AttributeClassObserver> entry : learningNodeRowMap.entrySet()) {
 				AttributeClassObserver obs = entry.getValue();
 				AttributeSplitSuggestion suggestion = obs
 						.getBestEvaluatedSplitSuggestion(splitCriterion,
-								preSplitDist, entry.getKey().intValue(), binarySplit);
+								preSplitDist, entry.getKey(), binarySplit);
 				if(suggestion != null){
 					suggestions.add(suggestion);
 				}
@@ -158,7 +158,7 @@ final class LocalStatisticsProcessor implements Processor {
 			logger.debug("Finish compute event");
 		} else if (event instanceof DeleteContentEvent) {
 			DeleteContentEvent dce = (DeleteContentEvent) event;
-			Long learningNodeId = Long.valueOf(dce.getLearningNodeId());
+			Long learningNodeId = dce.getLearningNodeId();
 			localStats.rowMap().remove(learningNodeId);
 		}
 		return false;

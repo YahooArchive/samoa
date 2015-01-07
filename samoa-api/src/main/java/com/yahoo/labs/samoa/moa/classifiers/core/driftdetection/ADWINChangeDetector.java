@@ -57,7 +57,7 @@ public class ADWINChangeDetector extends AbstractChangeDetector {
 
     @Override
     public void resetLearning() {
-        adwin = new ADWIN((double) this.deltaAdwinOption.getValue());
+        adwin = new ADWIN(this.deltaAdwinOption.getValue());
     }
 
     @Override

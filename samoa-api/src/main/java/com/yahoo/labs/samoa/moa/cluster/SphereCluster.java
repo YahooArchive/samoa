@@ -21,11 +21,10 @@ package com.yahoo.labs.samoa.moa.cluster;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import com.yahoo.labs.samoa.instances.DenseInstance;
 import com.yahoo.labs.samoa.instances.Instance;
+import java.util.List;
+import java.util.Random;
 
 /**
  * A simple implementation of the <code>Cluster</code> interface representing
@@ -180,7 +179,7 @@ public class SphereCluster extends Cluster {
 
 
 
-		double r = 0;
+		double r;
 		double[] c = new double[c0.length];
 
 		//one lays within the others
@@ -263,7 +262,7 @@ public class SphereCluster extends Cluster {
 	 * is negative if the two clusters overlap
 	 */
 	public double getHullDistance(SphereCluster other) {
-		double distance = 0.0;
+		double distance;
 		//get the center through getCenter so subclass have a chance
 		double[] center0 = getCenter();
 		double[] center1 = other.getCenter();
@@ -292,10 +291,7 @@ public class SphereCluster extends Cluster {
 		double minDist = Math.sqrt(2)*(getRadius() + other.getRadius());
 		double diff = getCenterDistance(other) - minDist;
 
-		if(diff > 0)
-			return true;
-		else
-			return false;
+		return diff > 0;
 	}
 
 	private double distance(double[] v1, double[] v2){
@@ -367,7 +363,7 @@ public class SphereCluster extends Cluster {
 	}
 
 	@Override
-	protected void getClusterSpecificInfo(ArrayList<String> infoTitle, ArrayList<String> infoValue) {
+	protected void getClusterSpecificInfo(List<String> infoTitle, List<String> infoValue) {
 		super.getClusterSpecificInfo(infoTitle, infoValue);
 		infoTitle.add("Radius");
 		infoValue.add(Double.toString(getRadius()));

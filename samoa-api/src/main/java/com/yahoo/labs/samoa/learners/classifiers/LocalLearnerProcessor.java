@@ -24,6 +24,8 @@ package com.yahoo.labs.samoa.learners.classifiers;
  * License
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
@@ -32,11 +34,8 @@ import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.moa.classifiers.core.driftdetection.ChangeDetector;
 import com.yahoo.labs.samoa.topology.Stream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.yahoo.labs.samoa.moa.core.Utils.maxIndex;
-//import weka.core.Instance;
 
 /**
  * The Class LearnerProcessor.
@@ -109,20 +108,16 @@ final public class LocalLearnerProcessor implements Processor {
                 Instance inst = event.getInstance();
 		this.model.trainOnInstance(inst);
 		this.instancesCount++;
-		//if (instancesCount % 10000 == 0) {
-		//	logger.info("Trained model using {} events with classifier id {}",
-		//			instancesCount, this.modelId); //getId());
-		//}
-                if (this.changeDetector != null) {
-                    boolean correctlyClassifies = this.correctlyClassifies(inst);
-                    double oldEstimation = this.changeDetector.getEstimation();
-                    this.changeDetector.input(correctlyClassifies ? 0 : 1);
-                    if (this.changeDetector.getChange() && this.changeDetector.getEstimation() > oldEstimation) {
-                        //Start a new classifier
-                        this.model.resetLearning();
-                        this.changeDetector.resetLearning();
-                    }
-                }
+		if (this.changeDetector != null) {
+				boolean correctlyClassifies = this.correctlyClassifies(inst);
+				double oldEstimation = this.changeDetector.getEstimation();
+				this.changeDetector.input(correctlyClassifies ? 0 : 1);
+				if (this.changeDetector.getChange() && this.changeDetector.getEstimation() > oldEstimation) {
+						//Start a new classifier
+						this.model.resetLearning();
+						this.changeDetector.resetLearning();
+				}
+		}
 	}
 
      /**
@@ -169,15 +164,8 @@ final public class LocalLearnerProcessor implements Processor {
 					instance, inEvent.getClassId(), dist, inEvent.isLastEvent());
 			outContentEvent.setClassifierIndex(this.modelId);
 			outContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());
-			logger.trace(inEvent.getInstanceIndex() + " " // +
-															// inEvent.getClassId()
-					+ " " + modelId + " " + dist);
+			logger.trace(inEvent.getInstanceIndex() + " {} {}", modelId, dist);
 			outputStream.put(outContentEvent);
-			
-			//if (++test % 10000 == 0) {
-				//logger.info("Tested model using {} events with classifier id {}",
-				//		test, this.modelId);
-			//}
 		}
 		
 		if (inEvent.isTraining()) {
@@ -202,25 +190,28 @@ final public class LocalLearnerProcessor implements Processor {
 	public Processor newProcessor(Processor sourceProcessor) {
 		LocalLearnerProcessor newProcessor = new LocalLearnerProcessor();
 		LocalLearnerProcessor originProcessor = (LocalLearnerProcessor) sourceProcessor;
+
 		if (originProcessor.getLearner() != null){
 			newProcessor.setLearner(originProcessor.getLearner().create());
 		}
-                if (originProcessor.getChangeDetector() != null){
-                    newProcessor.setChangeDetector(originProcessor.getChangeDetector());
-                }
+
+		if (originProcessor.getChangeDetector() != null){
+				newProcessor.setChangeDetector(originProcessor.getChangeDetector());
+		}
+
 		newProcessor.setOutputStream(originProcessor.getOutputStream());
 		return newProcessor;
 	}
         
-        protected ChangeDetector changeDetector;    
-        
-        public ChangeDetector getChangeDetector() {
-            return this.changeDetector;
-        }
+	protected ChangeDetector changeDetector;
 
-        public void setChangeDetector(ChangeDetector cd) {
-            this.changeDetector = cd;
-        }
+	public ChangeDetector getChangeDetector() {
+			return this.changeDetector;
+	}
+
+	public void setChangeDetector(ChangeDetector cd) {
+			this.changeDetector = cd;
+	}
         
 
 }

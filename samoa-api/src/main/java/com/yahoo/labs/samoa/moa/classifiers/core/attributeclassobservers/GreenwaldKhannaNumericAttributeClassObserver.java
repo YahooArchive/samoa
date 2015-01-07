@@ -45,15 +45,14 @@ public class GreenwaldKhannaNumericAttributeClassObserver extends AbstractOption
 
     private static final long serialVersionUID = 1L;
 
-    protected AutoExpandVector<GreenwaldKhannaQuantileSummary> attValDistPerClass = new AutoExpandVector<GreenwaldKhannaQuantileSummary>();
+    protected AutoExpandVector<GreenwaldKhannaQuantileSummary> attValDistPerClass = new AutoExpandVector<>();
 
     public IntOption numTuplesOption = new IntOption("numTuples", 'n',
         "The number of tuples.", 10, 1, Integer.MAX_VALUE);
 
     @Override
     public void observeAttributeClass(double attVal, int classVal, double weight) {
-        if (Utils.isMissingValue(attVal)) {
-        } else {
+        if (!Utils.isMissingValue(attVal)) {
             GreenwaldKhannaQuantileSummary valDist = this.attValDistPerClass.get(classVal);
             if (valDist == null) {
                 valDist = new GreenwaldKhannaQuantileSummary(this.numTuplesOption.getValue());

@@ -28,11 +28,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.topology.AbstractStream;
 import com.yahoo.labs.samoa.topology.IProcessingItem;
-import com.yahoo.labs.samoa.topology.Stream;
 import com.yahoo.labs.samoa.utils.StreamDestination;
 
 /**
@@ -46,7 +44,7 @@ class SimpleStream extends AbstractStream {
 
     SimpleStream(IProcessingItem sourcePi) {
     	super(sourcePi);
-    	this.destinations = new LinkedList<StreamDestination>();
+    	this.destinations = new LinkedList<>();
     	this.eventCounter = 0;
     	this.maxCounter = 1;
     }

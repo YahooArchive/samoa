@@ -30,7 +30,7 @@ public interface Task {
 
 	/**
 	 * Initialize this SAMOA task, 
-	 * i.e. create and connect ProcesingItems and Streams
+	 * i.e. create and connect ProcessingItems and Streams
 	 * and initialize the topology
 	 */
 	public void init();	

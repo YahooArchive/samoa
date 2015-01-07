@@ -119,14 +119,13 @@ public abstract class AbstractChangeDetector extends AbstractOptionHandler
      * warnings, delay, and estimation.
      */
     public double[] getOutput() {
-        double[] res = {this.isChangeDetected ? 1 : 0, this.isWarningZone ? 1 : 0, this.delay, this.estimation};
-        return res;
+        return new double[]{this.isChangeDetected ? 1 : 0, this.isWarningZone ? 1 : 0, this.delay, this.estimation};
     }
 
     /**
      * Returns a string representation of the model.
      *
-     * @param out	the stringbuilder to add the description
+     * @param sb	the stringbuilder to add the description
      * @param indent	the number of characters to indent
      */
     @Override

@@ -293,7 +293,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 		// Normalize Instance
 		double[] normalizedInstance = new double[inst.numAttributes()];
 		for(int j = 0; j < inst.numAttributes() -1; j++) {
-			int instAttIndex = modelAttIndexToInstanceAttIndex(j, inst);
+			int instAttIndex = modelAttIndexToInstanceAttIndex(j);
 			double mean = perceptronattributeStatistics.getValue(j) / perceptronYSeen;
 			double sd = computeSD(squaredperceptronattributeStatistics.getValue(j), perceptronattributeStatistics.getValue(j), perceptronYSeen);
 			if (sd > SD_THRESHOLD) 
@@ -321,7 +321,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 		double delta = normalizedY - normalizedPredict;
 
 		for (int j = 0; j < inst.numAttributes() - 1; j++) {
-			int instAttIndex = modelAttIndexToInstanceAttIndex(j, inst);
+			int instAttIndex = modelAttIndexToInstanceAttIndex(j);
 			if(inst.attribute(instAttIndex).isNumeric()) {
 				this.weightAttribute[j] += learningRatio * delta * normalizedInstance[j];
 				sumWeights += Math.abs(this.weightAttribute[j]);
@@ -331,7 +331,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 		sumWeights += Math.abs(this.weightAttribute[inst.numAttributes() - 1]);
 		if (sumWeights > inst.numAttributes()) { // Lasso regression
 			for (int j = 0; j < inst.numAttributes() - 1; j++) {
-				int instAttIndex = modelAttIndexToInstanceAttIndex(j, inst);
+				int instAttIndex = modelAttIndexToInstanceAttIndex(j);
 				if(inst.attribute(instAttIndex).isNumeric()) {
 					this.weightAttribute[j] = this.weightAttribute[j] / sumWeights;
 				}

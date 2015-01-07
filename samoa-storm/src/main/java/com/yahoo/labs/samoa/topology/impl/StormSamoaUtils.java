@@ -47,7 +47,7 @@ public class StormSamoaUtils {
 		
 	static Properties getProperties() throws IOException{
 		Properties props = new Properties();
-		InputStream is = null;
+		InputStream is;
 		
 		File f = new File("src/main/resources/samoa-storm-cluster.properties"); // FIXME it does not exist anymore
 		is = new FileInputStream(f);
@@ -66,8 +66,8 @@ public class StormSamoaUtils {
 	
 	public static StormTopology argsToTopology(String[] args){
 		StringBuilder cliString = new StringBuilder();
-		for (int i = 0; i < args.length; i++) {
-			cliString.append(" ").append(args[i]);
+		for (String arg : args) {
+			cliString.append(" ").append(arg);
 		}
 		logger.debug("Command line string = {}", cliString.toString());
 
@@ -76,14 +76,13 @@ public class StormSamoaUtils {
 		//TODO: remove setFactory method with DynamicBinding
 		task.setFactory(new StormComponentFactory());
 		task.init();
-			
-		StormTopology stormTopo = (StormTopology)task.getTopology();
-		return stormTopo;
+
+		return (StormTopology)task.getTopology();
 	}
 	
 	public static int numWorkers(List<String> tmpArgs){
 		int position = tmpArgs.size() - 1;
-		int numWorkers = -1;
+		int numWorkers;
 		
 		try {
 			numWorkers = Integer.parseInt(tmpArgs.get(position));
@@ -99,7 +98,7 @@ public class StormSamoaUtils {
         Task task = null;
         try {
             logger.debug("Providing task [{}]", cliString);
-            task = (Task) ClassOption.cliStringToObject(cliString, Task.class, null);
+            task = ClassOption.cliStringToObject(cliString, Task.class, null);
         } catch (Exception e) {
             logger.warn("Fail in initializing the task!");
             e.printStackTrace();

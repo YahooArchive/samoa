@@ -23,6 +23,10 @@ package com.yahoo.labs.samoa.learners.classifiers.ensemble;
 /**
  * License
  */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.learners.InstanceContentEvent;
@@ -30,9 +34,6 @@ import com.yahoo.labs.samoa.learners.ResultContentEvent;
 import com.yahoo.labs.samoa.moa.core.DoubleVector;
 import com.yahoo.labs.samoa.moa.core.Utils;
 import com.yahoo.labs.samoa.topology.Stream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * The Class BoostingPredictionCombinerProcessor.
@@ -60,7 +61,7 @@ public class BoostingPredictionCombinerProcessor extends PredictionCombinerProce
         double[] prediction = inEvent.getClassVotes();
         int instanceIndex = (int) inEvent.getInstanceIndex();
         
-        addStatisticsforInstanceReceived(instanceIndex, inEvent.getClassifierIndex(), prediction, 1);
+        addStatisticsForInstanceReceived(instanceIndex, inEvent.getClassifierIndex(), prediction, 1);
         //Boosting
         addPredictions(instanceIndex, inEvent, prediction);              
                
@@ -114,7 +115,7 @@ public class BoostingPredictionCombinerProcessor extends PredictionCombinerProce
 
     private void addPredictions(int instanceIndex, ResultContentEvent inEvent, double[] prediction) {
         if (this.mapPredictions == null) {
-            this.mapPredictions = new HashMap<Integer, DoubleVector>();
+            this.mapPredictions = new HashMap<>();
         }
         DoubleVector predictions = this.mapPredictions.get(instanceIndex);
         if (predictions == null){
@@ -132,13 +133,11 @@ public class BoostingPredictionCombinerProcessor extends PredictionCombinerProce
             double k = lambda_d;
             Instance inst = inEvent.getInstance();
             if (k > 0.0) {
-                Instance weightedInst = (Instance) inst.copy();
+                Instance weightedInst = inst.copy();
                 weightedInst.setWeight(inst.weight() * k);
                 //this.ensemble[i].trainOnInstance(weightedInst);
-                boolean isTraining = true;
-                boolean isTesting = false;
                 InstanceContentEvent instanceContentEvent = new InstanceContentEvent(
-                                inEvent.getInstanceIndex(), weightedInst, isTraining, isTesting);
+                                inEvent.getInstanceIndex(), weightedInst, true, false);
                 instanceContentEvent.setClassifierIndex(i);
                 instanceContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());	
                 trainingStream.put(instanceContentEvent);

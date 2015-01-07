@@ -54,8 +54,6 @@ public class CusumDM extends AbstractChangeDetector {
 
     private double x_mean;
 
-    private double alpha;
-
     private double delta;
 
     private double lambda;
@@ -76,16 +74,12 @@ public class CusumDM extends AbstractChangeDetector {
     @Override
     public void input(double x) {
         // It monitors the error rate
-        if (this.isChangeDetected == true) {
+        if (this.isChangeDetected) {
             resetLearning();
         }
 
         x_mean = x_mean + (x - x_mean) / (double) m_n;
         sum = Math.max(0, sum + x - x_mean - this.delta);
-
-        
-
-
         m_n++;
 
         // System.out.print(prediction + " " + m_n + " " + (m_p+m_s) + " ");

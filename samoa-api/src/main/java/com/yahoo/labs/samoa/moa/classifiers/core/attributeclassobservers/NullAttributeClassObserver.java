@@ -34,8 +34,7 @@ import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class NullAttributeClassObserver extends AbstractOptionHandler implements
-        AttributeClassObserver {
+public class NullAttributeClassObserver extends AbstractOptionHandler implements AttributeClassObserver {
 
     private static final long serialVersionUID = 1L;
 

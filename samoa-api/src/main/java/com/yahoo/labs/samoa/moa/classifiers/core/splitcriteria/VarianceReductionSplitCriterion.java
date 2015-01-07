@@ -48,15 +48,15 @@ public class VarianceReductionSplitCriterion extends AbstractOptionHandler imple
     public double getMeritOfSplit(double[] preSplitDist, double[][] postSplitDists) {
         double SDR=0.0;
     	double N = preSplitDist[0];
-    	int count = 0; 
-    	
-    	for(int i = 0; i < postSplitDists.length; i++)
-    	{
-    		double Ni = postSplitDists[i][0];
-    		if(Ni >=5.0){
-    			count = count +1;
-    		}
-    	}
+    	int count = 0;
+
+			for (int i1 = 0; i1 < postSplitDists.length; i1++) {
+				double[] postSplitDist = postSplitDists[i1];
+				double Ni = postSplitDist[0];
+				if (Ni >= 5.0) {
+					count = count + 1;
+				}
+			}
     	
     	if(count == postSplitDists.length){
     		SDR = computeSD(preSplitDist);

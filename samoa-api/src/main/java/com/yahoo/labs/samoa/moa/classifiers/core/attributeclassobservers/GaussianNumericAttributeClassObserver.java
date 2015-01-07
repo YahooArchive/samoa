@@ -53,7 +53,7 @@ public class GaussianNumericAttributeClassObserver extends AbstractOptionHandler
 
     protected DoubleVector maxValueObservedPerClass = new DoubleVector();
 
-    protected AutoExpandVector<GaussianEstimator> attValDistPerClass = new AutoExpandVector<GaussianEstimator>();
+    protected AutoExpandVector<GaussianEstimator> attValDistPerClass = new AutoExpandVector<>();
 
     /**
      * @param classVal
@@ -68,8 +68,7 @@ public class GaussianNumericAttributeClassObserver extends AbstractOptionHandler
 
     @Override
     public void observeAttributeClass(double attVal, int classVal, double weight) {
-        if (Utils.isMissingValue(attVal)) {
-        } else {
+        if (!Utils.isMissingValue(attVal)) {
             GaussianEstimator valDist = this.attValDistPerClass.get(classVal);
             if (valDist == null) {
                 valDist = new GaussianEstimator();
@@ -115,7 +114,7 @@ public class GaussianNumericAttributeClassObserver extends AbstractOptionHandler
     }
 
     public double[] getSplitPointSuggestions() {
-        Set<Double> suggestedSplitValues = new TreeSet<Double>();
+        Set<Double> suggestedSplitValues = new TreeSet<>();
         double minValue = Double.POSITIVE_INFINITY;
         double maxValue = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < this.attValDistPerClass.size(); i++) {
@@ -170,12 +169,10 @@ public class GaussianNumericAttributeClassObserver extends AbstractOptionHandler
 
     @Override
     public void getDescription(StringBuilder sb, int indent) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     protected void prepareForUseImpl(TaskMonitor monitor, ObjectRepository repository) {
-        // TODO Auto-generated method stub
     }
 
     @Override

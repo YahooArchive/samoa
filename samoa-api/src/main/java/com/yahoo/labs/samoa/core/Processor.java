@@ -39,7 +39,8 @@ public interface Processor extends Serializable, Configurable {
     boolean process(ContentEvent event);
 
     /**
-     * Initializes the Processor. This method is called once after the topology is set up and before any call to the {@link process} method.
+     * Initializes the Processor.
+     * This method is called once after the topology is set up and before any call to the {@link process} method.
      * 
      * @param id
      *            the identifier of the processor.
@@ -47,7 +48,8 @@ public interface Processor extends Serializable, Configurable {
     void onCreate(int id);
 
     /**
-     * Creates a copy of a processor. This method is used to instantiate multiple instances of the same {@link Processsor}.
+     * Creates a copy of a processor.
+     * This method is used to instantiate multiple instances of the same {@link Processsor}.
      * 
      * @param processor
      *            the processor to be copied.

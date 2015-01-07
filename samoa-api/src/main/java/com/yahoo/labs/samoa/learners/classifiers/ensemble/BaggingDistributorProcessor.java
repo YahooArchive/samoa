@@ -73,9 +73,8 @@ public class BaggingDistributorProcessor implements Processor{
 			for (int i = 0; i < sizeEnsemble; i++) {
 				Instance weightedInst = trainInst.copy();
 				//weightedInst.setWeight(trainInst.weight() * k);
-				boolean isTraining = false;
 				InstanceContentEvent instanceContentEvent = new InstanceContentEvent(
-						inEvent.getInstanceIndex(), weightedInst, isTraining, !isTraining);
+						inEvent.getInstanceIndex(), weightedInst, false, true);
 				instanceContentEvent.setClassifierIndex(i);
 				instanceContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());	
 				predictionStream.put(instanceContentEvent);
@@ -104,10 +103,8 @@ public class BaggingDistributorProcessor implements Processor{
 			if (k > 0) {
 				Instance weightedInst = trainInst.copy();
 				weightedInst.setWeight(trainInst.weight() * k);
-				boolean isTraining = true;
-				
 				InstanceContentEvent instanceContentEvent = new InstanceContentEvent(
-						inEvent.getInstanceIndex(), weightedInst, isTraining, !isTraining);
+						inEvent.getInstanceIndex(), weightedInst, true, false);
 				instanceContentEvent.setClassifierIndex(i);
 				instanceContentEvent.setEvaluationIndex(inEvent.getEvaluationIndex());	
 				trainingStream.put(instanceContentEvent);
@@ -122,8 +119,7 @@ public class BaggingDistributorProcessor implements Processor{
 	 */
 	@Override
 	public void onCreate(int id) {
-		// TODO Auto-generated method stub
-		//System.out.println("BaggingDistributor "+id);
+		//do nothing
 	}
 
 

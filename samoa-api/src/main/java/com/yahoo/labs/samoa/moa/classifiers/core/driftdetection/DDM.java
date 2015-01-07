@@ -73,7 +73,7 @@ public class DDM extends AbstractChangeDetector {
     public void input(double prediction) {
         // prediction must be 1 or 0
         // It monitors the error rate
-        if (this.isChangeDetected == true) {
+        if (this.isChangeDetected) {
             resetLearning();
         }
         m_p = m_p + (prediction - m_p) / (double) m_n;
@@ -98,16 +98,10 @@ public class DDM extends AbstractChangeDetector {
         }
 
         if (m_n > this.minNumInstancesOption.getValue() && m_p + m_s > m_pmin + 3 * m_smin) {
-            //System.out.println(m_p + ",D");
             this.isChangeDetected = true;
             //resetLearning();
-        } else if (m_p + m_s > m_pmin + 2 * m_smin) {
-            //System.out.println(m_p + ",W");
-            this.isWarningZone = true;
-        } else {
-            this.isWarningZone = false;
-            //System.out.println(m_p + ",N");
-        }
+        } else
+            this.isWarningZone = m_p + m_s > m_pmin + 2 * m_smin;
     }
 
     @Override
