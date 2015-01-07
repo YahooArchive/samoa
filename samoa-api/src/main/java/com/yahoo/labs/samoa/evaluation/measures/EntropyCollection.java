@@ -20,29 +20,28 @@ package com.yahoo.labs.samoa.evaluation.measures;
  * #L%
  */
 
-import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
-import com.yahoo.labs.samoa.moa.evaluation.MembershipMatrix;
-import com.yahoo.labs.samoa.moa.core.DataPoint;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.yahoo.labs.samoa.moa.cluster.Clustering;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
+import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
+import com.yahoo.labs.samoa.moa.evaluation.MembershipMatrix;
 
 public class EntropyCollection extends MeasureCollection{
-    private boolean debug = false;
-    private final double beta = 1;
 
+    private static final Logger logger = LoggerFactory.getLogger(EntropyCollection.class);
 
     @Override
     protected String[] getNames() {
-        String[] names = {"GT cross entropy","FC cross entropy","Homogeneity","Completeness","V-Measure","VarInformation"};
-        return names;
+        return new String[]{"GT cross entropy","FC cross entropy","Homogeneity","Completeness","V-Measure","VarInformation"};
     }
 
     @Override
     protected boolean[] getDefaultEnabled() {
-        boolean [] defaults = {false, false, false, false, false, false};
-        return defaults;
+        return new boolean[]{false, false, false, false, false, false};
     }
 
     @Override
@@ -63,9 +62,8 @@ public class EntropyCollection extends MeasureCollection{
             }
             FCentropy/=(-1*Math.log10(numCluster));
         }
-        if(debug){
-            System.out.println("FC entropy "+FCentropy);
-        }
+
+        logger.debug("FC entropy: {}", FCentropy);
 
         double GTentropy = 0;
         if(numClasses > 1){
@@ -76,10 +74,8 @@ public class EntropyCollection extends MeasureCollection{
             }
             GTentropy/=(-1*Math.log10(numClasses));
         }
-        if(debug){
-            System.out.println("GT entropy "+GTentropy);
-        }
 
+        logger.debug("GT entropy: {}", GTentropy);
 
         //cluster based entropy
         double FCcrossEntropy = 0;
@@ -102,10 +98,7 @@ public class EntropyCollection extends MeasureCollection{
         }
 
         addValue("FC cross entropy", 1-FCcrossEntropy);
-        if(debug){
-            System.out.println("FC cross entropy "+(1-FCcrossEntropy));
-        }
-
+        logger.debug("FC cross entropy: {}", 1 - FCcrossEntropy);
 
         //class based entropy
         double GTcrossEntropy = 0;
@@ -125,9 +118,7 @@ public class EntropyCollection extends MeasureCollection{
         if(numClasses > 1)
             GTcrossEntropy/=-1*Math.log10(numClasses);
         addValue("GT cross entropy", 1-GTcrossEntropy);
-        if(debug){
-            System.out.println("GT cross entropy "+(1-GTcrossEntropy));
-        }
+        logger.debug("GT cross entropy: {}", 1 - GTcrossEntropy);
 
         double homogeneity;
         if(FCentropy == 0)
@@ -148,7 +139,8 @@ public class EntropyCollection extends MeasureCollection{
             completeness = 1 - GTcrossEntropy/GTentropy;
         addValue("Completeness",completeness);
 
-        double vmeasure = (1+beta)*homogeneity*completeness/(beta*homogeneity+completeness);
+        double beta = 1;
+        double vmeasure = (1+ beta)*homogeneity*completeness/(beta *homogeneity+completeness);
 
         if(vmeasure > 1 || homogeneity < 0)
             addValue("V-Measure",-1);
@@ -163,8 +155,7 @@ public class EntropyCollection extends MeasureCollection{
                    if(mm.getClusterClassWeight(i, j)==0) continue;
                    double m = Math.log10(mm.getClusterClassWeight(i, j)/(double)mm.getClusterSum(i)/(double)mm.getClassSum(j)*(double)n);
                    m*= mm.getClusterClassWeight(i, j)/(double)n;
-                   if(debug)
-                        System.out.println("("+j+"/"+ j + "): "+m);
+                    logger.debug("( {} / {}): ",m, m);
                    mutual+=m;
                 }
         }
@@ -174,9 +165,8 @@ public class EntropyCollection extends MeasureCollection{
         double varInfo = 1;
         if(FCentropy + GTentropy > 0)
             varInfo = 2*mutual/(FCentropy + GTentropy);
-        
-        if(debug)
-            System.out.println("mutual "+mutual+ " / VI "+varInfo);
+
+        logger.debug("mutual: {} / VI: {}", mutual, varInfo);
         addValue("VarInformation", varInfo);
 
     }

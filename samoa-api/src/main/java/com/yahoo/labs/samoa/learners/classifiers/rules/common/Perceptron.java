@@ -210,7 +210,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 		accumulatedError= Math.abs(this.prediction(inst)-inst.classValue()) + fadingFactor*accumulatedError;
 		nError=1+fadingFactor*nError;
 		// Initialise Perceptron if necessary   
-		if (this.initialisePerceptron == true) {
+		if (this.initialisePerceptron) {
 			//this.fadingFactor=this.fadingFactorOption.getValue();
 			//this.classifierRandom.setSeed(randomSeedOption.getValue());
 			this.classifierRandom.setSeed(randomSeed);
@@ -238,7 +238,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 		this.perceptronsumY += inst.classValue();
 		this.squaredperceptronsumY += inst.classValue() * inst.classValue();
 
-		if(constantLearningRatioDecay==false){
+		if(!constantLearningRatioDecay){
 			learningRatio = originalLearningRatio / (1+ perceptronInstancesSeen*learningRateDecay); 
 		}
 
@@ -258,13 +258,12 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 
 	public double normalizedPrediction(Instance inst)
 	{
-		double[] normalizedInstance = normalizedInstance(inst); 
-		double normalizedPrediction = prediction(normalizedInstance);
-		return normalizedPrediction;
+		double[] normalizedInstance = normalizedInstance(inst);
+		return prediction(normalizedInstance);
 	}
 
 	private double denormalizedPrediction(double normalizedPrediction) {
-		if (this.initialisePerceptron==false){
+		if (!this.initialisePerceptron){
 			double meanY = perceptronsumY / perceptronYSeen;
 			double sdY = computeSD(squaredperceptronsumY, perceptronsumY, perceptronYSeen);
 			if (sdY > SD_THRESHOLD) 
@@ -280,7 +279,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 	public double prediction(double[] instanceValues)
 	{
 		double prediction = 0.0;
-		if(this.initialisePerceptron == false)
+		if(!this.initialisePerceptron)
 		{
 			for (int j = 0; j < instanceValues.length - 1; j++) {
 				prediction += this.weightAttribute[j] * instanceValues[j];
@@ -344,10 +343,10 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 	}
 
 	public void normalizeWeights(){
-		double sumWeights = 0.0;                
+		double sumWeights = 0.0;
 
-		for (int j = 0; j < this.weightAttribute.length ; j++) {
-			sumWeights += Math.abs(this.weightAttribute[j]);
+		for (double aWeightAttribute : this.weightAttribute) {
+			sumWeights += Math.abs(aWeightAttribute);
 		}
 		for (int j = 0; j < this.weightAttribute.length; j++) {
 			this.weightAttribute[j] = this.weightAttribute[j] / sumWeights;
@@ -358,7 +357,7 @@ public class Perceptron extends AbstractClassifier implements Regressor {
 		double meanY = perceptronsumY / perceptronYSeen;
 		double sdY = computeSD(squaredperceptronsumY, perceptronsumY, perceptronYSeen);
 
-		double normalizedY = 0.0;
+		double normalizedY;
 		if (sdY > SD_THRESHOLD){
 			normalizedY = (inst.classValue() - meanY) / sdY;
 		}else{

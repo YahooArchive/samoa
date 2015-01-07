@@ -37,14 +37,12 @@ public class SilhouetteCoefficient extends MeasureCollection{
 
     @Override
     protected boolean[] getDefaultEnabled() {
-        boolean [] defaults = {false};
-        return defaults;
+        return new boolean[]{false};
     }
 
     @Override
     public String[] getNames() {
-        String[] names = {"SilhCoeff"};
-        return names;
+        return new String[]{"SilhCoeff"};
     }
 
     public void evaluateClustering(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) {

@@ -20,14 +20,13 @@ package com.yahoo.labs.samoa.evaluation.measures;
  * #L%
  */
 
-import com.yahoo.labs.samoa.moa.cluster.Clustering;
-import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
-import com.yahoo.labs.samoa.moa.evaluation.MembershipMatrix;
-import com.yahoo.labs.samoa.moa.core.DataPoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
+import com.yahoo.labs.samoa.moa.cluster.Clustering;
+import com.yahoo.labs.samoa.moa.core.DataPoint;
+import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
+import com.yahoo.labs.samoa.moa.evaluation.MembershipMatrix;
 
 public class StatisticalCollection extends MeasureCollection{
     private boolean debug = false;
@@ -35,14 +34,12 @@ public class StatisticalCollection extends MeasureCollection{
     @Override
     protected String[] getNames() {
         //String[] names = {"van Dongen","Rand statistic", "C Index"};
-        String[] names = {"van Dongen","Rand statistic"};
-        return names;
+        return new String[]{"van Dongen","Rand statistic"};
     }
 
     @Override
     protected boolean[] getDefaultEnabled() {
-        boolean [] defaults = {false, false};
-        return defaults;
+        return new boolean[]{false, false};
     }
 
     @Override
@@ -129,7 +126,7 @@ public class StatisticalCollection extends MeasureCollection{
         double[] maxWithinClusters = new double[numClusters];
         ArrayList<Integer>[] pointsInClusters = new ArrayList[numClusters];
         for (int c = 0; c < numClusters; c++) {
-            pointsInClusters[c] = new ArrayList<Integer>();
+            pointsInClusters[c] = new ArrayList<>();
             minWithinClusters[c] = Double.MAX_VALUE;
             maxWithinClusters[c] = Double.MIN_VALUE;
         }

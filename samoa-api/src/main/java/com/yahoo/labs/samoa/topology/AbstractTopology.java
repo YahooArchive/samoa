@@ -38,9 +38,9 @@ public abstract class AbstractTopology implements Topology {
 
     protected AbstractTopology(String name) {
     	this.topoName = name;
-    	this.streams = new HashSet<Stream>();
-        this.processingItems = new HashSet<IProcessingItem>();
-        this.entranceProcessingItems = new HashSet<EntranceProcessingItem>();
+    	this.streams = new HashSet<>();
+        this.processingItems = new HashSet<>();
+        this.entranceProcessingItems = new HashSet<>();
     }
     
     /**

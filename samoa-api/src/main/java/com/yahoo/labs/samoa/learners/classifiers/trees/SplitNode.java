@@ -40,7 +40,7 @@ public class SplitNode extends Node {
 	public SplitNode(InstanceConditionalTest splitTest, 
 			double[] classObservation) {
 		super(classObservation);
-		this.children = new AutoExpandVector<Node>();
+		this.children = new AutoExpandVector<>();
 		this.splitTest = splitTest;
 	}
 

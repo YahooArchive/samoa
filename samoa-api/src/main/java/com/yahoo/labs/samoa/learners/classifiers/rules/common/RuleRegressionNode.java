@@ -86,7 +86,7 @@ public abstract class RuleRegressionNode implements Serializable {
 	 * Predictions 
 	 */
 	public double[] getPrediction(Instance instance) {
-		int predictionMode = this.getLearnerToUse(instance, this.predictionFunction);
+		int predictionMode = this.getLearnerToUse(this.predictionFunction);
 		return getPrediction(instance, predictionMode);
 	}
 	
@@ -98,7 +98,7 @@ public abstract class RuleRegressionNode implements Serializable {
 	}
 
 	public double[] getPrediction(Instance instance, int predictionMode) {
-		double[] ret = new double[1];  
+		double[] ret;
 		if (predictionMode == 1)
 			ret=this.perceptron.getVotesForInstance(instance);
 		else
@@ -112,7 +112,7 @@ public abstract class RuleRegressionNode implements Serializable {
 		switch (this.predictionFunction) {
 		//perceptron - 1
 		case 1:
-			res=this.perceptron.normalizedPrediction(instance); ;
+			res=this.perceptron.normalizedPrediction(instance);
 			break;
 			//target mean - 2
 		case 2:
@@ -121,7 +121,7 @@ public abstract class RuleRegressionNode implements Serializable {
 			break;
 			//adaptive	- 0
 		case 0:  
-			int predictionMode = this.getLearnerToUse(instance, 0);
+			int predictionMode = this.getLearnerToUse(0);
 			if(predictionMode == 1)
 			{
 				res=this.perceptron.normalizedPrediction(instance);
@@ -140,7 +140,7 @@ public abstract class RuleRegressionNode implements Serializable {
 	/*
 	 * Get learner mode
 	 */
-	public int getLearnerToUse(Instance instance, int predMode) {
+	public int getLearnerToUse(int predMode) {
 		int predictionMode = predMode;
 		if (predictionMode == 0) {
 			double perceptronError= this.perceptron.getCurrentError();
@@ -203,20 +203,20 @@ public abstract class RuleRegressionNode implements Serializable {
 		//AMRUles is equipped with anomaly detection. If on, compute the anomaly value.
 		long perceptronIntancesSeen=this.perceptron.getInstancesSeen();
 		if ( perceptronIntancesSeen>= numberOfInstanceesForAnomaly) {
-			double atribSum = 0.0;
-			double atribSquredSum = 0.0;
+			double attribSum;
+			double attribSquaredSum;
 			double D = 0.0;
 			double N = 0.0;
-			double anomaly = 0.0;
+			double anomaly;
 
 			for (int x = 0; x < instance.numAttributes() - 1; x++) {
 				// Perceptron is initialized each rule.
 				// this is a local anomaly.
 				int instAttIndex = modelAttIndexToInstanceAttIndex(x, instance);
-				atribSum = this.perceptron.perceptronattributeStatistics.getValue(x);
-				atribSquredSum = this.perceptron.squaredperceptronattributeStatistics.getValue(x);
-				double mean = atribSum / perceptronIntancesSeen;
-				double sd = computeSD(atribSquredSum, atribSum, perceptronIntancesSeen);
+				attribSum = this.perceptron.perceptronattributeStatistics.getValue(x);
+				attribSquaredSum = this.perceptron.squaredperceptronattributeStatistics.getValue(x);
+				double mean = attribSum / perceptronIntancesSeen;
+				double sd = computeSD(attribSquaredSum, attribSum, perceptronIntancesSeen);
 				double probability = computeProbability(mean, sd, instance.value(instAttIndex));
 
 				if (probability > 0.0) {

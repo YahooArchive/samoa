@@ -71,7 +71,7 @@ public class BaggingDistributorProcessor implements Processor{
                 if (inEvent.isTesting()){ 
 			Instance trainInst = inEvent.getInstance();
 			for (int i = 0; i < sizeEnsemble; i++) {
-				Instance weightedInst = (Instance) trainInst.copy();
+				Instance weightedInst = trainInst.copy();
 				//weightedInst.setWeight(trainInst.weight() * k);
 				boolean isTraining = false;
 				InstanceContentEvent instanceContentEvent = new InstanceContentEvent(
@@ -102,7 +102,7 @@ public class BaggingDistributorProcessor implements Processor{
 		for (int i = 0; i < sizeEnsemble; i++) {
 			int k = MiscUtils.poisson(1.0, this.random);
 			if (k > 0) {
-				Instance weightedInst = (Instance) trainInst.copy();
+				Instance weightedInst = trainInst.copy();
 				weightedInst.setWeight(trainInst.weight() * k);
 				boolean isTraining = true;
 				

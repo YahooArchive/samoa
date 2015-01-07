@@ -24,7 +24,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import java.util.zip.ZipEntry;
  */
 public class Utils {
 
-	public static final void buildSamoaPackage() {
+	public static void buildSamoaPackage() {
 		try {
 			String output = "/tmp/samoa/samoa.jar";// System.getProperty("user.home") + "/samoa.jar";
 			Manifest manifest = createManifest();
@@ -60,8 +59,6 @@ public class Utils {
 			
 			jo.close();
 			bo.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,11 +66,11 @@ public class Utils {
 	}
 	
 	// TODO should get the modules file from the parameters
-	public static final void buildModulesPackage(List<String> modulesNames) {
+	public static void buildModulesPackage(List<String> modulesNames) {
 		System.out.println(System.getProperty("user.dir"));
 		try {
 			String baseDir = System.getProperty("user.dir");
-			List<File> filesArray = new ArrayList<File>();
+			List<File> filesArray = new ArrayList<>();
 			for (String module : modulesNames) {
 				module = "/"+module.replace(".", "/")+".class";
 				filesArray.add(new File(baseDir+module));
@@ -102,8 +99,6 @@ public class Utils {
 
 			jo.close();
 			bo.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -117,25 +112,23 @@ public class Utils {
 			File inputFile = new File(libDir);
 			
 			File[] files = inputFile.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				addEntry(jo, files[i], baseDir, "lib");
+			for (File file : files) {
+				addEntry(jo, file, baseDir, "lib");
 			}
 			jo.close();
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private static void addEntries(JarOutputStream jo, File[] files, String baseDir, String rootDir){
-		for (int i = 0; i < files.length; i++) {
+		for (File file : files) {
 
-			if (!files[i].isDirectory()) {
-				addEntry(jo, files[i], baseDir, rootDir);
+			if (!file.isDirectory()) {
+				addEntry(jo, file, baseDir, rootDir);
 			} else {
-				File dir = new File(files[i].getAbsolutePath());
+				File dir = new File(file.getAbsolutePath());
 				addEntries(jo, dir.listFiles(), baseDir, rootDir);
 			}
 		}
@@ -155,14 +148,12 @@ public class Utils {
 				jo.write(buf, 0, anz);
 			}
 			bi.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static final Manifest createManifest() {
+	public static Manifest createManifest() {
 		Manifest manifest = new Manifest();
 		manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION,
 				"1.0");
@@ -189,11 +180,7 @@ public class Utils {
 		try {
 			cls = Class.forName(className); 
 			obj = cls.newInstance();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		return obj;

@@ -34,14 +34,12 @@ public class SSQ extends MeasureCollection {
 
     @Override
     public String[] getNames() {
-        String[] names = {"SSQ"};
-        return names;
+        return new String[]{"SSQ"};
     }
 
     @Override
     protected boolean[] getDefaultEnabled() {
-        boolean[] defaults = {false};
-        return defaults;
+        return new boolean[]{false};
     }
 
     // TODO Work on this later
@@ -49,9 +47,9 @@ public class SSQ extends MeasureCollection {
     public void evaluateClusteringSamoa(Clustering clustering,
             Clustering trueClsutering, ArrayList<Instance> points) {
         double sum = 0.0;
-        for (int p = 0; p < points.size(); p++) {
+        for (Instance point : points) {
             // don't include noise
-            if (points.get(p).classValue() == -1) {
+            if (point.classValue() == -1) {
                 continue;
             }
 
@@ -60,7 +58,7 @@ public class SSQ extends MeasureCollection {
                 double distance = 0.0;
                 double[] center = clustering.get(c).getCenter();
                 for (int i = 0; i < center.length; i++) {
-                    double d = points.get(p).value(i) - center[i];
+                    double d = point.value(i) - center[i];
                     distance += d * d;
                 }
                 minDistance = Math.min(distance, minDistance);

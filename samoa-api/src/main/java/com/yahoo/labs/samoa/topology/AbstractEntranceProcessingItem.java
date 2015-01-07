@@ -20,7 +20,6 @@ package com.yahoo.labs.samoa.topology;
  * #L%
  */
 
-import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.EntranceProcessor;
 
 /**

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -147,7 +148,7 @@ public class EvaluatorProcessor implements Processor {
 		StringBuilder report = new StringBuilder();
 		
 		report.append(EvaluatorProcessor.class.getCanonicalName());
-		report.append("id = " + this.id);
+		report.append("id = ").append(this.id);
 		report.append('\n');
 		
 		if(learningCurve.numEntries() > 0){
@@ -158,12 +159,10 @@ public class EvaluatorProcessor implements Processor {
 	}
 	
 	private void addMeasurement(){
-		List<Measurement> measurements = new Vector<Measurement>();
+		List<Measurement> measurements = new Vector<>();
 		measurements.add(new Measurement(ORDERING_MEASUREMENT_NAME, totalCount));
-		
-		for(Measurement measurement: evaluator.getPerformanceMeasurements()){
-			measurements.add(measurement);
-		}
+
+		Collections.addAll(measurements, evaluator.getPerformanceMeasurements());
 		
 		Measurement[] finalMeasurements = measurements.toArray(new Measurement[measurements.size()]);
 		

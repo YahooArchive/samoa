@@ -178,7 +178,7 @@ public class WindowClassificationPerformanceEvaluator extends AbstractMOAObject 
     }
 
     public double getFractionCorrectlyClassified() {
-        return this.weightObserved.total() > 0.0 ? (double) this.weightCorrect.total()
+        return this.weightObserved.total() > 0.0 ? this.weightCorrect.total()
                 / this.weightObserved.total() : 0.0;
     }
 

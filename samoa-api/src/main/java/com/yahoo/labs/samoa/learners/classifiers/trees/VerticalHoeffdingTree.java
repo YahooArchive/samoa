@@ -97,79 +97,58 @@ public final class VerticalHoeffdingTree implements ClassificationLearner, Adapt
     public FlagOption binarySplitsOption = new FlagOption("binarySplits", 'b',
             "Only allow binary splits.");
 
-    //TODO: (possible)
-    //1. memoryEstimatedOption => for estimating model sizes
-    //2. binarySplitsOption => for getting the best split suggestion, must be set in LocalStatisticsProcessor
-    //3. stopMemManagementOption => for enforcing tracker limit, no tracker limit enforcement atm
-    //4. removePoorAttsOption => no poor attributes remove at the moment
-    //5. noPrePruneOption => always add null split as an option now
-    private ModelAggregatorProcessor modelAggrProc;
+  private Stream resultStream;
 
-    private Stream resultStream;
+  private FilterProcessor filterProc;
 
-    private Stream attributeStream;
-
-    private Stream controlStream;
-
-    private LocalStatisticsProcessor locStatProc;
-
-    private FilterProcessor filterProc;
-    
-    private Stream filterStream;
-    
-    private Stream computeStream;
-    
-    private int parallelism;
-
-    @Override
+  @Override
     public void init(TopologyBuilder topologyBuilder, Instances dataset, int parallelism) {
-        this.parallelism = parallelism;
-        
-        this.filterProc = new FilterProcessor.Builder(dataset)
+
+    this.filterProc = new FilterProcessor.Builder(dataset)
                 .build();
         topologyBuilder.addProcessor(filterProc, parallelism);
-        
-        this.filterStream = topologyBuilder.createStream(filterProc);
-        this.filterProc.setOutputStream(this.filterStream);
-         
- 
-        this.modelAggrProc = new ModelAggregatorProcessor.Builder(dataset)
-                .splitCriterion((SplitCriterion) this.splitCriterionOption.getValue())
-                .splitConfidence(splitConfidenceOption.getValue())
-                .tieThreshold(tieThresholdOption.getValue())
-                .gracePeriod(gracePeriodOption.getValue())
-                .parallelismHint(parallelismHintOption.getValue())
-                .timeOut(timeOutOption.getValue())
-                .changeDetector(this.getChangeDetector())
-                .build();
+
+      Stream filterStream = topologyBuilder.createStream(filterProc);
+        this.filterProc.setOutputStream(filterStream);
+
+
+      ModelAggregatorProcessor modelAggrProc = new ModelAggregatorProcessor.Builder(dataset)
+          .splitCriterion((SplitCriterion) this.splitCriterionOption.getValue())
+          .splitConfidence(splitConfidenceOption.getValue())
+          .tieThreshold(tieThresholdOption.getValue())
+          .gracePeriod(gracePeriodOption.getValue())
+          .parallelismHint(parallelismHintOption.getValue())
+          .timeOut(timeOutOption.getValue())
+          .changeDetector(this.getChangeDetector())
+          .build();
         
         topologyBuilder.addProcessor(modelAggrProc, parallelism);
 
-        topologyBuilder.connectInputShuffleStream(this.filterStream, modelAggrProc);
+        topologyBuilder.connectInputShuffleStream(filterStream, modelAggrProc);
      
         this.resultStream = topologyBuilder.createStream(modelAggrProc);
-        this.modelAggrProc.setResultStream(resultStream);
+        modelAggrProc.setResultStream(resultStream);
 
-        this.attributeStream = topologyBuilder.createStream(modelAggrProc);
-        this.modelAggrProc.setAttributeStream(attributeStream);
+      Stream attributeStream = topologyBuilder.createStream(modelAggrProc);
+        modelAggrProc.setAttributeStream(attributeStream);
 
-        this.controlStream = topologyBuilder.createStream(modelAggrProc);
-        this.modelAggrProc.setControlStream(controlStream);
+      Stream controlStream = topologyBuilder.createStream(modelAggrProc);
+        modelAggrProc.setControlStream(controlStream);
 
-        this.locStatProc = new LocalStatisticsProcessor.Builder()
-                .splitCriterion((SplitCriterion) this.splitCriterionOption.getValue())
-                .binarySplit(binarySplitsOption.isSet())
-                .nominalClassObserver((AttributeClassObserver) this.nominalEstimatorOption.getValue())
-                .numericClassObserver((AttributeClassObserver) this.numericEstimatorOption.getValue())
-                .build();
+      LocalStatisticsProcessor locStatProc = new LocalStatisticsProcessor.Builder()
+          .splitCriterion((SplitCriterion) this.splitCriterionOption.getValue())
+          .binarySplit(binarySplitsOption.isSet())
+          .nominalClassObserver((AttributeClassObserver) this.nominalEstimatorOption.getValue())
+          .numericClassObserver((AttributeClassObserver) this.numericEstimatorOption.getValue())
+          .build();
 
         topologyBuilder.addProcessor(locStatProc, parallelismHintOption.getValue());
-        topologyBuilder.connectInputKeyStream(this.attributeStream, locStatProc);
-        topologyBuilder.connectInputAllStream(this.controlStream, locStatProc);
+        topologyBuilder.connectInputKeyStream(attributeStream, locStatProc);
+        topologyBuilder.connectInputAllStream(controlStream, locStatProc);
 
-        this.computeStream = topologyBuilder.createStream(locStatProc);
+      Stream computeStream = topologyBuilder.createStream(locStatProc);
 
-        this.locStatProc.setComputationResultStream(computeStream);
+        locStatProc.setComputationResultStream(computeStream);
         topologyBuilder.connectInputAllStream(computeStream, modelAggrProc);
     }
 
@@ -180,8 +159,7 @@ public final class VerticalHoeffdingTree implements ClassificationLearner, Adapt
     
     @Override
     public Set<Stream> getResultStreams() {
-    	Set<Stream> streams = ImmutableSet.of(this.resultStream);
-		return streams;
+      return ImmutableSet.of(this.resultStream);
     }
 
     protected ChangeDetector changeDetector;    

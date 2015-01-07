@@ -42,11 +42,11 @@ public interface ComponentFactory {
      * 
      * @param processor
      *            contains the logic for this processing item.
-     * @param paralellism
+     * @param parallelism
      *            defines the amount of instances of this processing item will be created.
      * @return ProcessingItem
      */
-    public ProcessingItem createPi(Processor processor, int paralellism);
+    public ProcessingItem createPi(Processor processor, int parallelism);
 
     /**
      * Creates a platform specific processing item with the specified processor that is the entrance point in the topology. This processing item can either

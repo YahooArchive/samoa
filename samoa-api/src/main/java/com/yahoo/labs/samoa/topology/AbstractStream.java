@@ -21,7 +21,6 @@ package com.yahoo.labs.samoa.topology;
  */
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.utils.PartitioningScheme;
 
 /**
  * Abstract Stream
@@ -83,7 +82,7 @@ public abstract class AbstractStream implements Stream {
     
     /**
      * Set the name (ID) of this stream
-     * @param name
+     * @param streamID
      * 			the name (ID)
      */
     public void setStreamId (String streamID) {

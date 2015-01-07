@@ -24,20 +24,16 @@ package com.yahoo.labs.samoa.streams;
  * License
  */
 
-import com.yahoo.labs.samoa.moa.streams.InstanceStream;
-import com.yahoo.labs.samoa.moa.streams.clustering.ClusteringStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yahoo.labs.samoa.core.ContentEvent;
-import com.yahoo.labs.samoa.learners.InstanceContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.instances.Instances;
+import com.yahoo.labs.samoa.learners.InstanceContentEvent;
+import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.topology.Stream;
-//import weka.core.Instance;
-//import weka.core.Instances;
 
 /**
  * The Class StreamSourceProcessor.
@@ -80,17 +76,14 @@ public class StreamSourceProcessor implements Processor {
 
 	/**
 	 * Send instances.
-	 *
-	 * @param inputStream the input stream
+	 *  @param inputStream the input stream
 	 * @param numberInstances the number instances
 	 * @param isTraining the is training
-	 * @param numberEvaluations the number evaluations
 	 */
 	public void sendInstances(Stream inputStream,
-			int numberInstances, boolean isTraining, boolean isTesting, int numberEvaluations) {
+														int numberInstances, boolean isTraining, boolean isTesting) {
 		int numberSamples = 0;
-		
-		ClusteringStream cs = null;
+
 		while (streamSource.hasMoreInstances()
 				&& numberSamples < numberInstances) {
 			
@@ -101,19 +94,8 @@ public class StreamSourceProcessor implements Processor {
 		
 			
 			inputStream.put(instanceContentEvent);
-			
-			
-//			for (int i = 0; i < numberEvaluations; i++) {
-//				InstanceContentEvent instanceContentEvent = new InstanceContentEvent(
-//						numberInstancesSent, nextInstance(), isTraining, isTesting);
-//				logger.debug("SENDING {}",numberInstances);
-//				instanceContentEvent.setEvaluationIndex(i);
-				
-			//}
 		}
-//		if (streamSource.hasMoreInstances() == false) {
-//			this.sendEndEvaluationInstance(inputStream);
-//		}
+
 		InstanceContentEvent instanceContentEvent = new InstanceContentEvent(
 				numberInstancesSent, null, isTraining, isTesting);
 		instanceContentEvent.setLast(true);
@@ -136,7 +118,7 @@ public class StreamSourceProcessor implements Processor {
 	 * @return the instance
 	 */
 	protected Instance nextInstance() {
-		if (this.isInited == true) {
+		if (this.isInited) {
 			return streamSource.nextInstance().getData();
 		} else {
 			this.isInited = true;

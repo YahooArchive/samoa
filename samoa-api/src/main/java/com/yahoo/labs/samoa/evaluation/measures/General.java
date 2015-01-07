@@ -45,9 +45,8 @@ public class General extends MeasureCollection{
 
     @Override
     protected String[] getNames() {
-        String[] names = {"GPrecision","GRecall","Redundancy","numCluster","numClasses"};
         //String[] names = {"GPrecision","GRecall","Redundancy","Overlap","numCluster","numClasses","Compactness"};
-        return names;
+        return new String[]{"GPrecision","GRecall","Redundancy","numCluster","numClasses"};
     }
 
 //    @Override

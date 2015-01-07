@@ -48,7 +48,6 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
     private static final long serialVersionUID = 4169053337917578558L;
 
     private static final Logger logger = LoggerFactory.getLogger(PrequentialSourceProcessor.class);
-    private int id;
     private boolean isInited = false;
     private StreamSource streamSource;
     private Instance firstInstance;
@@ -83,8 +82,7 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
 
     @Override
     public boolean hasNext() {
-    	if (isFinished()) return false;
-    	return (delay <= 0 || numInstanceSent < readyEventIndex);
+        return !isFinished() && (delay <= 0 || numInstanceSent < readyEventIndex);
     }
 
     private boolean hasReachedEndOfStream() {
@@ -123,10 +121,9 @@ public final class PrequentialSourceProcessor implements EntranceProcessor {
 
     @Override
     public void onCreate(int id) {
-        this.id = id;
         initStreamSource(sourceStream);
         timer = Executors.newScheduledThreadPool(1);
-        logger.debug("Creating PrequentialSourceProcessor with id {}", this.id);
+        logger.debug("Creating PrequentialSourceProcessor with id {}", id);
     }
 
     @Override

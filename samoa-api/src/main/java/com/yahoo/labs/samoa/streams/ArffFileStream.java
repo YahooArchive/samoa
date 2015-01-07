@@ -43,17 +43,13 @@ public class ArffFileStream extends FileStream {
 		       -1, -1, Integer.MAX_VALUE);
 		   
 	protected InstanceExample lastInstanceRead;
-	private String filePath;
-	private long numInstancesRead;
-	
-	
+
 	@Override
 	public void prepareForUseImpl(TaskMonitor monitor, ObjectRepository repository) {
 		super.prepareForUseImpl(monitor, repository);
-		this.filePath = this.arffFileOption.getFile().getAbsolutePath();
+		String filePath = this.arffFileOption.getFile().getAbsolutePath();
 		this.fileSource.init(filePath, "arff");
 		this.lastInstanceRead = null;
-		this.numInstancesRead = 0;
 	}
 	
 	@Override
@@ -94,8 +90,7 @@ public class ArffFileStream extends FileStream {
             if (this.instances.readInstance(this.fileReader)) {
                 this.lastInstanceRead = new InstanceExample(this.instances.instance(0));
                 this.instances.delete(); // keep instances clean
-                this.numInstancesRead++;
-                return true;
+							return true;
             }
             if (this.fileReader != null) {
                 this.fileReader.close();
