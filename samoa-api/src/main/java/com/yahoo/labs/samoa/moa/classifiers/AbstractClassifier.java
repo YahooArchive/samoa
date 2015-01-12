@@ -25,23 +25,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import com.github.javacliparser.IntOption;
+import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.MOAObject;
 import com.yahoo.labs.samoa.moa.core.Example;
-import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.core.Measurement;
 import com.yahoo.labs.samoa.moa.core.ObjectRepository;
 import com.yahoo.labs.samoa.moa.core.StringUtils;
+import com.yahoo.labs.samoa.moa.core.Utils;
 import com.yahoo.labs.samoa.moa.learners.Learner;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
-import com.esotericsoftware.kryo.Kryo;
-import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
-import com.yahoo.labs.samoa.instances.Instance;
-import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.moa.core.Utils;
 
-public abstract class AbstractClassifier extends AbstractOptionHandler
-        implements Classifier { //Learner<Example<Instance>> {
+public abstract class AbstractClassifier extends AbstractOptionHandler implements Classifier {
 
     @Override
     public String getPurposeString() {
@@ -152,7 +150,7 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
 
     @Override
     public Measurement[] getModelMeasurements() {
-        List<Measurement> measurementList = new LinkedList<Measurement>();
+        List<Measurement> measurementList = new LinkedList<>();
         measurementList.add(new Measurement("model training instances",
                 trainingWeightSeenByModel()));
         measurementList.add(new Measurement("model serialized size (bytes)",
@@ -164,7 +162,7 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
         // add average of sub-model measurements
         Learner[] subModels = getSublearners();
         if ((subModels != null) && (subModels.length > 0)) {
-            List<Measurement[]> subMeasurements = new LinkedList<Measurement[]>();
+            List<Measurement[]> subMeasurements = new LinkedList<>();
             for (Learner subModel : subModels) {
                 if (subModel != null) {
                     subMeasurements.add(subModel.getModelMeasurements());
@@ -214,7 +212,7 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
     @Override
     public MOAObject getModel(){
         return this;
-    };
+    }
     
     @Override
     public void trainOnInstance(Example<Instance> example){
@@ -253,8 +251,7 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
      * @return the name of the attribute
      */
     public String getAttributeNameString(int attIndex) {
-        return InstancesHeader.getAttributeNameString(this.modelContext,
-                attIndex);
+        return InstancesHeader.getAttributeNameString(this.modelContext, attIndex);
     }
 
     /**
@@ -265,8 +262,7 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
      * @return the name of the value of the attribute
      */
     public String getNominalValueString(int attIndex, int valIndex) {
-        return InstancesHeader.getNominalValueString(this.modelContext,
-                attIndex, valIndex);
+        return InstancesHeader.getNominalValueString(this.modelContext, attIndex, valIndex);
     }
 
 
@@ -374,24 +370,9 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
      * given the index of the attribute in the learner.
      *
      * @param index the index of the attribute in the learner
-     * @param inst the instance
      * @return the index in the instance
      */
-    protected static int modelAttIndexToInstanceAttIndex(int index,
-            Instance inst) {
+    protected static int modelAttIndexToInstanceAttIndex(int index) {
         return index; //inst.classIndex() > index ? index : index + 1;
-    }
-
-    /**
-     * Gets the index of the attribute in a set of instances,
-     * given the index of the attribute in the learner.
-     * 
-     * @param index the index of the attribute in the learner
-     * @param insts the instances
-     * @return the index of the attribute in the instances
-     */
-    protected static int modelAttIndexToInstanceAttIndex(int index,
-            Instances insts) {
-        return index; //insts.classIndex() > index ? index : index + 1;
     }
 }

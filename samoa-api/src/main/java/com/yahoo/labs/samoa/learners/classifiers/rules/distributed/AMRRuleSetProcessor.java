@@ -20,13 +20,6 @@ package com.yahoo.labs.samoa.learners.classifiers.rules.distributed;
  * #L%
  */
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.yahoo.labs.samoa.core.ContentEvent;
 import com.yahoo.labs.samoa.core.Processor;
 import com.yahoo.labs.samoa.instances.Instance;
@@ -40,6 +33,10 @@ import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.ErrorWeightedVote;
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.InverseErrorWeightedVote;
 import com.yahoo.labs.samoa.moa.classifiers.rules.core.voting.UniformWeightedVote;
 import com.yahoo.labs.samoa.topology.Stream;
+import java.util.LinkedList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Model Aggregator Processor (HAMR).
@@ -52,8 +49,7 @@ public class AMRRuleSetProcessor implements Processor {
 	 * 
 	 */
 	private static final long serialVersionUID = -6544096255649379334L;
-	private static final Logger logger = 
-			LoggerFactory.getLogger(AMRRuleSetProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(AMRRuleSetProcessor.class);
 
 	private int processorId;
 
@@ -125,31 +121,28 @@ public class AMRRuleSetProcessor implements Processor {
 		boolean continueTraining = instanceEvent.isTraining();
 		
 		ErrorWeightedVote errorWeightedVote = newErrorWeightedVote();
-		Iterator<PassiveRule> ruleIterator= this.ruleSet.iterator();
-		while (ruleIterator.hasNext()) { 
+		for (PassiveRule aRuleSet : this.ruleSet) {
 			if (!continuePrediction && !continueTraining)
 				break;
-			
-			PassiveRule rule = ruleIterator.next();
-			
-			if (rule.isCovering(instance) == true){
+
+			if (aRuleSet.isCovering(instance)) {
 				predictionCovered = true;
 
 				if (continuePrediction) {
-					double [] vote=rule.getPrediction(instance);
-					double error= rule.getCurrentError();
-					errorWeightedVote.addVote(vote,error);
+					double[] vote = aRuleSet.getPrediction(instance);
+					double error = aRuleSet.getCurrentError();
+					errorWeightedVote.addVote(vote, error);
 					if (!this.unorderedRules) continuePrediction = false;
 				}
-				
+
 				if (continueTraining) {
-					if (!isAnomaly(instance, rule)) {
+					if (!isAnomaly(instance, aRuleSet)) {
 						trainingCovered = true;
-						rule.updateStatistics(instance);
-                    	
+						aRuleSet.updateStatistics(instance);
+
 						// Send instance to statistics PIs
-						sendInstanceToRule(instance, rule.getRuleNumberID());
-						
+						sendInstanceToRule(instance, aRuleSet.getRuleNumberID());
+
 						if (!this.unorderedRules) continueTraining = false;
 					}
 				}
@@ -194,7 +187,7 @@ public class AMRRuleSetProcessor implements Processor {
 	private boolean isAnomaly(Instance instance, LearningRule rule) {
 		//AMRUles is equipped with anomaly detection. If on, compute the anomaly value. 			
 		boolean isAnomaly = false;	
-		if (this.noAnomalyDetection == false){
+		if (!this.noAnomalyDetection){
 			if (rule.getInstancesSeen() >= this.anomalyNumInstThreshold) {
 				isAnomaly = rule.isAnomaly(instance, 
 						this.univariateAnomalyprobabilityThreshold,

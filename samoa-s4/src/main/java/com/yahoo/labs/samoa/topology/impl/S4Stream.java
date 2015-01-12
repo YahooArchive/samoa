@@ -43,8 +43,7 @@ public class S4Stream extends AbstractStream {
 	public static final int GROUP_BY_KEY = 1;
 	public static final int BROADCAST = 2;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(S4Stream.class);
+	private static final Logger logger = LoggerFactory.getLogger(S4Stream.class);
 
 	private S4DoTask app;
 	private int processingItemParalellism;

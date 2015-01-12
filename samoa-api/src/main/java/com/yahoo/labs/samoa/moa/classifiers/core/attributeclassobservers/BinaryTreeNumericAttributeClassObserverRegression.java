@@ -100,14 +100,13 @@ public class BinaryTreeNumericAttributeClassObserverRegression extends AbstractO
     public Node root1 = null;
     
     public void observeAttributeTarget(double attVal, double target){
-    	 if (Double.isNaN(attVal)) {
-         } else {
-             if (this.root1 == null) {
-                 this.root1 = new Node(attVal, target);
-             } else {
-                 this.root1.insertValue(attVal, target);
-             }
-         }
+      if (!Double.isNaN(attVal)) {
+          if (this.root1 == null) {
+              this.root1 = new Node(attVal, target);
+          } else {
+              this.root1.insertValue(attVal, target);
+          }
+      }
     }
 
     @Override
@@ -118,7 +117,6 @@ public class BinaryTreeNumericAttributeClassObserverRegression extends AbstractO
     @Override
     public double probabilityOfAttributeValueGivenClass(double attVal,
             int classVal) {
-        // TODO: NaiveBayes broken until implemented
         return 0.0;
     }
 
@@ -141,12 +139,10 @@ public class BinaryTreeNumericAttributeClassObserverRegression extends AbstractO
 
     @Override
     public void getDescription(StringBuilder sb, int indent) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     protected void prepareForUseImpl(TaskMonitor monitor, ObjectRepository repository) {
-        // TODO Auto-generated method stub
     }
 }
 

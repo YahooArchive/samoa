@@ -45,7 +45,7 @@ public class NonLearningRule extends Rule {
 
 	@Override
 	public void getDescription(StringBuilder sb, int indent) {
-		// TODO Auto-generated method stub
+		// do nothing
 	}
 
 }

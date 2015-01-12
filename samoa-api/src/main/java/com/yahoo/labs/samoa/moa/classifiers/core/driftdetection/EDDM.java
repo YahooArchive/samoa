@@ -62,8 +62,6 @@ public class EDDM extends AbstractChangeDetector {
 
     private double m_m2smax;
 
-    private int m_lastLevel;
-
     public EDDM() {
         resetLearning();
     }
@@ -77,7 +75,6 @@ public class EDDM extends AbstractChangeDetector {
         m_mean = 0.0;
         m_stdTemp = 0.0;
         m_m2smax = 0.0;
-        //m_lastLevel = DDM_INCONTROL_LEVEL;
         this.estimation = 0.0;
     }
 
@@ -86,7 +83,7 @@ public class EDDM extends AbstractChangeDetector {
         // prediction must be 1 or 0
         // It monitors the error rate
         // System.out.print(prediction + " " + m_n + " " + probability + " ");
-        if (this.isChangeDetected == true) {
+        if (this.isChangeDetected) {
             resetLearning();
         }
         this.isChangeDetected = false;
@@ -106,9 +103,6 @@ public class EDDM extends AbstractChangeDetector {
             double std = Math.sqrt(m_stdTemp / m_numErrors);
             double m2s = m_mean + 2 * std;
 
-            // System.out.print(m_numErrors + " " + m_mean + " " + std + " " +
-            // m2s + " " + m_m2smax + " ");
-
             if (m2s > m_m2smax) {
                 if (m_n > FDDM_MINNUMINSTANCES) {
                     m_m2smax = m2s;
@@ -123,26 +117,11 @@ public class EDDM extends AbstractChangeDetector {
                     //System.out.println(m_mean + ",D");
                     this.isChangeDetected = true;
                     //resetLearning();
-                    //return DDM_OUTCONTROL_LEVEL;
-                } else if (m_n > FDDM_MINNUMINSTANCES
-                        && m_numErrors > m_minNumErrors && p < FDDM_WARNING) {
-                    //System.out.println(m_mean + ",W");
-                    //m_lastLevel = DDM_WARNING_LEVEL;
-                    this.isWarningZone = true;
-                    //return DDM_WARNING_LEVEL;
                 } else {
-                    this.isWarningZone = false;
-                    //System.out.println(m_mean + ",N");
-                    //m_lastLevel = DDM_INCONTROL_LEVEL;
-                    //return DDM_INCONTROL_LEVEL;
+                    this.isWarningZone = m_n > FDDM_MINNUMINSTANCES
+                        && m_numErrors > m_minNumErrors && p < FDDM_WARNING;
                 }
             }
-        } else {
-            // System.out.print(m_numErrors + " " + m_mean + " " +
-            // Math.sqrt(m_stdTemp/m_numErrors) + " " + (m_mean +
-            // 2*Math.sqrt(m_stdTemp/m_numErrors)) + " " + m_m2smax + " ");
-            // System.out.print(((m_mean +
-            // 2*Math.sqrt(m_stdTemp/m_numErrors))/m_m2smax) + " ");
         }
     }
 

@@ -82,11 +82,11 @@ final class FilterProcessor implements Processor {
                     //Send Instances
                     InstancesContentEvent outputEvent = new InstancesContentEvent(instanceContentEvent);
                     boolean isLastEvent = false;
-                    while (this.contentEventList.isEmpty() == false){
+                    while (!this.contentEventList.isEmpty()){
                         InstanceContentEvent ice = this.contentEventList.remove(0);
                         Instance inst = ice.getInstance();
                         outputEvent.add(inst);
-                        if (isLastEvent == false) {
+                        if (!isLastEvent) {
                             isLastEvent = ice.isLastEvent();
                         }
                     }
@@ -159,9 +159,9 @@ final class FilterProcessor implements Processor {
 		//required parameters
 		private final Instances dataset;
 		
-                private int delay = 0;
+		private int delay = 0;
         
-                private int batchSize = 200;
+    private int batchSize = 200;
 
 		Builder(Instances dataset){
 			this.dataset = dataset;
@@ -169,18 +169,18 @@ final class FilterProcessor implements Processor {
 		
 		Builder(FilterProcessor oldProcessor){
 			this.dataset = oldProcessor.dataset;
-                        this.delay = oldProcessor.delay;
-                        this.batchSize = oldProcessor.batchSize;
+			this.delay = oldProcessor.delay;
+			this.batchSize = oldProcessor.batchSize;
 		}
                 
-                public Builder delay(int delay){
+		public Builder delay(int delay){
 			this.delay = delay;
-                        return this;
+			return this;
 		}
                 
-                public Builder batchSize(int val){
+		public Builder batchSize(int val){
 			this.batchSize = val;
-                        return this;
+			return this;
 		}
               	
 		FilterProcessor build(){

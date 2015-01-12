@@ -62,8 +62,7 @@ class SimpleProcessingItem extends AbstractProcessingItem {
 
     public SimpleProcessingItem copy() {
     	Processor processor = this.getProcessor();
-        SimpleProcessingItem ret = new SimpleProcessingItem(processor.newProcessor(processor));
-        return ret;
+        return new SimpleProcessingItem(processor.newProcessor(processor));
     }
 
     public void processEvent(ContentEvent event, int counter) {

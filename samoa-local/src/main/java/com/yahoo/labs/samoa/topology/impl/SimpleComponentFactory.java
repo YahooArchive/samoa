@@ -44,8 +44,7 @@ public class SimpleComponentFactory implements ComponentFactory {
     }
 
     public Stream createStream(IProcessingItem sourcePi) {
-        SimpleStream stream = new SimpleStream(sourcePi);
-        return stream;
+        return new SimpleStream(sourcePi);
     }
 
     public Topology createTopology(String topoName) {

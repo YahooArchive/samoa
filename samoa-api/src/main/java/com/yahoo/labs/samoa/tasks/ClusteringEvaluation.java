@@ -54,7 +54,7 @@ public class ClusteringEvaluation implements Task, Configurable {
 
     private static final int DISTRIBUTOR_PARALLELISM = 1;
 
-    private static Logger logger = LoggerFactory.getLogger(ClusteringEvaluation.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClusteringEvaluation.class);
 
     public ClassOption learnerOption = new ClassOption("learner", 'l', "Clustering to run.", Learner.class, DistributedClusterer.class.getName());
 
@@ -72,7 +72,7 @@ public class ClusteringEvaluation implements Task, Configurable {
     public IntOption sampleFrequencyOption = new IntOption("sampleFrequency", 'f', "How many instances between samples of the learning performance.", 1000, 0,
             Integer.MAX_VALUE);
 
-    public StringOption evaluationNameOption = new StringOption("evalutionName", 'n', "Identifier of the evaluation", "Clustering__"
+    public StringOption evaluationNameOption = new StringOption("evaluationName", 'n', "Identifier of the evaluation", "Clustering__"
             + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 
     public FileOption dumpFileOption = new FileOption("dumpFile", 'd', "File to append intermediate csv results to", null, "csv", true);
@@ -81,7 +81,7 @@ public class ClusteringEvaluation implements Task, Configurable {
             0.0, 1.0);
 
     private ClusteringEntranceProcessor source;
-    private Stream sourceStream;
+    private InstanceStream streamTrain;
     private ClusteringDistributorProcessor distributor;
     private Stream distributorStream;
     private Stream evaluationStream;
@@ -91,12 +91,11 @@ public class ClusteringEvaluation implements Task, Configurable {
     
     private Learner learner;
     private ClusteringEvaluatorProcessor evaluator;
-    //private Stream evaluatorPiInputStream;
 
     private Topology topology;
     private TopologyBuilder builder;
 
-    public void getDescription(StringBuilder sb, int indent) {
+    public void getDescription(StringBuilder sb) {
         sb.append("Clustering evaluation");
     }
 
@@ -108,22 +107,22 @@ public class ClusteringEvaluation implements Task, Configurable {
             logger.warn("Builder was not initialized, initializing it from the Task");
 
             builder = new TopologyBuilder();
-            logger.debug("Sucessfully instantiating TopologyBuilder");
+            logger.debug("Successfully instantiating TopologyBuilder");
 
             builder.initTopology(evaluationNameOption.getValue(), sourceDelayOption.getValue());
-            logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
+            logger.debug("Successfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
         }
 
         // instantiate ClusteringEntranceProcessor and its output stream (sourceStream)
         source = new ClusteringEntranceProcessor();
-        InstanceStream streamTrain = (InstanceStream) this.streamTrainOption.getValue();
+        streamTrain = this.streamTrainOption.getValue();
         source.setStreamSource(streamTrain);
         builder.addEntranceProcessor(source);
         source.setSamplingThreshold(samplingThresholdOption.getValue());
         source.setMaxNumInstances(instanceLimitOption.getValue());
-        logger.debug("Sucessfully instantiated ClusteringEntranceProcessor");
+        logger.debug("Successfully instantiated ClusteringEntranceProcessor");
 
-        sourceStream = builder.createStream(source);
+        Stream sourceStream = builder.createStream(source);
         // starter.setInputStream(sourcePiOutputStream); // FIXME set stream in the EntrancePI
 
         // distribution of instances and sampling for evaluation
@@ -137,24 +136,24 @@ public class ClusteringEvaluation implements Task, Configurable {
         logger.debug("Successfully instantiated Distributor");
        
         // instantiate learner and connect it to distributorStream
-        learner = (Learner) this.learnerOption.getValue();
+        learner = this.learnerOption.getValue();
         learner.init(builder, source.getDataset(), 1);
         builder.connectInputShuffleStream(distributorStream, learner.getInputProcessor());
-        logger.debug("Sucessfully instantiated Learner");
+        logger.debug("Successfully instantiated Learner");
 
-        evaluator = new ClusteringEvaluatorProcessor.Builder(// (ClassificationPerformanceEvaluator) this.evaluatorOption.getValue())
-                // .samplingFrequency(
-                sampleFrequencyOption.getValue()).dumpFile(dumpFileOption.getFile()).decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon()).build();
+        evaluator = new ClusteringEvaluatorProcessor.Builder(
+        sampleFrequencyOption.getValue()).dumpFile(dumpFileOption.getFile())
+            .decayHorizon(((ClusteringStream) streamTrain).getDecayHorizon()).build();
 
         builder.addProcessor(evaluator);
         for (Stream evaluatorPiInputStream:learner.getResultStreams()) {
         	builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
         }
         builder.connectInputAllStream(evaluationStream, evaluator);
-        logger.debug("Sucessfully instantiated EvaluatorProcessor");
+        logger.debug("Successfully instantiated EvaluatorProcessor");
 
         topology = builder.build();
-        logger.debug("Sucessfully built the topology");
+        logger.debug("Successfully built the topology");
     }
 
     @Override
@@ -162,10 +161,10 @@ public class ClusteringEvaluation implements Task, Configurable {
         // TODO unify this code with init() for now, it's used by S4 App
         // dynamic binding theoretically will solve this problem
         builder = new TopologyBuilder(factory);
-        logger.debug("Sucessfully instantiated TopologyBuilder");
+        logger.debug("Successfully instantiated TopologyBuilder");
 
         builder.initTopology(evaluationNameOption.getValue());
-        logger.debug("Sucessfully initialized SAMOA topology with name {}", evaluationNameOption.getValue());
+        logger.debug("Successfully initialized SAMOA topology with name {}", evaluationNameOption.getValue());
 
     }
 

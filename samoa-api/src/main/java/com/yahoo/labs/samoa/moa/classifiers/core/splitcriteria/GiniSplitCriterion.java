@@ -40,8 +40,7 @@ public class GiniSplitCriterion extends AbstractOptionHandler implements
     private static final long serialVersionUID = 1L;
 
     @Override
-    public double getMeritOfSplit(double[] preSplitDist,
-            double[][] postSplitDists) {
+    public double getMeritOfSplit(double[] preSplitDist, double[][] postSplitDists) {
         double totalWeight = 0.0;
         double[] distWeights = new double[postSplitDists.length];
         for (int i = 0; i < postSplitDists.length; i++) {
@@ -63,8 +62,8 @@ public class GiniSplitCriterion extends AbstractOptionHandler implements
 
     public static double computeGini(double[] dist, double distSumOfWeights) {
         double gini = 1.0;
-        for (int i = 0; i < dist.length; i++) {
-            double relFreq = dist[i] / distSumOfWeights;
+        for (double aDist : dist) {
+            double relFreq = aDist / distSumOfWeights;
             gini -= relFreq * relFreq;
         }
         return gini;

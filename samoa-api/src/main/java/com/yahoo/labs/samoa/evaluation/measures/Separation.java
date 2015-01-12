@@ -19,16 +19,15 @@ package com.yahoo.labs.samoa.evaluation.measures;
  * limitations under the License.
  * #L%
  */
-import java.util.ArrayList;
-import java.util.List;
-
+import com.yahoo.labs.samoa.instances.DenseInstance;
+import com.yahoo.labs.samoa.instances.Instance;
 import com.yahoo.labs.samoa.moa.cluster.Cluster;
 import com.yahoo.labs.samoa.moa.cluster.Clustering;
 import com.yahoo.labs.samoa.moa.cluster.SphereCluster;
 import com.yahoo.labs.samoa.moa.core.DataPoint;
 import com.yahoo.labs.samoa.moa.evaluation.MeasureCollection;
-import com.yahoo.labs.samoa.instances.DenseInstance;
-import com.yahoo.labs.samoa.instances.Instance;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Separation extends MeasureCollection {
 
@@ -57,14 +56,11 @@ public class Separation extends MeasureCollection {
         BSS = getBSS(clustering, sc.getCenter());
 
         if (trueClustering != null) {
-            String s = "";
-            List<Instance> listInstances = new ArrayList<Instance>();
+            List<Instance> listInstances = new ArrayList<>();
             for (Cluster c : trueClustering.getClustering()) {
                 DenseInstance inst = new DenseInstance(c.getWeight(), c.getCenter());
                 listInstances.add(inst);
-                s += " " + c.getWeight();
             }
-            //	System.out.println(s);
             SphereCluster gt = new SphereCluster(listInstances, dimension);
             BSS_GT = getBSS(trueClustering, gt.getCenter());
         }
@@ -81,8 +77,7 @@ public class Separation extends MeasureCollection {
             double weight = clustering.get(i).getWeight();
             double sum = 0.0;
             for (int j = 0; j < mean.length; j++) {
-                sum += Math
-                        .pow((mean[j] - clustering.get(i).getCenter()[j]), 2);
+                sum += Math.pow((mean[j] - clustering.get(i).getCenter()[j]), 2);
             }
             bss += weight * sum;
         }
@@ -94,7 +89,6 @@ public class Separation extends MeasureCollection {
     protected void evaluateClustering(Clustering clustering,
             Clustering trueClustering, ArrayList<DataPoint> points)
             throws Exception {
-        // TODO Auto-generated method stub
         double BSS_GT = 1.0;
         double BSS;
         int dimension = points.get(0).numAttributes() - 1;
@@ -107,13 +101,12 @@ public class Separation extends MeasureCollection {
 
         if (trueClustering != null) {
             String s = "";
-            List<Instance> listInstances = new ArrayList<Instance>();
+            List<Instance> listInstances = new ArrayList<>();
             for (Cluster c : trueClustering.getClustering()) {
                 DenseInstance inst = new DenseInstance(c.getWeight(), c.getCenter());
                 listInstances.add(inst);
                 s += " " + c.getWeight();
             }
-            //	System.out.println(s);
             SphereCluster gt = new SphereCluster(listInstances, dimension);
             BSS_GT = getBSS(trueClustering, gt.getCenter());
         }

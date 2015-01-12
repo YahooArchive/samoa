@@ -86,8 +86,7 @@ public class InfoGainSplitCriterion extends AbstractOptionHandler implements
         return entropy / totalWeight;
     }
 
-    public static int numSubsetsGreaterThanFrac(double[][] distributions,
-            double minFrac) {
+    public static int numSubsetsGreaterThanFrac(double[][] distributions, double minFrac) {
         double totalWeight = 0.0;
         double[] distSums = new double[distributions.length];
         for (int i = 0; i < distSums.length; i++) {

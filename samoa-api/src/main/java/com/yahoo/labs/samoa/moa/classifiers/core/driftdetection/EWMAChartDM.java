@@ -37,7 +37,7 @@ public class EWMAChartDM extends AbstractChangeDetector {
 
     private static final long serialVersionUID = -3518369648142099719L;
 
-    //private static final int DDM_MINNUMINST = 30;
+    //private static final int DDM_MIN_NUM_INST = 30;
     public IntOption minNumInstancesOption = new IntOption(
             "minNumInstances",
             'n',
@@ -77,7 +77,7 @@ public class EWMAChartDM extends AbstractChangeDetector {
     public void input(double prediction) {
         // prediction must be 1 or 0
         // It monitors the error rate
-        if (this.isChangeDetected == true) {
+        if (this.isChangeDetected) {
             resetLearning();
         }
 
@@ -91,11 +91,7 @@ public class EWMAChartDM extends AbstractChangeDetector {
 
         z_t += lambda * (prediction - z_t);
 
-        //double L_t = 2.76 - 6.23 * m_p + 18.12 * Math.pow(m_p, 3) - 312.45 * Math.pow(m_p, 5) + 1002.18 * Math.pow(m_p, 7); //%1 FP
         double L_t = 3.97 - 6.56 * m_p + 48.73 * Math.pow(m_p, 3) - 330.13 * Math.pow(m_p, 5) + 848.18 * Math.pow(m_p, 7); //%1 FP
-        //double L_t = 1.17 + 7.56 * m_p - 21.24 * Math.pow(m_p, 3) + 112.12 * Math.pow(m_p, 5) - 987.23 * Math.pow(m_p, 7); //%1 FP
-
-        // System.out.print(prediction + " " + m_n + " " + (m_p+m_s) + " ");
         this.estimation = m_p;
         this.isChangeDetected = false;
         this.isWarningZone = false;
@@ -106,15 +102,10 @@ public class EWMAChartDM extends AbstractChangeDetector {
         }
             
         if (m_n > this.minNumInstancesOption.getValue() && z_t > m_p + L_t * m_s) {
-            //System.out.println(m_p + ",D");
             this.isChangeDetected = true;
             //resetLearning();
-        } else if (z_t > m_p + 0.5 *  L_t * m_s) {
-            //System.out.println(m_p + ",W");
-            this.isWarningZone = true;
         } else {
-            this.isWarningZone = false;
-            //System.out.println(m_p + ",N");
+            this.isWarningZone = z_t > m_p + 0.5 * L_t * m_s;
         }
     }
 

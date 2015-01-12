@@ -20,9 +20,6 @@ package com.yahoo.labs.samoa;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,16 +67,16 @@ public class LocalDoTask {
         Option[] extraOptions = new Option[] { suppressStatusOutOpt, suppressResultOutOpt, statusUpdateFreqOpt };
 
         StringBuilder cliString = new StringBuilder();
-        for (int i = 0; i < args.length; i++) {
-            cliString.append(" ").append(args[i]);
+        for (String arg : args) {
+            cliString.append(" ").append(arg);
         }
         logger.debug("Command line string = {}", cliString.toString());
         System.out.println("Command line string = " + cliString.toString());
 
-        Task task = null;
+        Task task;
         try {
-            task = (Task) ClassOption.cliStringToObject(cliString.toString(), Task.class, extraOptions);
-            logger.info("Sucessfully instantiating {}", task.getClass().getCanonicalName());
+            task = ClassOption.cliStringToObject(cliString.toString(), Task.class, extraOptions);
+            logger.info("Successfully instantiating {}", task.getClass().getCanonicalName());
         } catch (Exception e) {
             logger.error("Fail to initialize the task", e);
             System.out.println("Fail to initialize the task" + e);

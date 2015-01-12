@@ -100,8 +100,6 @@ public class ADWIN extends AbstractMOAObject {
                 this.tail = null;
             }
             this.count--;
-            //temp=null;
-            return;
         }
 
         public void addToTail() {
@@ -127,7 +125,6 @@ public class ADWIN extends AbstractMOAObject {
             }
             this.count--;
             //temp=null;
-            return;
         }
 
         @Override
@@ -136,8 +133,6 @@ public class ADWIN extends AbstractMOAObject {
     }
 
     private class ListItem extends AbstractMOAObject {
-//		protected Object data;
-
         protected ListItem next;
 
         protected ListItem previous;
@@ -475,7 +470,7 @@ public class ADWIN extends AbstractMOAObject {
 
     public boolean setInput(double intEntrada, double delta) {
         boolean blnChange = false;
-        boolean blnExit = false;
+        boolean blnExit;
         ListItem cursor;
         mintTime++;
 
@@ -496,8 +491,8 @@ public class ADWIN extends AbstractMOAObject {
                 double u1 = getTotal();
                 double v0 = 0;
                 double v1 = VARIANCE;
-                double n2 = 0;
-                double u2 = 0;
+                double n2;
+                double u2;
 
                 cursor = listRowBuckets.tail();
                 int i = lastBucketRow;
@@ -521,7 +516,7 @@ public class ADWIN extends AbstractMOAObject {
                             blnExit = true;
                             break;
                         }
-                        double absvalue = (double) (u0 / n0) - (u1 / n1);       //n1<WIDTH-mintMinWinLength-1
+                        double absvalue = (u0 / n0) - (u1 / n1);       //n1<WIDTH-mintMinWinLength-1
                         if ((n1 > mintMinWinLength + 1 && n0 > mintMinWinLength + 1) && // Diference NEGATIVE
                                 //if(
                                 blnCutexpression(n0, n1, u0, u1, v0, v1, absvalue, delta)) {

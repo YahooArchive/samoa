@@ -40,8 +40,7 @@ import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class NominalAttributeClassObserver extends AbstractOptionHandler implements
-        DiscreteAttributeClassObserver {
+public class NominalAttributeClassObserver extends AbstractOptionHandler implements DiscreteAttributeClassObserver {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +48,7 @@ public class NominalAttributeClassObserver extends AbstractOptionHandler impleme
 
     protected double missingWeightObserved = 0.0;
 
-    public AutoExpandVector<DoubleVector> attValDistPerClass = new AutoExpandVector<DoubleVector>();
+    public AutoExpandVector<DoubleVector> attValDistPerClass = new AutoExpandVector<>();
 
     @Override
     public void observeAttributeClass(double attVal, int classVal, double weight) {

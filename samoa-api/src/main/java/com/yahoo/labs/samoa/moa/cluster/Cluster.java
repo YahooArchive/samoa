@@ -20,14 +20,14 @@ package com.yahoo.labs.samoa.moa.cluster;
  * limitations under the License.
  * #L%
  */
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import com.yahoo.labs.samoa.moa.AbstractMOAObject;
+
 import com.yahoo.labs.samoa.instances.Instance;
+import com.yahoo.labs.samoa.moa.AbstractMOAObject;
 
 public abstract class Cluster extends AbstractMOAObject {
 
@@ -36,11 +36,11 @@ public abstract class Cluster extends AbstractMOAObject {
 	private double id = -1;
     private double gtLabel = -1;
 
-    private HashMap<String, String> measure_values;
+    private Map<String, String> measure_values;
 
 
     public Cluster(){
-        this.measure_values = new HashMap<String, String>();
+        this.measure_values = new HashMap<>();
     }
     /**
      * @return the center of the cluster
@@ -59,7 +59,7 @@ public abstract class Cluster extends AbstractMOAObject {
      * Returns the probability of the given point belonging to
      * this cluster.
      *
-     * @param point
+     * @param instance
      * @return a value between 0 and 1
      */
     public abstract double getInclusionProbability(Instance instance);
@@ -120,7 +120,7 @@ public abstract class Cluster extends AbstractMOAObject {
     }
 
 
-    protected void getClusterSpecificInfo(ArrayList<String> infoTitle,ArrayList<String> infoValue){
+    protected void getClusterSpecificInfo(List<String> infoTitle, List<String> infoValue){
         infoTitle.add("ClusterID");
         infoValue.add(Integer.toString((int)getId()));
 
@@ -140,11 +140,11 @@ public abstract class Cluster extends AbstractMOAObject {
     }
 
     public String getInfo() {
-        ArrayList<String> infoTitle = new ArrayList<String>();
-        ArrayList<String> infoValue = new ArrayList<String>();
+        List<String> infoTitle = new ArrayList<>();
+        List<String> infoValue = new ArrayList<>();
         getClusterSpecificInfo(infoTitle, infoValue);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         //Cluster properties
         sb.append("<html>");
@@ -160,10 +160,9 @@ public abstract class Cluster extends AbstractMOAObject {
         sb.append("<br>");
         sb.append("<b>Evaluation</b><br>");
         sb.append("<table>");
-        Iterator miterator = measure_values.entrySet().iterator();
-        while(miterator.hasNext()) {
-             Map.Entry e = (Map.Entry)miterator.next();
-             sb.append("<tr><td>"+e.getKey()+"</td><td>"+e.getValue()+"</td></tr>");
+        for (Object o : measure_values.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
+            sb.append("<tr><td>" + e.getKey() + "</td><td>" + e.getValue() + "</td></tr>");
         }
         sb.append("</table>");
         sb.append("</html>");

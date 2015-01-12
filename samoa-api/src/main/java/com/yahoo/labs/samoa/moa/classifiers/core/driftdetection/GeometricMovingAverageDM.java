@@ -56,8 +56,6 @@ public class GeometricMovingAverageDM extends AbstractChangeDetector {
                                                                                             
     private double alpha;
 
-    private double delta;
-
     private double lambda;
 
     public GeometricMovingAverageDM() {
@@ -76,17 +74,13 @@ public class GeometricMovingAverageDM extends AbstractChangeDetector {
     @Override
     public void input(double x) {
         // It monitors the error rate
-        if (this.isChangeDetected == true) {
+        if (this.isChangeDetected) {
             resetLearning();
         }
 
         x_mean = x_mean + (x - x_mean) / m_n;
-        sum = alpha * sum + ( 1.0- alpha) * (x - x_mean);
-
-
+        sum = alpha * sum + (1.0- alpha) * (x - x_mean);
         m_n++;
-
-        // System.out.print(prediction + " " + m_n + " " + (m_p+m_s) + " ");
         this.estimation = x_mean;
         this.isChangeDetected = false;
         this.isWarningZone = false;

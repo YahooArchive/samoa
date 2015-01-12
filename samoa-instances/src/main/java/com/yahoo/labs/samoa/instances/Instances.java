@@ -49,7 +49,7 @@ public class Instances implements Serializable {
 
 	transient protected ArffLoader arff;
         
-        protected int classAttribute;
+	protected int classAttribute;
 
 	public Instances(InstancesHeader modelContext) {
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -73,7 +73,7 @@ public class Instances implements Serializable {
                 this.classAttribute = classAttribute;
 		arff = new ArffLoader(reader, 0, classAttribute);
 		this.instanceInformation = arff.getStructure();
-		this.instances = new ArrayList<Instance>();
+		this.instances = new ArrayList<>();
 	}
 
 	public Instances(Instances chunk, int capacity) {
@@ -83,7 +83,7 @@ public class Instances implements Serializable {
 	public Instances(String st, List<Attribute> v, int capacity) {
 		
 		this.instanceInformation = new InstanceInformation(st, v);
-		this.instances = new ArrayList<Instance>();
+		this.instances = new ArrayList<>();
 	}
 
 	public Instances(Instances chunk, int i, int j) {
@@ -191,7 +191,7 @@ public class Instances implements Serializable {
 	}
 
 	public void delete() {
-		this.instances = new ArrayList<Instance>();
+		this.instances = new ArrayList<>();
 	}
 
 	public void swap(int i, int j) {
@@ -217,8 +217,7 @@ public class Instances implements Serializable {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 
 		for (int i = 0; i < numInstances(); i++) {
 			text.append(instance(i).toString());
@@ -231,7 +230,7 @@ public class Instances implements Serializable {
 
 	// toString() with header
 	public String toStringArff() {
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 
 		text.append(ARFF_RELATION).append(" ")
 				.append(Utils.quote(getRelationName())).append("\n\n");

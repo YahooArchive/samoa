@@ -61,7 +61,7 @@ public class SilhouetteCoefficient extends MeasureCollection{
         int totalCount = 0;
         for (int p = 0; p < points.size(); p++) {
             DataPoint point = points.get(p);
-            ArrayList<Integer> ownClusters = new ArrayList<Integer>();
+            ArrayList<Integer> ownClusters = new ArrayList<>();
             for (int fc = 0; fc < numFCluster; fc++) {
                 if(pointInclusionProbFC[p][fc] > pointInclusionProbThreshold){
                     ownClusters.add(fc);

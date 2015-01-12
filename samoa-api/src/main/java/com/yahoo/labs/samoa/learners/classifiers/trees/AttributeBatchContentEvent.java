@@ -36,20 +36,14 @@ final class AttributeBatchContentEvent implements ContentEvent {
 
 	private final long learningNodeId;
 	private final int obsIndex;
-	//private final double attrVal;
-	//private final int classVal;
-	//private final double weight;
-        private final List<ContentEvent> contentEventList;
+	private final List<ContentEvent> contentEventList;
 	private final transient String key;
 	private final boolean isNominal;
 	
 	public AttributeBatchContentEvent(){
 		learningNodeId = -1;
 		obsIndex = -1;
-		//attrVal = 0.0;
-		//classVal = -1;
-		//weight = 0.0;
-                contentEventList = new LinkedList<>();
+		contentEventList = new LinkedList<>();
 		key = "";
 		isNominal = true;
 	}
@@ -57,18 +51,15 @@ final class AttributeBatchContentEvent implements ContentEvent {
 	private AttributeBatchContentEvent(Builder builder){
 		this.learningNodeId = builder.learningNodeId;
 		this.obsIndex = builder.obsIndex;
-                this.contentEventList = new LinkedList<>();
-                if (builder.contentEvent != null) {
-                    this.contentEventList.add(builder.contentEvent);
-                }
-		//this.attrVal = builder.attrVal;
-		//this.classVal = builder.classVal;
-		//this.weight = builder.weight;
+		this.contentEventList = new LinkedList<>();
+		if (builder.contentEvent != null) {
+			this.contentEventList.add(builder.contentEvent);
+		}
 		this.isNominal = builder.isNominal;
 		this.key = builder.key;
 	}
         
-        public void add(ContentEvent contentEvent){
+	public void add(ContentEvent contentEvent){
              this.contentEventList.add(contentEvent);
         }
 	
@@ -94,20 +85,8 @@ final class AttributeBatchContentEvent implements ContentEvent {
 	int getObsIndex(){
 		return this.obsIndex;
 	}
-	
-	/*int getClassVal(){
-		return this.classVal;
-	}
-	
-	double getAttrVal(){
-		return this.attrVal;
-	}
-	
-	double getWeight(){
-		return this.weight;
-	}*/
-        
-        public List<ContentEvent> getContentEventList(){
+
+	public List<ContentEvent> getContentEventList(){
             return this.contentEventList;
         }
 	
@@ -122,11 +101,7 @@ final class AttributeBatchContentEvent implements ContentEvent {
 		private final int obsIndex;
 		private final String key;
 		
-		//optional parameters
-		//private double attrVal = 0.0;
-		//private int classVal = 0;
-		//private double weight = 0.0;
-                private ContentEvent contentEvent;
+		private ContentEvent contentEvent;
 		private boolean isNominal = false;
 		
 		Builder(long id, int obsIndex, String key){
@@ -141,25 +116,10 @@ final class AttributeBatchContentEvent implements ContentEvent {
 			this.key = "";
 		}
 		
-		/*Builder attrValue(double val){
-			this.attrVal = val;
-			return this;
+		Builder contentEvent(ContentEvent contentEvent){
+						this.contentEvent = contentEvent;
+						return this;
 		}
-		
-		Builder classValue(int val){
-			this.classVal = val;
-			return this;
-		}
-		
-		Builder weight(double val){
-			this.weight = val;
-			return this;
-		}*/
-                
-                Builder contentEvent(ContentEvent contentEvent){
-                        this.contentEvent = contentEvent;
-                        return this;
-                }
 		
 		Builder isNominal(boolean val){
 			this.isNominal = val;

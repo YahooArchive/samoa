@@ -46,10 +46,10 @@ import com.yahoo.labs.samoa.topology.TopologyBuilder;
 /**
  * The Bagging Classifier by Oza and Russell.
  */
-public class AdaptiveBagging implements Learner , Configurable {
+public class AdaptiveBagging implements Learner, Configurable {
     
-    /** Logger */
-    private static final Logger logger = LoggerFactory.getLogger(AdaptiveBagging.class);
+	/** Logger */
+  private static final Logger logger = LoggerFactory.getLogger(AdaptiveBagging.class);
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2971850264864952099L;
@@ -62,8 +62,8 @@ public class AdaptiveBagging implements Learner , Configurable {
 	public IntOption ensembleSizeOption = new IntOption("ensembleSize", 's',
 			"The number of models in the bag.", 10, 1, Integer.MAX_VALUE);
 
-    public ClassOption driftDetectionMethodOption = new ClassOption("driftDetectionMethod", 'd',
-            "Drift detection method to use.", ChangeDetector.class, ADWINChangeDetector.class.getName());
+	public ClassOption driftDetectionMethodOption = new ClassOption("driftDetectionMethod", 'd',
+      "Drift detection method to use.", ChangeDetector.class, ADWINChangeDetector.class.getName());
 
 	/** The distributor processor. */
 	private BaggingDistributorProcessor distributorP;
@@ -74,9 +74,9 @@ public class AdaptiveBagging implements Learner , Configurable {
 	/** The dataset. */
 	private Instances dataset;
         
-        protected Learner classifier;
+	protected Learner classifier;
         
-        protected int parallelism;
+  protected int parallelism;
 
 	/**
 	 * Sets the layout.
@@ -89,14 +89,14 @@ public class AdaptiveBagging implements Learner , Configurable {
 		distributorP.setSizeEnsemble(sizeEnsemble);
                 this.builder.addProcessor(distributorP, 1);
 		        
-                //instantiate classifier 
-                classifier = this.baseLearnerOption.getValue();
-                if (classifier instanceof AdaptiveLearner) {
-                    // logger.info("Building an AdaptiveLearner {}", classifier.getClass().getName());
-                    AdaptiveLearner ada = (AdaptiveLearner) classifier;
-                    ada.setChangeDetector((ChangeDetector) this.driftDetectionMethodOption.getValue());
-                }
-                classifier.init(builder, this.dataset, sizeEnsemble);
+		//instantiate classifier
+		classifier = this.baseLearnerOption.getValue();
+		if (classifier instanceof AdaptiveLearner) {
+				// logger.info("Building an AdaptiveLearner {}", classifier.getClass().getName());
+				AdaptiveLearner ada = (AdaptiveLearner) classifier;
+				ada.setChangeDetector((ChangeDetector) this.driftDetectionMethodOption.getValue());
+		}
+		classifier.init(builder, this.dataset, sizeEnsemble);
         
 		PredictionCombinerProcessor predictionCombinerP= new PredictionCombinerProcessor();
 		predictionCombinerP.setSizeEnsemble(sizeEnsemble);

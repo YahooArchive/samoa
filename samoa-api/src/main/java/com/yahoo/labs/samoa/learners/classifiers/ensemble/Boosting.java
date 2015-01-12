@@ -55,25 +55,16 @@ public class Boosting implements Learner , Configurable {
 
 	/** The distributor processor. */
 	private BoostingDistributorProcessor distributorP;
-                
-	/** The training stream. */
-	private Stream trainingStream;
-        
-        /** The testing stream. */
-	private Stream testingStream;
-	
-	/** The prediction stream. */
-	private Stream predictionStream;
-	
+
 	/** The result stream. */
 	protected Stream resultStream;
 	
 	/** The dataset. */
 	private Instances dataset;
         
-        protected Learner classifier;
+	protected Learner classifier;
         
-        protected int parallelism;
+	protected int parallelism;
 
 	/**
 	 * Sets the layout.
@@ -84,11 +75,11 @@ public class Boosting implements Learner , Configurable {
 
 		distributorP = new BoostingDistributorProcessor();
 		distributorP.setSizeEnsemble(sizeEnsemble);
-                this.builder.addProcessor(distributorP, 1);
+		this.builder.addProcessor(distributorP, 1);
 	
-                //instantiate classifier 
-                classifier = (Learner) this.baseLearnerOption.getValue();
-                classifier.init(builder, this.dataset, sizeEnsemble);
+		//instantiate classifier
+		classifier = this.baseLearnerOption.getValue();
+		classifier.init(builder, this.dataset, sizeEnsemble);
 		
 		BoostingPredictionCombinerProcessor predictionCombinerP= new BoostingPredictionCombinerProcessor();
 		predictionCombinerP.setSizeEnsemble(sizeEnsemble);
@@ -102,19 +93,22 @@ public class Boosting implements Learner , Configurable {
 			this.builder.connectInputKeyStream(subResultStream, predictionCombinerP);
 		}
 		
-		testingStream = this.builder.createStream(distributorP);
-                this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
+		/* The testing stream. */
+		Stream testingStream = this.builder.createStream(distributorP);
+		this.builder.connectInputKeyStream(testingStream, classifier.getInputProcessor());
 	
-		predictionStream = this.builder.createStream(distributorP);		
-                this.builder.connectInputKeyStream(predictionStream, classifier.getInputProcessor());
+		/* The prediction stream. */
+		Stream predictionStream = this.builder.createStream(distributorP);
+		this.builder.connectInputKeyStream(predictionStream, classifier.getInputProcessor());
 		
 		distributorP.setOutputStream(testingStream);
 		distributorP.setPredictionStream(predictionStream);
                 
-                // Addition to Bagging: stream to train
-                trainingStream = this.builder.createStream(predictionCombinerP);
-                predictionCombinerP.setTrainingStream(trainingStream);
-                this.builder.connectInputKeyStream(trainingStream, classifier.getInputProcessor());
+    // Addition to Bagging: stream to train
+    /* The training stream. */
+		Stream trainingStream = this.builder.createStream(predictionCombinerP);
+		predictionCombinerP.setTrainingStream(trainingStream);
+		this.builder.connectInputKeyStream(trainingStream, classifier.getInputProcessor());
                 
 	}
 
@@ -143,7 +137,6 @@ public class Boosting implements Learner , Configurable {
      */
     @Override
     public Set<Stream> getResultStreams() {
-    	Set<Stream> streams = ImmutableSet.of(this.resultStream);
-		return streams;
+			return ImmutableSet.of(this.resultStream);
     }
 }

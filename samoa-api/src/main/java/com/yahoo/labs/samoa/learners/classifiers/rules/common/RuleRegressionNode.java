@@ -289,29 +289,4 @@ public abstract class RuleRegressionNode implements Serializable {
     protected static int modelAttIndexToInstanceAttIndex(int index, Instance inst) {
             return  index<= inst.classIndex() ? index : index + 1;
     }
-
-    
-
-//	/*
-//	 * Helper for cloning?
-//	 */
-//	public void initialize(RuleRegressionNode oldLearningNode) {
-//		// TODO Auto-generated method stub
-//		if(((RulePassiveRegressionNode) oldLearningNode).perceptron!=null)
-//		{
-//			this.perceptron=new Perceptron(((RulePassiveRegressionNode) oldLearningNode).perceptron);
-//			this.perceptron.resetError();
-//			this.perceptron.setLearningRatio();
-//		}
-//
-//		if(((RuleActiveRegressionNode) oldLearningNode).targetMean!=null)
-//		{
-//			this.targetMean= new TargetMean(((RuleActiveRegressionNode) oldLearningNode).targetMean);
-//			this.targetMean.resetError();
-//		}
-//		//reset statistics
-//		this.nodeStatistics.setValue(0, 0);
-//		this.nodeStatistics.setValue(1, 0);
-//		this.nodeStatistics.setValue(2, 0);
-//	}
 }

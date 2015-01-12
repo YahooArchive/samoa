@@ -42,8 +42,7 @@ import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class VFMLNumericAttributeClassObserver extends AbstractOptionHandler
-        implements NumericAttributeClassObserver {
+public class VFMLNumericAttributeClassObserver extends AbstractOptionHandler implements NumericAttributeClassObserver {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,7 +64,7 @@ public class VFMLNumericAttributeClassObserver extends AbstractOptionHandler
         public double boundaryWeight;
     }
 
-    protected List<Bin> binList = new ArrayList<Bin>();
+    protected List<Bin> binList = new ArrayList<>();
 
     public IntOption numBinsOption = new IntOption("numBins", 'n',
         "The number of bins.", 10, 1, Integer.MAX_VALUE);
@@ -73,8 +72,7 @@ public class VFMLNumericAttributeClassObserver extends AbstractOptionHandler
 
     @Override
     public void observeAttributeClass(double attVal, int classVal, double weight) {
-        if (Utils.isMissingValue(attVal)) {
-        } else {
+        if (!Utils.isMissingValue(attVal)) {
             if (this.binList.size() < 1) {
                 // create the first bin
                 Bin newBin = new Bin();
@@ -86,11 +84,10 @@ public class VFMLNumericAttributeClassObserver extends AbstractOptionHandler
                 this.binList.add(newBin);
             } else {
                 // find bin containing new example with binary search
-                int index = -1;
+                int index = 0;
                 boolean found = false;
                 int min = 0;
                 int max = this.binList.size() - 1;
-                index = 0;
                 while ((min <= max) && !found) {
                     int i = (min + max) / 2;
                     Bin bin = this.binList.get(i);

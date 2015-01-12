@@ -20,9 +20,8 @@ package com.yahoo.labs.samoa.moa.classifiers.core;
  * #L%
  */
 
-import com.esotericsoftware.kryo.Kryo;
-import com.yahoo.labs.samoa.moa.classifiers.core.conditionaltests.InstanceConditionalTest;
 import com.yahoo.labs.samoa.moa.AbstractMOAObject;
+import com.yahoo.labs.samoa.moa.classifiers.core.conditionaltests.InstanceConditionalTest;
 
 /**
  * Class for computing attribute split suggestions given a split test.
@@ -30,8 +29,7 @@ import com.yahoo.labs.samoa.moa.AbstractMOAObject;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class AttributeSplitSuggestion extends AbstractMOAObject implements
-        Comparable<AttributeSplitSuggestion> {
+public class AttributeSplitSuggestion extends AbstractMOAObject implements Comparable<AttributeSplitSuggestion> {
     
     private static final long serialVersionUID = 1L;
 
@@ -41,8 +39,7 @@ public class AttributeSplitSuggestion extends AbstractMOAObject implements
 
     public double merit;
     
-    public AttributeSplitSuggestion() {
-    };
+    public AttributeSplitSuggestion() {}
 
     public AttributeSplitSuggestion(InstanceConditionalTest splitTest,
             double[][] resultingClassDistributions, double merit) {
@@ -66,6 +63,6 @@ public class AttributeSplitSuggestion extends AbstractMOAObject implements
 
     @Override
     public void getDescription(StringBuilder sb, int indent) {
-        // TODO Auto-generated method stub
+        // do nothing
     }
 }
