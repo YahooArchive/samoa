@@ -45,8 +45,7 @@ import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class RandomTreeGenerator extends AbstractOptionHandler implements
-        InstanceStream {
+public class RandomTreeGenerator extends AbstractOptionHandler implements InstanceStream {
 
     @Override
     public String getPurposeString() {
@@ -175,8 +174,8 @@ public class RandomTreeGenerator extends AbstractOptionHandler implements
     }
 
     protected void generateHeader() {
-        FastVector attributes = new FastVector();
-        FastVector nominalAttVals = new FastVector();
+        FastVector<Attribute> attributes = new FastVector<>();
+        FastVector<String> nominalAttVals = new FastVector<>();
         for (int i = 0; i < this.numValsPerNominalOption.getValue(); i++) {
             nominalAttVals.addElement("value" + (i + 1));
         }
@@ -187,7 +186,7 @@ public class RandomTreeGenerator extends AbstractOptionHandler implements
         for (int i = 0; i < this.numNumericsOption.getValue(); i++) {
             attributes.addElement(new Attribute("numeric" + (i + 1)));
         }
-        FastVector classLabels = new FastVector();
+        FastVector<String> classLabels = new FastVector<>();
         for (int i = 0; i < this.numClassesOption.getValue(); i++) {
             classLabels.addElement("class" + (i + 1));
         }
@@ -199,7 +198,7 @@ public class RandomTreeGenerator extends AbstractOptionHandler implements
 
     protected void generateRandomTree() {
         Random treeRand = new Random(this.treeRandomSeedOption.getValue());
-        ArrayList<Integer> nominalAttCandidates = new ArrayList<Integer>(
+        ArrayList<Integer> nominalAttCandidates = new ArrayList<>(
                 this.numNominalsOption.getValue());
         for (int i = 0; i < this.numNominalsOption.getValue(); i++) {
             nominalAttCandidates.add(i);
@@ -229,7 +228,7 @@ public class RandomTreeGenerator extends AbstractOptionHandler implements
         if (chosenAtt < nominalAttCandidates.size()) {
             node.splitAttIndex = nominalAttCandidates.get(chosenAtt);
             node.children = new Node[this.numValsPerNominalOption.getValue()];
-            ArrayList<Integer> newNominalCandidates = new ArrayList<Integer>(
+            ArrayList<Integer> newNominalCandidates = new ArrayList<>(
                     nominalAttCandidates);
             newNominalCandidates.remove(new Integer(node.splitAttIndex));
             newNominalCandidates.trimToSize();

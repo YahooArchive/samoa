@@ -20,6 +20,13 @@ package com.yahoo.labs.samoa.moa.streams;
  * #L%
  */
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import com.github.javacliparser.FileOption;
 import com.github.javacliparser.IntOption;
 import com.yahoo.labs.samoa.instances.Instances;
@@ -29,14 +36,6 @@ import com.yahoo.labs.samoa.moa.core.InstanceExample;
 import com.yahoo.labs.samoa.moa.core.ObjectRepository;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
 import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
 
 /**
  * Stream reader of ARFF files.
@@ -44,8 +43,7 @@ import java.io.Reader;
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @version $Revision: 7 $
  */
-public class ArffFileStream extends AbstractOptionHandler implements
-        InstanceStream {
+public class ArffFileStream extends AbstractOptionHandler implements InstanceStream {
 
     @Override
     public String getPurposeString() {
@@ -140,8 +138,8 @@ public class ArffFileStream extends AbstractOptionHandler implements
     }
 
     protected boolean readNextInstanceFromFile() {
-        boolean ret = false;
-        if (this.hasStarted == false){
+        boolean ret;
+        if (!this.hasStarted){
             try {
                 reset();
                 ret = getNextInstanceFromFile();
@@ -161,7 +159,7 @@ public class ArffFileStream extends AbstractOptionHandler implements
         // TODO Auto-generated method stub
     }
 
-    private void reset() throws IOException, FileNotFoundException {
+    private void reset() throws IOException {
         if (this.fileReader != null) {
             this.fileReader.close();
         }

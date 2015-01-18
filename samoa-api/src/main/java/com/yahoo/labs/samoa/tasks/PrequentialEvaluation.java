@@ -78,7 +78,7 @@ public class PrequentialEvaluation implements Task, Configurable {
     public IntOption sampleFrequencyOption = new IntOption("sampleFrequency", 'f', "How many instances between samples of the learning performance.", 100000,
             0, Integer.MAX_VALUE);
 
-    public StringOption evaluationNameOption = new StringOption("evalutionName", 'n', "Identifier of the evaluation", "Prequential_"
+    public StringOption evaluationNameOption = new StringOption("evaluationName", 'n', "Identifier of the evaluation", "Prequential_"
             + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 
     public FileOption dumpFileOption = new FileOption("dumpFile", 'd', "File to append intermediate csv results to", null, "csv", true);
@@ -121,10 +121,10 @@ public class PrequentialEvaluation implements Task, Configurable {
 
         if (builder == null) {
             builder = new TopologyBuilder();
-            logger.debug("Sucessfully instantiating TopologyBuilder");
+            logger.debug("Successfully instantiating TopologyBuilder");
 
             builder.initTopology(evaluationNameOption.getValue());
-            logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
+            logger.debug("Successfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
         }
 
         // instantiate PrequentialSourceProcessor and its output stream (sourcePiOutputStream)
@@ -134,7 +134,7 @@ public class PrequentialEvaluation implements Task, Configurable {
         preqSource.setSourceDelay(sourceDelayOption.getValue());
         preqSource.setDelayBatchSize(batchDelayOption.getValue());
         builder.addEntranceProcessor(preqSource);
-        logger.debug("Sucessfully instantiating PrequentialSourceProcessor");
+        logger.debug("Successfully instantiating PrequentialSourceProcessor");
 
         // preqStarter = new PrequentialSourceTopologyStarter(preqSource, instanceLimitOption.getValue());
         // sourcePi = builder.createEntrancePi(preqSource, preqStarter);
@@ -144,12 +144,12 @@ public class PrequentialEvaluation implements Task, Configurable {
         // preqStarter.setInputStream(sourcePiOutputStream);
 
         // instantiate classifier and connect it to sourcePiOutputStream
-        classifier = (Learner) this.learnerOption.getValue();
+        classifier = this.learnerOption.getValue();
         classifier.init(builder, preqSource.getDataset(), 1);
         builder.connectInputShuffleStream(sourcePiOutputStream, classifier.getInputProcessor());
-        logger.debug("Sucessfully instantiating Classifier");
+        logger.debug("Successfully instantiating Classifier");
 
-        PerformanceEvaluator evaluatorOptionValue = (PerformanceEvaluator) this.evaluatorOption.getValue();
+        PerformanceEvaluator evaluatorOptionValue = this.evaluatorOption.getValue();
         if (!PrequentialEvaluation.isLearnerAndEvaluatorCompatible(classifier, evaluatorOptionValue)) {
         	evaluatorOptionValue = getDefaultPerformanceEvaluatorForLearner(classifier);
         }
@@ -163,10 +163,10 @@ public class PrequentialEvaluation implements Task, Configurable {
         	builder.connectInputShuffleStream(evaluatorPiInputStream, evaluator);
         }
         
-        logger.debug("Sucessfully instantiating EvaluatorProcessor");
+        logger.debug("Successfully instantiating EvaluatorProcessor");
 
         prequentialTopology = builder.build();
-        logger.debug("Sucessfully building the topology");
+        logger.debug("Successfully building the topology");
     }
 
     @Override
@@ -175,10 +175,10 @@ public class PrequentialEvaluation implements Task, Configurable {
         // for now, it's used by S4 App
         // dynamic binding theoretically will solve this problem
         builder = new TopologyBuilder(factory);
-        logger.debug("Sucessfully instantiating TopologyBuilder");
+        logger.debug("Successfully instantiating TopologyBuilder");
 
         builder.initTopology(evaluationNameOption.getValue());
-        logger.debug("Sucessfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
+        logger.debug("Successfully initializing SAMOA topology with name {}", evaluationNameOption.getValue());
 
     }
 
@@ -192,13 +192,8 @@ public class PrequentialEvaluation implements Task, Configurable {
     // }
     
     private static boolean isLearnerAndEvaluatorCompatible(Learner learner, PerformanceEvaluator evaluator) {
-    	if (learner instanceof RegressionLearner && evaluator instanceof RegressionPerformanceEvaluator) {
-    		return true;
-    	}
-    	if (learner instanceof ClassificationLearner && evaluator instanceof ClassificationPerformanceEvaluator) {
-    		return true;
-    	}
-    	return false;
+        return (learner instanceof RegressionLearner && evaluator instanceof RegressionPerformanceEvaluator) ||
+            (learner instanceof ClassificationLearner && evaluator instanceof ClassificationPerformanceEvaluator);
     }
     
     private static PerformanceEvaluator getDefaultPerformanceEvaluatorForLearner(Learner learner) {

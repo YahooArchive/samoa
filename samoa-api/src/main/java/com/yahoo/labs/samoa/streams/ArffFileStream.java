@@ -53,7 +53,7 @@ public class ArffFileStream extends FileStream {
 	}
 	
 	@Override
-    protected void reset() {
+	protected void reset() {
 		try {
 			if (this.fileReader != null)
 				this.fileReader.close();
@@ -68,7 +68,7 @@ public class ArffFileStream extends FileStream {
 			hitEndOfStream = true;
 			throw new RuntimeException("FileStream is empty.");
 		}
-    }
+	}
 	
 	@Override
 	protected boolean getNextFileReader() {

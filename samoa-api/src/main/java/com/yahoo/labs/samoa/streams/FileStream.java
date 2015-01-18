@@ -21,20 +21,19 @@ package com.yahoo.labs.samoa.streams;
  */
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.Reader;
 
 import com.github.javacliparser.ClassOption;
+import com.yahoo.labs.samoa.instances.Instances;
+import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.moa.core.InstanceExample;
 import com.yahoo.labs.samoa.moa.core.ObjectRepository;
 import com.yahoo.labs.samoa.moa.options.AbstractOptionHandler;
 import com.yahoo.labs.samoa.moa.streams.InstanceStream;
 import com.yahoo.labs.samoa.moa.tasks.TaskMonitor;
-import com.yahoo.labs.samoa.instances.Instance;
-import com.yahoo.labs.samoa.instances.Instances;
-import com.yahoo.labs.samoa.instances.InstancesHeader;
 import com.yahoo.labs.samoa.streams.fs.FileStreamSource;
 
 /**
@@ -142,7 +141,7 @@ public abstract class FileStream extends AbstractOptionHandler implements Instan
    }
    
    protected boolean readNextInstanceFromStream() {
-	   if (hasStarted == false) {
+	   if (!hasStarted) {
 		   this.reset();  
 		   hasStarted = true;
 	   }
