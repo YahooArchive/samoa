@@ -18,6 +18,9 @@
 
 SAMOA: Scalable Advanced Massive Online Analysis.
 =================
+
+## This repository is discontinued. The development of SAMOA has moved over to the Apache Software Foundation. Please subscribe to the [dev mailing list](http://incubator.apache.org/projects/samoa.html) to participate in development, and use [Jira](https://issues.apache.org/jira/browse/SAMOA/?selectedTab=com.atlassian.jira.jira-projects-plugin:summary-panel) to report bugs and propose new features. 
+
 SAMOA is a platform for mining on big data streams.
 It is a distributed streaming machine learning (ML) framework that contains a 
 programing abstraction for distributed streaming ML algorithms.
