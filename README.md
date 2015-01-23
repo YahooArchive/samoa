@@ -16,10 +16,10 @@
 
 [![Build Status](https://travis-ci.org/yahoo/samoa.svg?branch=master)](https://travis-ci.org/yahoo/samoa)
 
-SAMOA: Scalable Advanced Massive Online Analysis.
+SAMOA: Scalable Advanced<br/>Massive Online Analysis.
 =================
 
-## This repository is discontinued. The development of SAMOA has moved over to the [Apache Software Foundation](http://samoa.incubator.apache.org). Please subscribe to the [dev mailing list](http://incubator.apache.org/projects/samoa.html) to participate in the development, and use [Jira](https://issues.apache.org/jira/browse/SAMOA) to report bugs and propose new features.
+### This repository is discontinued. The development of SAMOA has moved over to the [Apache Software Foundation](http://samoa.incubator.apache.org). Please subscribe to the [dev mailing list](http://incubator.apache.org/projects/samoa.html) to participate in the development, and use [Jira](https://issues.apache.org/jira/browse/SAMOA) to report bugs and propose new features.
 
 SAMOA is a platform for mining on big data streams.
 It is a distributed streaming machine learning (ML) framework that contains a 
