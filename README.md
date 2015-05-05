@@ -70,28 +70,12 @@ mvn package
 
 The deployable jar for SAMOA will be in `target/SAMOA-Local-0.0.1-SNAPSHOT.jar`.
 
-## Documentation
-
-The documentation is intended to give an introduction on how to use SAMOA in the various possible ways. 
-As a user you can use it to develop new algorithms and test different Distributed Stream Processing Engines.
-
-[Wiki Documentation](http://github.com/yahoo/samoa/wiki)
-
-[Javadoc](http://yahoo.github.io/samoa/docs/api)
-
 ## Slides
 
-[![SAMOA Slides](http://yahoo.github.io/samoa/samoa-slides.jpg)](https://speakerdeck.com/gdfm/samoa-a-platform-for-mining-big-data-streams)
+[SAMOA Slides](https://speakerdeck.com/gdfm/samoa-a-platform-for-mining-big-data-streams)
 
 G. De Francisci Morales [SAMOA: A Platform for Mining Big Data Streams](http://melmeric.files.wordpress.com/2013/04/samoa-a-platform-for-mining-big-data-streams.pdf)
 Keynote Talk at [RAMSS ’13](http://www.ramss.ws/2013/program/): 2nd International Workshop on Real-Time Analysis and Mining of Social Streams WWW, Rio De Janeiro, 2013.
-
-## SAMOA Developer's Guide
-
-<p><a href="http://yahoo.github.io/samoa/SAMOA-Developers-Guide-0-0-1.pdf"><img style="max-width:95%;border:3px solid black;" src="http://yahoo.github.io/samoa/Manual.png" alt="SAMOA Developer's Guide" height="250"> </a></p>
-
-## Contributors
-[List of contributors to the SAMOA project](http://yahoo.github.io/samoa/contributors.html)
 
 ## License
 
